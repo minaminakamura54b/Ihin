@@ -1,0 +1,78 @@
+<% content_for :title, "複数遺品の一括査定 | いひん" %>
+
+<div class="page-container page-narrow">
+  <div class="page-header">
+    <% unless user_signed_in? %>
+      <div class="guest-badge">登録不要・無料</div>
+    <% end %>
+    <h1>複数遺品の一括査定</h1>
+    <p class="page-subtitle">最大5点の遺品をまとめてAIが査定します。複数の角度から撮影すると精度が上がります。</p>
+  </div>
+
+  <% unless user_signed_in? %>
+    <% if @remaining.to_i > 0 %>
+      <div class="guest-limit-banner">
+        <i class="fas fa-gift"></i>
+        残り <strong><%= @remaining %>点</strong> まで無料で査定できます
+      </div>
+    <% elsif @remaining == 0 %>
+      <div class="guest-limit-banner guest-limit-banner-full">
+        <i class="fas fa-lock"></i> 無料査定の上限（<%= AppSetting.guest_assessment_limit %>点）に達しました
+      </div>
+    <% end %>
+  <% end %>
+
+  <% if @show_limit_modal %>
+    <div class="modal-overlay" id="limitModal">
+      <div class="modal-box">
+        <div class="modal-icon">🔓</div>
+        <h2>無料査定の上限に達しました</h2>
+        <p>無料登録すると制限なく何度でも査定できます</p>
+        <div class="modal-actions">
+          <%= link_to "無料登録して続ける", new_user_registration_path, class: "btn btn-primary btn-lg" %>
+          <%= link_to "閉じる", new_bulk_assessment_path, class: "btn btn-ghost" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if flash[:alert] %>
+    <div class="flash flash-alert"><%= flash[:alert] %></div>
+  <% end %>
+
+  <div data-controller="bulk-assessment"
+       data-bulk-assessment-max-items-value="5"
+       data-bulk-assessment-remaining-value="<%= user_signed_in? ? 99 : @remaining.to_i %>">
+
+    <form action="<%= bulk_assessments_path %>" method="POST" enctype="multipart/form-data"
+          data-bulk-assessment-target="form">
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+      <div data-bulk-assessment-target="itemList">
+        <%= render "bulk_item_fields", index: 0 %>
+      </div>
+
+      <div class="bulk-add-area">
+        <button type="button" class="btn btn-outline btn-full"
+                data-bulk-assessment-target="addButton"
+                data-action="click->bulk-assessment#addItem">
+          <i class="fas fa-plus"></i> 遺品を追加（最大5点）
+        </button>
+        <p class="form-hint" data-bulk-assessment-target="countText">現在 1点 登録中</p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-full"
+                data-bulk-assessment-target="submitButton">
+          <i class="fas fa-robot"></i> 一括査定を開始する
+        </button>
+      </div>
+    </form>
+
+    <% unless user_signed_in? %>
+      <div class="guest-note">
+        <p><i class="fas fa-lock"></i> 結果を保存・管理したい場合は<%= link_to "無料登録", new_user_registration_path %>が必要です</p>
+      </div>
+    <% end %>
+  </div>
+</div>

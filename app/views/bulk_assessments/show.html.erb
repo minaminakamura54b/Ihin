@@ -1,0 +1,124 @@
+<% content_for :title, "一括査定結果 | いひん" %>
+
+<div class="page-container"
+     data-controller="bulk-assessment-progress"
+     data-bulk-assessment-progress-url-value="<%= progress_bulk_assessment_path(@bulk) %>"
+     data-bulk-assessment-progress-status-value="<%= @bulk.status %>">
+
+  <div class="page-header">
+    <h1>一括査定</h1>
+    <% if @bulk.processing? || @bulk.pending? %>
+      <p class="page-subtitle">AIが査定中です…少々お待ちください</p>
+    <% elsif @bulk.completed? %>
+      <p class="page-subtitle">査定が完了しました</p>
+    <% end %>
+  </div>
+
+  <%# 進捗バー（処理中のみ表示） %>
+  <% if @bulk.processing? || @bulk.pending? %>
+    <div class="progress-section" data-bulk-assessment-progress-target="progressSection">
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill"
+               data-bulk-assessment-progress-target="progressBar"
+               style="width: <%= @bulk.total_count > 0 ? (@bulk.completed_count.to_f / @bulk.total_count * 100).round : 0 %>%">
+          </div>
+        </div>
+        <p class="progress-text" data-bulk-assessment-progress-target="progressText">
+          <%= @bulk.completed_count %>/<%= @bulk.total_count %>点完了
+        </p>
+      </div>
+      <div class="assess-loading-inner">
+        <div class="assess-spinner"></div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# 合計価格（完了時のみ） %>
+  <% if @bulk.completed? && @bulk.total_estimated_price > 0 %>
+    <div class="bulk-total-price">
+      <span class="total-label">合計推定価格</span>
+      <span class="total-value">約 <%= number_with_delimiter(@bulk.total_estimated_price) %>円</span>
+    </div>
+  <% end %>
+
+  <%# 査定結果一覧 %>
+  <div class="bulk-items-grid" data-bulk-assessment-progress-target="itemsGrid">
+    <% @items.each do |item| %>
+      <div class="bulk-result-card bulk-result-<%= item.status %>" id="bulk_item_<%= item.id %>">
+        <div class="bulk-result-header">
+          <span class="bulk-result-number"><%= item.position %></span>
+          <h3><%= item.display_name %></h3>
+          <span class="bulk-status-badge status-<%= item.status %>">
+            <% case item.status %>
+            <% when "pending"    then %><i class="fas fa-clock"></i> 待機中
+            <% when "processing" then %><i class="fas fa-spinner fa-spin"></i> 査定中
+            <% when "completed"  then %><i class="fas fa-check"></i> 完了
+            <% when "failed"     then %><i class="fas fa-exclamation-triangle"></i> 失敗
+            <% end %>
+          </span>
+        </div>
+
+        <% if item.photos.attached? %>
+          <div class="bulk-result-photos">
+            <% item.photos.first(3).each do |photo| %>
+              <%= image_tag photo.variant(resize_to_fill: [120, 120]), class: "bulk-photo-thumb" %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if item.completed? %>
+          <div class="bulk-result-body">
+            <div class="bulk-price">
+              <span class="price-label">推定価格</span>
+              <span class="price-value">
+                <% if item.estimated_price.present? %>
+                  約 <%= number_with_delimiter(item.estimated_price) %>円
+                <% else %>
+                  参考価格なし
+                <% end %>
+              </span>
+            </div>
+            <% if item.action_label %>
+              <div class="bulk-action-suggestion action-<%= item.suggested_action %>">
+                AIの提案：<strong><%= item.action_label %></strong>
+              </div>
+            <% end %>
+            <p class="bulk-ai-result"><%= item.ai_result %></p>
+          </div>
+        <% end %>
+
+        <% if item.failed? %>
+          <div class="bulk-result-body bulk-result-error">
+            <p class="text-red"><i class="fas fa-exclamation-triangle"></i> 査定に失敗しました</p>
+            <% if item.error_message.present? %>
+              <p class="text-sm text-gray"><%= item.error_message %></p>
+            <% end %>
+            <%= button_to "再試行する",
+                retry_item_bulk_assessment_path(@bulk, item_id: item.id),
+                method: :post,
+                class: "btn btn-outline btn-sm" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @bulk.completed? %>
+    <div class="bulk-cta">
+      <% if user_signed_in? %>
+        <%= link_to "もう一度一括査定する", new_bulk_assessment_path, class: "btn btn-outline" %>
+        <%= link_to "遺品リストを見る", items_path, class: "btn btn-ghost" %>
+      <% else %>
+        <div class="guest-cta-box">
+          <h2>結果を保存して管理しませんか？</h2>
+          <p>無料登録すると査定結果の保存・やることリスト・思い出ボックスなど全機能が使えます。</p>
+          <div class="guest-cta-actions">
+            <%= link_to "無料で登録して保存する", new_user_registration_path, class: "btn btn-primary btn-lg" %>
+            <%= link_to "もう一度査定する", new_bulk_assessment_path, class: "btn btn-outline" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

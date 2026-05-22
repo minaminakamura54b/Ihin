@@ -1,0 +1,41 @@
+<% content_for :title, "業者編集 | 管理画面" %>
+
+<div class="page-container page-narrow">
+  <div class="breadcrumb">
+    <%= link_to "業者管理", admin_businesses_path %> &rsaquo; 編集
+  </div>
+
+  <div class="admin-detail-card">
+    <h1 style="margin-bottom:24px;"><%= @business.name %> を編集</h1>
+    <%= form_with model: [:admin, @business] do |f| %>
+      <div class="form-group">
+        <%= f.label :name, "業者名", class: "form-label" %>
+        <%= f.text_field :name, class: "form-input" %>
+      </div>
+      <div class="form-group">
+        <%= f.label :category, "業種", class: "form-label" %>
+        <%= f.select :category, [["遺品整理業者", "estate_clearance"], ["買取業者", "buyback"], ["司法書士", "judicial_scrivener"]], {}, class: "form-select" %>
+      </div>
+      <div class="form-group">
+        <%= f.label :area, "エリア", class: "form-label" %>
+        <%= f.text_field :area, class: "form-input" %>
+      </div>
+      <div class="form-group">
+        <%= f.label :plan, "プラン", class: "form-label" %>
+        <%= f.select :plan, [["ベーシック", "basic"], ["スタンダード", "standard"], ["プレミアム", "premium"]], {}, class: "form-select" %>
+      </div>
+      <div class="form-group">
+        <%= f.label :active, "状態", class: "form-label" %>
+        <%= f.select :active, [["有効", true], ["無効", false]], {}, class: "form-select" %>
+      </div>
+      <div class="form-actions" style="flex-direction:row;">
+        <%= f.submit "更新する", class: "btn btn-primary" %>
+        <%= link_to "キャンセル", admin_business_path(@business), class: "btn btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.admin-detail-card { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+</style>

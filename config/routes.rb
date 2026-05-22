@@ -1,14 +1,65 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  devise_for :users, controllers: {
+    registrations: "users/registrations",
+    sessions: "users/sessions"
+  }
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  root "home#index"
+
+  resource :guest_assessment, only: [:new, :create]
+
+  resources :bulk_assessments, only: [:new, :create, :show] do
+    member do
+      get :progress
+      post :retry_item
+    end
+  end
+
+  resources :items do
+    member do
+      post :assess
+      patch :update_action
+    end
+  end
+
+  resources :todo_items do
+    member do
+      patch :toggle
+    end
+  end
+
+  resources :memories
+
+  resource :ai_consultation, only: [:show]
+  resources :consultations, only: [:create, :index]
+
+  resources :businesses do
+    resources :inquiries, only: [:create, :index, :update]
+    member do
+      post :subscribe
+      delete :unsubscribe
+      get :dashboard
+    end
+    collection do
+      get :search
+    end
+  end
+
+  namespace :admin do
+    root "dashboard#index"
+    resources :users
+    resources :businesses
+    resources :inquiries
+    resources :settings, only: [:index, :update]
+  end
+
+  namespace :stripe do
+    post :webhooks, to: "webhooks#create"
+  end
+
+  # /appraisals/:id → /items/:id へのリダイレクト（旧URLからのアクセス対応）
+  get "/appraisals/:id", to: redirect("/items/%{id}")
+  get "/appraisals", to: redirect("/items")
+
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

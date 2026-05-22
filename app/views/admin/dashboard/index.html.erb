@@ -1,0 +1,91 @@
+<% content_for :title, "管理画面 | いひん" %>
+
+<div class="page-container">
+  <div class="page-header">
+    <h1>管理ダッシュボード</h1>
+  </div>
+
+  <div class="dashboard-cards">
+    <div class="dashboard-card">
+      <div class="card-icon card-icon-primary">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="card-content">
+        <h3>総ユーザー数</h3>
+        <div class="card-stats">
+          <span>遺族: <%= @family_count %>名</span>
+          <span>業者: <%= @business_count %>名</span>
+        </div>
+        <p class="price"><%= @user_count %>名</p>
+        <%= link_to "管理", admin_users_path, class: "card-btn btn-outline" %>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-icon card-icon-warning">
+        <i class="fas fa-box"></i>
+      </div>
+      <div class="card-content">
+        <h3>登録遺品数</h3>
+        <p class="price"><%= @item_count %>点</p>
+        <%= link_to "一覧", admin_businesses_path, class: "card-btn btn-warning" %>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="card-icon card-icon-success">
+        <i class="fas fa-store"></i>
+      </div>
+      <div class="card-content">
+        <h3>アクティブ業者数</h3>
+        <p class="price"><%= @active_businesses %>社</p>
+        <%= link_to "管理", admin_businesses_path, class: "card-btn btn-success" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="section-header">
+      <h2>最近の問い合わせ</h2>
+      <%= link_to "すべて見る →", admin_inquiries_path, class: "section-link" %>
+    </div>
+
+    <% if @recent_inquiries.any? %>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>日時</th>
+            <th>遺族</th>
+            <th>業者</th>
+            <th>ステータス</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @recent_inquiries.each do |inquiry| %>
+            <tr>
+              <td><%= inquiry.created_at.strftime("%m/%d %H:%M") %></td>
+              <td><%= inquiry.user.name %></td>
+              <td><%= inquiry.business.name %></td>
+              <td>
+                <span class="badge badge-<%= inquiry.pending? ? 'yellow' : inquiry.contacted? ? 'blue' : 'gray' %>">
+                  <%= inquiry.pending? ? "未対応" : inquiry.contacted? ? "対応中" : "完了" %>
+                </span>
+              </td>
+              <td><%= link_to "詳細", admin_inquiry_path(inquiry), class: "btn btn-sm btn-outline" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="text-light">問い合わせはありません</p>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.admin-table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.admin-table th { background: var(--color-warm-100); padding: 12px 16px; text-align: left; font-size: 0.85rem; color: var(--color-text-light); }
+.admin-table td { padding: 12px 16px; border-top: 1px solid var(--color-warm-100); font-size: 0.9rem; }
+.text-light { color: var(--color-text-light); }
+</style>

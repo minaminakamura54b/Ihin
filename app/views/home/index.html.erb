@@ -1,0 +1,234 @@
+<% if user_signed_in? %>
+  <%# ログイン済みダッシュボード %>
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h1>こんにちは、<%= current_user.name %>さん</h1>
+      <p class="dashboard-subtitle">今日も一歩ずつ、大丈夫ですよ。</p>
+    </div>
+
+    <div class="dashboard-cards">
+      <div class="dashboard-card">
+        <div class="card-icon card-icon-primary">
+          <i class="fas fa-camera"></i>
+        </div>
+        <div class="card-content">
+          <h3>AI査定</h3>
+          <p>遺品の写真を撮ってAIに査定してもらいましょう</p>
+          <div class="card-stats">
+            <span><%= current_user.items.count %>点登録済み</span>
+            <span><%= current_user.items.assessed.count %>点査定済み</span>
+          </div>
+          <%= link_to "写真を追加する", new_item_path, class: "card-btn btn-primary" %>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-icon card-icon-warning">
+          <i class="fas fa-list-check"></i>
+        </div>
+        <div class="card-content">
+          <h3>やることリスト</h3>
+          <p>手続きや整理のやることを管理できます</p>
+          <div class="card-stats">
+            <span class="text-red"><%= current_user.todo_items.urgent.incomplete.count %>件 急ぎ</span>
+            <span><%= current_user.todo_items.incomplete.count %>件 残り</span>
+          </div>
+          <%= link_to "リストを見る", todo_items_path, class: "card-btn btn-warning" %>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-icon card-icon-success">
+          <i class="fas fa-heart"></i>
+        </div>
+        <div class="card-content">
+          <h3>思い出ボックス</h3>
+          <p>大切な遺品の写真とエピソードを残せます</p>
+          <div class="card-stats">
+            <span><%= current_user.memories.count %>件保存済み</span>
+          </div>
+          <%= link_to "思い出を見る", memories_path, class: "card-btn btn-success" %>
+        </div>
+      </div>
+
+      <div class="dashboard-card">
+        <div class="card-icon card-icon-info">
+          <i class="fas fa-handshake"></i>
+        </div>
+        <div class="card-content">
+          <h3>業者マッチング</h3>
+          <p>信頼できる業者をご紹介します</p>
+          <%= link_to "業者を探す", businesses_path, class: "card-btn btn-info" %>
+        </div>
+      </div>
+    </div>
+
+    <% if @recent_items.any? %>
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h2>最近登録した遺品</h2>
+          <%= link_to "すべて見る →", items_path, class: "section-link" %>
+        </div>
+        <div class="items-grid">
+          <%= render @recent_items %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @pending_todos.any? %>
+      <div class="dashboard-section">
+        <div class="section-header">
+          <h2>急ぎのやること</h2>
+          <%= link_to "すべて見る →", todo_items_path, class: "section-link" %>
+        </div>
+        <div class="todo-preview">
+          <% @pending_todos.each do |todo| %>
+            <div class="todo-preview-item">
+              <span class="category-badge category-<%= todo.category %>"><%= todo.category_label %></span>
+              <span class="todo-title"><%= todo.title %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+<% else %>
+  <%# 未ログイン トップページ %>
+  <div class="landing">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-badge">遺族・家族は完全無料</div>
+        <h1 class="hero-title">
+          大切な方の遺品を<br>
+          <span class="text-primary">AIが丁寧に査定</span>します
+        </h1>
+        <p class="hero-description">
+          写真を1枚撮るだけで、AIが品物を識別し相場価格を査定。<br>
+          「売る」「残す」「処分する」の判断を優しくサポートします。
+        </p>
+        <div class="hero-actions">
+          <%= link_to "今すぐ試す（登録不要）", new_guest_assessment_path, class: "btn btn-primary btn-lg" %>
+          <%= link_to "無料で登録する", new_user_registration_path, class: "btn btn-outline btn-lg" %>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="hero-card">
+          <div class="hero-card-icon">📸</div>
+          <div class="hero-card-text">
+            <strong>AI査定結果</strong>
+            <p>食器セット（昭和レトロ）</p>
+            <p class="price">査定額：3,000〜8,000円</p>
+            <div class="action-badges">
+              <span class="badge badge-green">売る</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-it-works" id="how-it-works">
+      <div class="section-container">
+        <h2 class="section-title">使い方はかんたん3ステップ</h2>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-icon">📸</div>
+            <h3>写真を撮る</h3>
+            <p>遺品をスマホで撮影してアップロード</p>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-icon">🤖</div>
+            <h3>AIが査定</h3>
+            <p>Claude AIが品物を識別して相場価格を算出</p>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-icon">✅</div>
+            <h3>判断する</h3>
+            <p>「売る」「残す」「処分」の提案に沿って整理</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="section-container">
+        <h2 class="section-title">すべての機能が無料</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>AI自動査定</h3>
+            <p>写真1枚でAIが品物を識別・相場価格を査定します</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3>やることリスト</h3>
+            <p>急ぎ・通常・デジタル遺品の3カテゴリで整理</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💝</div>
+            <h3>思い出ボックス</h3>
+            <p>遺品の写真とエピソードを家族で共有</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>業者マッチング</h3>
+            <p>信頼できる遺品整理・買取業者をご紹介</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>まずは無料で試してみてください</h2>
+        <p>クレジットカード不要・登録1分</p>
+        <%= link_to "無料で登録する", new_user_registration_path, class: "btn btn-primary btn-xl" %>
+        <p class="cta-note">遺族・家族は完全無料でご利用いただけます</p>
+      </div>
+    </section>
+
+    <section class="business-section">
+      <div class="section-container">
+        <h2 class="section-title">業者の方へ</h2>
+        <div class="business-plans">
+          <div class="plan-card">
+            <h3>ベーシック</h3>
+            <div class="plan-price">¥30,000<span>/月</span></div>
+            <ul>
+              <li>プロフィール掲載</li>
+              <li>問い合わせ受付</li>
+              <li>エリア絞り込み表示</li>
+            </ul>
+            <%= link_to "登録する", new_user_registration_path(role: "business"), class: "btn btn-outline" %>
+          </div>
+          <div class="plan-card plan-featured">
+            <div class="plan-badge">人気</div>
+            <h3>スタンダード</h3>
+            <div class="plan-price">¥40,000<span>/月</span></div>
+            <ul>
+              <li>ベーシックのすべて</li>
+              <li>優先表示</li>
+              <li>口コミ機能</li>
+            </ul>
+            <%= link_to "登録する", new_user_registration_path(role: "business"), class: "btn btn-primary" %>
+          </div>
+          <div class="plan-card">
+            <h3>プレミアム</h3>
+            <div class="plan-price">¥50,000<span>/月</span></div>
+            <ul>
+              <li>スタンダードのすべて</li>
+              <li>トップ表示</li>
+              <li>専任サポート</li>
+            </ul>
+            <%= link_to "登録する", new_user_registration_path(role: "business"), class: "btn btn-outline" %>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+<% end %>

@@ -1,0 +1,25 @@
+<div class="item-card" id="item_<%= item.id %>">
+  <%= link_to item_path(item) do %>
+    <div class="item-image">
+      <% if item.images.attached? %>
+        <%= image_tag item.images.first.variant(resize_to_fill: [280, 200]), alt: item.name, loading: "lazy" %>
+      <% else %>
+        <div class="item-image-placeholder">
+          <i class="fas fa-image"></i>
+        </div>
+      <% end %>
+      <div class="item-action-badge action-<%= item.action %>">
+        <%= item.action_label %>
+      </div>
+    </div>
+    <div class="item-info">
+      <h3 class="item-name"><%= item.name.presence || "名前未設定" %></h3>
+      <% if item.estimated_price.present? %>
+        <p class="item-price">約 <%= number_to_currency(item.estimated_price, unit: "円", delimiter: ",", format: "%n%u") %></p>
+      <% end %>
+      <% unless item.assessed? %>
+        <span class="badge badge-gray">査定待ち</span>
+      <% end %>
+    </div>
+  <% end %>
+</div>

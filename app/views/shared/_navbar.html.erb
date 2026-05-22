@@ -1,0 +1,53 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <%= link_to root_path, class: "brand-link" do %>
+        <span class="brand-icon">🏮</span>
+        <span class="brand-name">いひん</span>
+      <% end %>
+    </div>
+
+    <% if user_signed_in? %>
+      <div class="navbar-menu" data-controller="navbar">
+        <button class="navbar-toggle" data-action="navbar#toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="navbar-links" data-navbar-target="menu">
+
+          <% if current_user.family? %>
+            <%# ===== 遺族向けリンク ===== %>
+            <%= link_to "AI査定", items_path, class: "nav-link #{controller_name == 'items' ? 'active' : ''}" %>
+            <%= link_to "やることリスト", todo_items_path, class: "nav-link #{controller_name == 'todo_items' ? 'active' : ''}" %>
+            <%= link_to "思い出ボックス", memories_path, class: "nav-link #{controller_name == 'memories' ? 'active' : ''}" %>
+            <%= link_to "業者を探す", businesses_path, class: "nav-link #{controller_name == 'businesses' ? 'active' : ''}" %>
+            <%= link_to "💬 AI相談", ai_consultation_path, class: "nav-link nav-link-ai #{controller_name == 'ai_consultations' ? 'active' : ''}" %>
+
+          <% elsif current_user.business? %>
+            <%# ===== 業者向けリンク ===== %>
+            <% if current_user.business&.persisted? %>
+              <%= link_to "ダッシュボード", dashboard_business_path(current_user.business),
+                  class: "nav-link nav-link-biz #{controller_name == 'businesses' && action_name == 'dashboard' ? 'active' : ''}" %>
+            <% end %>
+            <%= link_to "業者を探す", businesses_path, class: "nav-link #{controller_name == 'businesses' && action_name != 'dashboard' ? 'active' : ''}" %>
+
+          <% elsif current_user.admin? %>
+            <%# ===== 管理者向けリンク ===== %>
+            <%= link_to "管理画面", admin_root_path, class: "nav-link nav-link-admin #{controller.class.name.start_with?('Admin::') ? 'active' : ''}" %>
+            <%= link_to "業者一覧", businesses_path, class: "nav-link" %>
+          <% end %>
+
+          <div class="nav-user">
+            <span class="nav-username"><%= current_user.name %>さん</span>
+            <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "nav-link nav-link-logout" %>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <div class="navbar-auth">
+        <%= link_to "AI査定を試す", new_guest_assessment_path, class: "btn btn-ghost nav-link-try" %>
+        <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline" %>
+        <%= link_to "無料登録", new_user_registration_path, class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</nav>

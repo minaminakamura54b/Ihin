@@ -1,0 +1,51 @@
+<% if @item.assessed? %>
+  <%= turbo_stream.replace "assessment_section" do %>
+    <div class="assessment-result">
+      <div class="assessment-price">
+        <span class="price-label">AI査定価格</span>
+        <span class="price-value">
+          <%= @item.estimated_price ? "約 #{number_to_currency(@item.estimated_price, unit: '円', delimiter: ',', format: '%n%u')}" : "参考価格なし" %>
+        </span>
+      </div>
+      <div class="assessment-comment">
+        <h3><i class="fas fa-robot"></i> AIからのコメント</h3>
+        <p><%= @item.ai_result %></p>
+      </div>
+    </div>
+    <div class="action-selector">
+      <h3>この遺品をどうしますか？</h3>
+      <div class="action-buttons">
+        <%= button_to "売る", update_action_item_path(@item), method: :patch, params: { action_type: "sell" }, class: "action-btn #{@item.sell? ? 'action-btn-active-sell' : ''}" %>
+        <%= button_to "残す", update_action_item_path(@item), method: :patch, params: { action_type: "keep" }, class: "action-btn #{@item.keep? ? 'action-btn-active-keep' : ''}" %>
+        <%= button_to "処分する", update_action_item_path(@item), method: :patch, params: { action_type: "dispose" }, class: "action-btn #{@item.dispose? ? 'action-btn-active-dispose' : ''}" %>
+        <%= button_to "メモ", update_action_item_path(@item), method: :patch, params: { action_type: "memo" }, class: "action-btn #{@item.memo? ? 'action-btn-active-memo' : ''}" %>
+      </div>
+    </div>
+  <% end %>
+  <%= turbo_stream.replace "item_#{@item.id}_action" do %>
+    <%= render "action_badge", item: @item %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace "assessment_section" do %>
+    <div class="assessment-pending" data-controller="assess">
+      <div class="pending-icon">⚠️</div>
+      <h3>査定に失敗しました</h3>
+      <% if @assessment_error.present? %>
+        <p class="text-red"><%= @assessment_error %></p>
+      <% end %>
+      <p>しばらく経ってからもう一度お試しください</p>
+      <%= form_with url: assess_item_path(@item), method: :post,
+          data: { action: "submit->assess#submit" } do %>
+        <button type="submit" class="btn btn-primary" data-assess-target="button">
+          再試行する
+        </button>
+      <% end %>
+      <div class="assess-loading hidden" data-assess-target="overlay">
+        <div class="assess-loading-inner">
+          <div class="assess-spinner"></div>
+          <p>AIが査定中です…少々お待ちください</p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,44 @@
+ja:
+  activerecord:
+    models:
+      user: ユーザー
+      item: 遺品
+      todo_item: タスク
+      memory: 思い出
+      business: 業者
+      inquiry: 問い合わせ
+    attributes:
+      user:
+        name: お名前
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード（確認）
+        role: 利用目的
+      item:
+        name: 品物の名前
+        image: 写真
+        estimated_price: 査定価格
+        action: 分類
+        memo: メモ
+      todo_item:
+        title: やること
+        category: カテゴリ
+        priority: 優先度
+        completed: 完了
+      business:
+        name: 業者名
+        category: 業種
+        area: 対応エリア
+        description: 説明
+        phone: 電話番号
+        website: ウェブサイト
+        plan: プラン
+      inquiry:
+        message: メッセージ
+  date:
+    formats:
+      default: "%Y年%m月%d日"
+      long: "%Y年%m月%d日（%a）"
+  time:
+    formats:
+      default: "%Y年%m月%d日 %H:%M"

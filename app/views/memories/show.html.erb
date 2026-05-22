@@ -1,0 +1,33 @@
+<% content_for :title, "思い出 | いひん" %>
+
+<div class="page-container page-narrow">
+  <div class="breadcrumb">
+    <%= link_to "思い出ボックス", memories_path %> &rsaquo; 思い出の記録
+  </div>
+
+  <div class="memory-detail">
+    <% if @memory.photo.attached? %>
+      <%= image_tag @memory.photo.variant(resize_to_limit: [600, 500]), class: "memory-detail-photo" %>
+    <% end %>
+
+    <% if @memory.item %>
+      <div class="memory-item-link">
+        <i class="fas fa-box"></i>
+        関連する遺品：<%= link_to @memory.item.name || "名前未設定", item_path(@memory.item) %>
+      </div>
+    <% end %>
+
+    <div class="memory-detail-comment">
+      <p><%= @memory.comment %></p>
+    </div>
+
+    <p class="memory-detail-date"><%= @memory.created_at.strftime("%Y年%m月%d日") %></p>
+
+    <div class="form-actions">
+      <%= link_to "編集", edit_memory_path(@memory), class: "btn btn-outline" %>
+      <%= button_to "削除", memory_path(@memory), method: :delete,
+          class: "btn btn-danger",
+          data: { turbo_confirm: "削除しますか？" } %>
+    </div>
+  </div>
+</div>

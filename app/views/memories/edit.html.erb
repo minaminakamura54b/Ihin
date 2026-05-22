@@ -1,0 +1,29 @@
+<% content_for :title, "思い出を編集 | いひん" %>
+
+<div class="page-container page-narrow">
+  <div class="page-header">
+    <h1>思い出を編集する</h1>
+  </div>
+
+  <%= form_with(model: @memory) do |f| %>
+    <div class="form-group">
+      <%= f.label :photo, "写真", class: "form-label" %>
+      <% if @memory.photo.attached? %>
+        <div class="current-photo">
+          <%= image_tag @memory.photo.variant(resize_to_fill: [200, 150]), class: "current-photo-img" %>
+        </div>
+      <% end %>
+      <%= f.file_field :photo, accept: "image/*", class: "form-file" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :comment, "エピソード・思い出", class: "form-label" %>
+      <%= f.text_area :comment, class: "form-input form-textarea", rows: 5 %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit "更新する", class: "btn btn-primary btn-full" %>
+      <%= link_to "キャンセル", @memory, class: "btn btn-ghost btn-full" %>
+    </div>
+  <% end %>
+</div>

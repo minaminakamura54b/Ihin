@@ -1,0 +1,107 @@
+<% content_for :title, "#{@item.name || '遺品'} | いひん" %>
+
+<div class="page-container">
+  <div class="breadcrumb">
+    <%= link_to "遺品リスト", items_path %> &rsaquo; <%= @item.name || "遺品詳細" %>
+  </div>
+
+  <div class="item-detail">
+    <div class="item-detail-image">
+      <% if @item.images.attached? %>
+        <% if @item.images.count == 1 %>
+          <%= image_tag @item.images.first.variant(resize_to_limit: [600, 600]), class: "detail-image", alt: @item.name %>
+        <% else %>
+          <div class="image-gallery">
+            <% @item.images.each do |img| %>
+              <div class="image-gallery-item">
+                <%= image_tag img.variant(resize_to_limit: [400, 400]), class: "gallery-image", alt: @item.name %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="detail-image-placeholder">
+          <i class="fas fa-image"></i>
+          <p>写真なし</p>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="item-detail-info">
+      <div class="item-detail-header">
+        <h1><%= @item.name.presence || "名前未設定" %></h1>
+        <div id="item_<%= @item.id %>_action">
+          <%= render "action_badge", item: @item %>
+        </div>
+      </div>
+
+      <div id="assessment_section">
+        <% if @item.assessed? %>
+          <div class="assessment-result">
+            <div class="assessment-price">
+              <span class="price-label">AI査定価格</span>
+              <span class="price-value">
+                <%= @item.estimated_price ? "約 #{number_to_currency(@item.estimated_price, unit: '円', delimiter: ',', format: '%n%u')}" : "参考価格なし" %>
+              </span>
+            </div>
+            <div class="assessment-comment">
+              <h3><i class="fas fa-robot"></i> AIからのコメント</h3>
+              <p><%= @item.ai_result %></p>
+            </div>
+          </div>
+          <div class="action-selector">
+            <h3>この遺品をどうしますか？</h3>
+            <div class="action-buttons">
+              <%= button_to "売る", update_action_item_path(@item), method: :patch,
+                  params: { action_type: "sell" },
+                  class: "action-btn #{@item.sell? ? 'action-btn-active-sell' : ''}" %>
+              <%= button_to "残す", update_action_item_path(@item), method: :patch,
+                  params: { action_type: "keep" },
+                  class: "action-btn #{@item.keep? ? 'action-btn-active-keep' : ''}" %>
+              <%= button_to "処分する", update_action_item_path(@item), method: :patch,
+                  params: { action_type: "dispose" },
+                  class: "action-btn #{@item.dispose? ? 'action-btn-active-dispose' : ''}" %>
+              <%= button_to "メモ", update_action_item_path(@item), method: :patch,
+                  params: { action_type: "memo" },
+                  class: "action-btn #{@item.memo? ? 'action-btn-active-memo' : ''}" %>
+            </div>
+          </div>
+        <% else %>
+          <div class="assessment-pending" data-controller="assess">
+            <div class="pending-icon">🤖</div>
+            <h3>AI査定を開始しましょう</h3>
+            <p>写真からAIが品物を識別して相場価格を査定します</p>
+            <%= form_with url: assess_item_path(@item), method: :post,
+                data: { action: "submit->assess#submit" } do %>
+              <button type="submit" class="btn btn-primary btn-lg"
+                      data-assess-target="button">
+                AI査定を開始する
+              </button>
+            <% end %>
+            <div class="assess-loading hidden" data-assess-target="overlay">
+              <div class="assess-loading-inner">
+                <div class="assess-spinner"></div>
+                <p>AIが査定中です…少々お待ちください</p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <% if @item.memo.present? %>
+        <div class="item-memo">
+          <h3>メモ</h3>
+          <p><%= @item.memo %></p>
+        </div>
+      <% end %>
+
+      <div class="item-actions">
+        <%= link_to "思い出として記録", new_memory_path(item_id: @item.id), class: "btn btn-outline" %>
+        <%= link_to "編集", edit_item_path(@item), class: "btn btn-ghost" %>
+        <%= button_to "削除", item_path(@item), method: :delete,
+            class: "btn btn-danger",
+            data: { turbo_confirm: "本当に削除しますか？" } %>
+      </div>
+    </div>
+  </div>
+</div>

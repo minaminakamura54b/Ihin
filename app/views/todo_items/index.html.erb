@@ -1,0 +1,63 @@
+<% content_for :title, "やることリスト | いひん" %>
+
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>やることリスト</h1>
+      <p class="page-subtitle">手続きや整理のタスクを管理できます</p>
+    </div>
+    <%= link_to new_todo_item_path, class: "btn btn-primary" do %>
+      <i class="fas fa-plus"></i> 追加する
+    <% end %>
+  </div>
+
+  <div class="todo-columns">
+    <div class="todo-column todo-column-urgent">
+      <div class="todo-column-header">
+        <span class="category-badge category-urgent">急ぎ</span>
+        <span class="todo-count"><%= @urgent_todos.count %>件</span>
+        <%= link_to "+", new_todo_item_path(category: "urgent"), class: "todo-add-btn" %>
+      </div>
+      <div id="urgent_todos">
+        <% if @urgent_todos.any? %>
+          <%= render @urgent_todos %>
+        <% else %>
+          <div class="todo-empty">急ぎのタスクはありません</div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="todo-column todo-column-normal">
+      <div class="todo-column-header">
+        <span class="category-badge category-normal">通常</span>
+        <span class="todo-count"><%= @normal_todos.count %>件</span>
+        <%= link_to "+", new_todo_item_path(category: "normal"), class: "todo-add-btn" %>
+      </div>
+      <div id="normal_todos">
+        <% if @normal_todos.any? %>
+          <%= render @normal_todos %>
+        <% else %>
+          <div class="todo-empty">通常のタスクはありません</div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="todo-column todo-column-digital">
+      <div class="todo-column-header">
+        <span class="category-badge category-digital">デジタル遺品</span>
+        <span class="todo-count"><%= @digital_todos.count %>件</span>
+        <%= link_to "+", new_todo_item_path(category: "digital"), class: "todo-add-btn" %>
+      </div>
+      <div id="digital_todos">
+        <% if @digital_todos.any? %>
+          <%= render @digital_todos %>
+        <% else %>
+          <div class="todo-empty">
+            <p>デジタル遺品のタスクはありません</p>
+            <p class="todo-hint">SNS・メール・サブスク解約など</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

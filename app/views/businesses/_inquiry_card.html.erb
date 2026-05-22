@@ -1,0 +1,45 @@
+<% last_name = inquiry.user.name.split(/[\s　]/).first %>
+<div class="biz-inquiry-card" id="inquiry_<%= inquiry.id %>">
+  <div class="biz-inquiry-meta">
+    <div class="biz-inquiry-user">
+      <div class="biz-inquiry-avatar"><%= last_name[0] %></div>
+      <div>
+        <p class="biz-inquiry-name"><%= last_name %>さん</p>
+        <p class="biz-inquiry-date"><%= inquiry.created_at.strftime("%Y年%m月%d日 %H:%M") %></p>
+      </div>
+    </div>
+    <div id="inquiry_status_<%= inquiry.id %>">
+      <%= render "inquiry_status_badge", inquiry: inquiry %>
+    </div>
+  </div>
+
+  <div class="biz-inquiry-message">
+    <p><%= inquiry.message.truncate(120) %></p>
+  </div>
+
+  <div class="biz-inquiry-actions">
+    <% unless inquiry.closed? %>
+      <% if inquiry.pending? %>
+        <%= button_to "対応中にする",
+            business_inquiry_path(@business, inquiry),
+            method: :patch,
+            params: { inquiry: { status: :contacted } },
+            class: "btn btn-primary btn-sm",
+            data: { turbo_stream: true } %>
+      <% end %>
+      <%= button_to "成約・完了",
+          business_inquiry_path(@business, inquiry),
+          method: :patch,
+          params: { inquiry: { status: :closed } },
+          class: "btn btn-success btn-sm",
+          data: { turbo_stream: true } %>
+    <% end %>
+    <a href="mailto:<%= inquiry.user.email %>?subject=<%= u "【いひん】#{@business.name}よりご連絡" %>"
+       class="btn btn-outline btn-sm">
+      <i class="fas fa-envelope"></i> メールで連絡
+    </a>
+    <span class="btn btn-ghost btn-sm biz-estimate-btn" title="近日公開予定">
+      <i class="fas fa-file-invoice"></i> 見積もり作成
+    </span>
+  </div>
+</div>

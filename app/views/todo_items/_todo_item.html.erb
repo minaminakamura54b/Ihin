@@ -1,0 +1,24 @@
+<div class="todo-item <%= todo_item.completed ? 'todo-completed' : '' %>" id="todo_item_<%= todo_item.id %>">
+  <div class="todo-check">
+    <%= button_to toggle_todo_item_path(todo_item), method: :patch,
+        class: "todo-checkbox #{todo_item.completed ? 'checked' : ''}",
+        form: { data: { turbo_stream: true } } do %>
+      <i class="fas <%= todo_item.completed ? 'fa-check-circle' : 'fa-circle' %>"></i>
+    <% end %>
+  </div>
+  <div class="todo-content">
+    <span class="todo-title <%= todo_item.completed ? 'line-through' : '' %>">
+      <%= todo_item.title %>
+    </span>
+  </div>
+  <div class="todo-actions">
+    <%= link_to edit_todo_item_path(todo_item), class: "todo-action-btn" do %>
+      <i class="fas fa-pencil"></i>
+    <% end %>
+    <%= button_to todo_item_path(todo_item), method: :delete,
+        class: "todo-action-btn todo-action-delete",
+        form: { data: { turbo_confirm: "削除しますか？", turbo_stream: true } } do %>
+      <i class="fas fa-trash"></i>
+    <% end %>
+  </div>
+</div>

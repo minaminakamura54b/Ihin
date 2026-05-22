@@ -1,0 +1,33 @@
+<% content_for :title, "ユーザー編集 | 管理画面" %>
+
+<div class="page-container page-narrow">
+  <div class="breadcrumb">
+    <%= link_to "ユーザー管理", admin_users_path %> &rsaquo; 編集
+  </div>
+
+  <div class="admin-detail-card">
+    <h1 style="margin-bottom:24px;">ユーザー編集</h1>
+    <%= form_with model: [:admin, @user] do |f| %>
+      <div class="form-group">
+        <%= f.label :name, "名前", class: "form-label" %>
+        <%= f.text_field :name, class: "form-input" %>
+      </div>
+      <div class="form-group">
+        <%= f.label :email, "メール", class: "form-label" %>
+        <%= f.email_field :email, class: "form-input" %>
+      </div>
+      <div class="form-group">
+        <%= f.label :role, "ロール", class: "form-label" %>
+        <%= f.select :role, [["遺族", "family"], ["業者", "business"], ["管理者", "admin"]], {}, class: "form-select" %>
+      </div>
+      <div class="form-actions" style="flex-direction:row;">
+        <%= f.submit "更新する", class: "btn btn-primary" %>
+        <%= link_to "キャンセル", admin_user_path(@user), class: "btn btn-ghost" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.admin-detail-card { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+</style>

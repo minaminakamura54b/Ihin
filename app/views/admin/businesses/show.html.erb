@@ -1,0 +1,38 @@
+<% content_for :title, "#{@business.name} | 業者管理" %>
+
+<div class="page-container page-narrow">
+  <div class="breadcrumb">
+    <%= link_to "業者管理", admin_businesses_path %> &rsaquo; <%= @business.name %>
+  </div>
+
+  <div class="admin-detail-card">
+    <dl class="detail-list">
+      <dt>ID</dt><dd><%= @business.id %></dd>
+      <dt>業者名</dt><dd><%= @business.name %></dd>
+      <dt>担当ユーザー</dt><dd><%= @business.user.name %> (<%= @business.user.email %>)</dd>
+      <dt>業種</dt><dd><%= @business.category_label %></dd>
+      <dt>エリア</dt><dd><%= @business.area %></dd>
+      <dt>プラン</dt><dd><%= @business.plan_label %></dd>
+      <dt>状態</dt>
+      <dd>
+        <span class="badge <%= @business.active? ? 'badge-green' : 'badge-gray' %>">
+          <%= @business.active? ? "有効" : "無効" %>
+        </span>
+      </dd>
+      <dt>Stripe顧客ID</dt><dd><%= @business.stripe_customer_id.presence || "未登録" %></dd>
+      <dt>Stripeサブスクリプション</dt><dd><%= @business.stripe_subscription_id.presence || "未登録" %></dd>
+      <dt>登録日</dt><dd><%= @business.created_at.strftime("%Y年%m月%d日") %></dd>
+    </dl>
+    <div class="form-actions" style="flex-direction: row;">
+      <%= link_to "編集", edit_admin_business_path(@business), class: "btn btn-primary" %>
+      <%= link_to "一覧へ", admin_businesses_path, class: "btn btn-ghost" %>
+    </div>
+  </div>
+</div>
+
+<style>
+.admin-detail-card { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+.detail-list { display: grid; grid-template-columns: 180px 1fr; gap: 12px 20px; margin-bottom: 28px; }
+.detail-list dt { font-weight: 600; color: var(--color-text-light); font-size: 0.9rem; }
+.detail-list dd { font-size: 0.95rem; }
+</style>

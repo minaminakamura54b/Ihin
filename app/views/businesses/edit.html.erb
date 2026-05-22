@@ -1,0 +1,52 @@
+<% content_for :title, "業者情報を編集 | いひん" %>
+
+<div class="page-container page-narrow">
+  <div class="breadcrumb">
+    <%= link_to @business.name, business_path(@business) %> &rsaquo; 編集
+  </div>
+
+  <div class="page-header">
+    <h1>業者情報を編集する</h1>
+  </div>
+
+  <%= form_with model: @business do |f| %>
+    <% if @business.errors.any? %>
+      <div class="error-messages">
+        <ul>
+          <% @business.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :name, "業者名", class: "form-label required" %>
+      <%= f.text_field :name, class: "form-input" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :category, "業種", class: "form-label required" %>
+      <%= f.select :category, [["遺品整理業者", "estate_clearance"], ["買取業者", "buyback"], ["司法書士", "judicial_scrivener"]], {}, class: "form-select" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :area, "対応エリア", class: "form-label" %>
+      <%= f.text_field :area, class: "form-input" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :description, "事業者の説明", class: "form-label" %>
+      <%= f.text_area :description, class: "form-input form-textarea", rows: 4 %>
+    </div>
+    <div class="form-group">
+      <%= f.label :phone, "電話番号", class: "form-label" %>
+      <%= f.telephone_field :phone, class: "form-input" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :website, "ウェブサイト", class: "form-label" %>
+      <%= f.url_field :website, class: "form-input" %>
+    </div>
+    <div class="form-actions">
+      <%= f.submit "更新する", class: "btn btn-primary btn-full" %>
+      <%= link_to "キャンセル", business_path(@business), class: "btn btn-ghost btn-full" %>
+    </div>
+  <% end %>
+</div>

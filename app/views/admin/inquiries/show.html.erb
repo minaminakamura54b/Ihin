@@ -1,0 +1,40 @@
+<% content_for :title, "問い合わせ詳細 | 管理画面" %>
+
+<div class="page-container page-narrow">
+  <div class="breadcrumb">
+    <%= link_to "問い合わせ管理", admin_inquiries_path %> &rsaquo; #<%= @inquiry.id %>
+  </div>
+
+  <div class="admin-detail-card">
+    <dl class="detail-list">
+      <dt>送信日時</dt><dd><%= @inquiry.created_at.strftime("%Y年%m月%d日 %H:%M") %></dd>
+      <dt>遺族</dt><dd><%= @inquiry.user.name %> (<%= @inquiry.user.email %>)</dd>
+      <dt>業者</dt><dd><%= link_to @inquiry.business.name, admin_business_path(@inquiry.business) %></dd>
+      <dt>ステータス</dt>
+      <dd>
+        <span class="badge <%= @inquiry.pending? ? 'badge-yellow' : @inquiry.contacted? ? 'badge-blue' : 'badge-gray' %>">
+          <%= @inquiry.pending? ? "未対応" : @inquiry.contacted? ? "対応中" : "完了" %>
+        </span>
+      </dd>
+      <dt>メッセージ</dt><dd style="white-space: pre-wrap;"><%= @inquiry.message %></dd>
+    </dl>
+
+    <div style="margin-bottom: 24px;">
+      <p style="font-size:0.9rem; color:var(--color-text-light); margin-bottom: 10px;">ステータスを変更：</p>
+      <div style="display: flex; gap: 8px;">
+        <%= button_to "未対応", admin_inquiry_path(@inquiry), method: :patch, params: { status: "pending" }, class: "btn btn-sm btn-outline" %>
+        <%= button_to "対応中", admin_inquiry_path(@inquiry), method: :patch, params: { status: "contacted" }, class: "btn btn-sm btn-info" %>
+        <%= button_to "完了", admin_inquiry_path(@inquiry), method: :patch, params: { status: "closed" }, class: "btn btn-sm btn-success" %>
+      </div>
+    </div>
+
+    <%= link_to "一覧へ", admin_inquiries_path, class: "btn btn-ghost" %>
+  </div>
+</div>
+
+<style>
+.admin-detail-card { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+.detail-list { display: grid; grid-template-columns: 140px 1fr; gap: 12px 20px; margin-bottom: 28px; }
+.detail-list dt { font-weight: 600; color: var(--color-text-light); font-size: 0.9rem; }
+.detail-list dd { font-size: 0.95rem; }
+</style>

@@ -1,0 +1,21 @@
+<%= turbo_stream.append "chat_messages" do %>
+  <div class="chat-turn"
+       data-user-message="<%= j @user_message %>"
+       data-ai-message="<%= j @ai_answer %>">
+    <div class="chat-message-user">
+      <div class="chat-bubble chat-bubble-user">
+        <p><%= @user_message %></p>
+      </div>
+      <div class="chat-avatar chat-avatar-user">
+        <i class="fas fa-user"></i>
+      </div>
+    </div>
+    <div class="chat-message-ai">
+      <div class="chat-avatar chat-avatar-ai">🤖</div>
+      <div class="chat-bubble chat-bubble-ai">
+        <%= simple_format @ai_answer %>
+      </div>
+    </div>
+  </div>
+<% end %>
+<%= turbo_stream.remove "chat_suggestions" %>

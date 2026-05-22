@@ -1,0 +1,73 @@
+<% content_for :title, "AI相談 | いひん" %>
+
+<div class="page-container page-narrow">
+  <div class="page-header">
+    <div>
+      <h1>AIに相談する</h1>
+      <p class="page-subtitle">遺品整理や手続きについて、何でも気軽にご相談ください</p>
+    </div>
+  </div>
+
+  <div class="chat-container" data-controller="ai-chat">
+
+    <%# チャット履歴エリア %>
+    <div class="chat-messages" id="chat_messages" data-ai-chat-target="messages">
+      <div class="chat-welcome">
+        <div class="chat-welcome-icon">🤖</div>
+        <div class="chat-bubble chat-bubble-ai">
+          <p>こんにちは。遺品整理や各種手続きについて、何でもご相談ください。</p>
+          <p>一人で抱え込まず、少しでもお力になれれば幸いです。</p>
+        </div>
+      </div>
+
+      <%# 過去の相談履歴 %>
+      <% @past_consultations.each do |c| %>
+        <div class="chat-turn"
+             data-user-message="<%= j c.message %>"
+             data-ai-message="<%= j c.response %>">
+          <div class="chat-message-user">
+            <div class="chat-bubble chat-bubble-user"><p><%= c.message %></p></div>
+            <div class="chat-avatar chat-avatar-user"><i class="fas fa-user"></i></div>
+          </div>
+          <div class="chat-message-ai">
+            <div class="chat-avatar chat-avatar-ai">🤖</div>
+            <div class="chat-bubble chat-bubble-ai"><%= simple_format c.response %></div>
+          </div>
+        </div>
+      <% end %>
+
+      <%# よくある質問のサジェスト（履歴がない場合のみ表示） %>
+      <div class="chat-suggestions" id="chat_suggestions" <%= "style='display:none'" if @past_consultations.any? %>>
+        <p class="suggestions-label">よくある相談：</p>
+        <div class="suggestions-grid">
+          <% @suggested_questions.each do |question| %>
+            <button class="suggestion-btn"
+                    data-action="click->ai-chat#suggest"
+                    data-question="<%= question %>">
+              <%= question %>
+            </button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <%# 入力エリア %>
+    <div class="chat-input-area">
+      <%= form_with url: consultations_path, method: :post,
+          data: { ai_chat_target: "form", action: "submit->ai-chat#submit" } do |f| %>
+        <%= hidden_field_tag :history, "[]", data: { ai_chat_target: "history" } %>
+        <div class="chat-input-row">
+          <%= f.text_area :message, rows: 2,
+              placeholder: "相談内容を入力してください...",
+              class: "chat-input",
+              data: { ai_chat_target: "input", action: "keydown->ai-chat#keydown" } %>
+          <%= f.submit "送信",
+              class: "chat-send-btn",
+              data: { ai_chat_target: "submit", disable_with: "送信中..." } %>
+        </div>
+      <% end %>
+      <p class="chat-note">※ AIによる回答は参考情報です。法的・医療的な判断は専門家にご相談ください。</p>
+    </div>
+
+  </div>
+</div>

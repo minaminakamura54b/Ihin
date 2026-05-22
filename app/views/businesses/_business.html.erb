@@ -1,0 +1,27 @@
+<div class="business-card">
+  <div class="business-card-header">
+    <div class="business-category-badge">
+      <%= business.category_label %>
+    </div>
+    <% if business.plan == "premium" %>
+      <span class="plan-badge plan-premium">プレミアム</span>
+    <% elsif business.plan == "standard" %>
+      <span class="plan-badge plan-standard">スタンダード</span>
+    <% end %>
+  </div>
+  <div class="business-card-body">
+    <h3 class="business-name"><%= business.name %></h3>
+    <% if business.area.present? %>
+      <p class="business-area"><i class="fas fa-map-marker-alt"></i> <%= business.area %></p>
+    <% end %>
+    <% if business.description.present? %>
+      <p class="business-description"><%= truncate(business.description, length: 80) %></p>
+    <% end %>
+  </div>
+  <div class="business-card-footer">
+    <%= link_to "詳細を見る", business_path(business), class: "btn btn-outline btn-sm" %>
+    <% if user_signed_in? %>
+      <%= link_to "問い合わせる", business_path(business), class: "btn btn-primary btn-sm" %>
+    <% end %>
+  </div>
+</div>

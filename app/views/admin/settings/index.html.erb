@@ -1,0 +1,24 @@
+<% content_for :title, "設定 | 管理画面" %>
+
+<div class="page-container">
+  <div class="page-header">
+    <h1>システム設定</h1>
+  </div>
+
+  <div class="admin-section">
+    <h2>未登録ユーザー制限</h2>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <label>無料査定上限（点数）</label>
+        <p class="form-hint">未登録ユーザーが無料で査定できる合計点数。現在: <strong><%= @guest_limit %>点</strong></p>
+      </div>
+      <%= form_tag admin_setting_path("guest_assessment_limit"), method: :patch do %>
+        <div class="setting-input-row">
+          <input type="number" name="value" value="<%= @guest_limit %>" min="1" max="100" class="form-input form-input-sm">
+          <button type="submit" class="btn btn-primary btn-sm">更新</button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

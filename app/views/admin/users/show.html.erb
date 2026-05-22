@@ -1,0 +1,30 @@
+<% content_for :title, "#{@user.name} | ユーザー管理" %>
+
+<div class="page-container page-narrow">
+  <div class="breadcrumb">
+    <%= link_to "ユーザー管理", admin_users_path %> &rsaquo; <%= @user.name %>
+  </div>
+
+  <div class="admin-detail-card">
+    <dl class="detail-list">
+      <dt>ID</dt><dd><%= @user.id %></dd>
+      <dt>名前</dt><dd><%= @user.name %></dd>
+      <dt>メール</dt><dd><%= @user.email %></dd>
+      <dt>ロール</dt><dd><%= @user.admin? ? "管理者" : @user.business? ? "業者" : "遺族" %></dd>
+      <dt>登録日</dt><dd><%= @user.created_at.strftime("%Y年%m月%d日") %></dd>
+      <dt>遺品数</dt><dd><%= @user.items.count %> 点</dd>
+      <dt>タスク数</dt><dd><%= @user.todo_items.count %> 件</dd>
+    </dl>
+    <div class="form-actions" style="flex-direction: row;">
+      <%= link_to "編集", edit_admin_user_path(@user), class: "btn btn-primary" %>
+      <%= link_to "一覧へ", admin_users_path, class: "btn btn-ghost" %>
+    </div>
+  </div>
+</div>
+
+<style>
+.admin-detail-card { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
+.detail-list { display: grid; grid-template-columns: 140px 1fr; gap: 12px 20px; margin-bottom: 28px; }
+.detail-list dt { font-weight: 600; color: var(--color-text-light); font-size: 0.9rem; }
+.detail-list dd { font-size: 0.95rem; }
+</style>

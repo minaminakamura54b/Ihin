@@ -1,0 +1,62 @@
+<% content_for :title, "#{@business.name} | いひん" %>
+
+<div class="page-container">
+  <div class="breadcrumb">
+    <%= link_to "業者を探す", businesses_path %> &rsaquo; <%= @business.name %>
+  </div>
+
+  <div class="business-detail">
+    <div class="business-detail-header">
+      <div>
+        <span class="business-category-badge"><%= @business.category_label %></span>
+        <h1><%= @business.name %></h1>
+        <% if @business.area.present? %>
+          <p class="business-area"><i class="fas fa-map-marker-alt"></i> <%= @business.area %></p>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="business-detail-body">
+      <% if @business.description.present? %>
+        <div class="business-section">
+          <h2>事業者について</h2>
+          <p><%= @business.description %></p>
+        </div>
+      <% end %>
+
+      <div class="business-info-grid">
+        <% if @business.phone.present? %>
+          <div class="business-info-item">
+            <span class="info-label"><i class="fas fa-phone"></i> 電話番号</span>
+            <span><%= @business.phone %></span>
+          </div>
+        <% end %>
+        <% if @business.website.present? %>
+          <div class="business-info-item">
+            <span class="info-label"><i class="fas fa-globe"></i> ウェブサイト</span>
+            <a href="<%= @business.website %>" target="_blank" rel="noopener"><%= @business.website %></a>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <% if user_signed_in? && @inquiry %>
+      <div class="inquiry-section">
+        <h2>問い合わせる</h2>
+        <p class="inquiry-note">無料で問い合わせができます。業者からの返信をお待ちください。</p>
+        <%= form_with model: [@business, @inquiry] do |f| %>
+          <div class="form-group">
+            <%= f.label :message, "メッセージ", class: "form-label" %>
+            <%= f.text_area :message, class: "form-input form-textarea", rows: 4,
+                placeholder: "遺品整理についてご相談したいのですが..." %>
+          </div>
+          <%= f.submit "送信する", class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    <% elsif !user_signed_in? %>
+      <div class="inquiry-section">
+        <p>問い合わせるには <%= link_to "無料登録", new_user_registration_path %> が必要です。</p>
+      </div>
+    <% end %>
+  </div>
+</div>

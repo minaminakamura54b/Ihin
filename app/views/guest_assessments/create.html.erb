@@ -1,0 +1,81 @@
+<% content_for :title, "AI査定結果 | いひん" %>
+
+<div class="page-container page-narrow">
+  <% if @result[:success] %>
+    <div class="guest-result">
+      <div class="guest-result-header">
+        <div class="guest-badge">AI査定完了</div>
+        <h1><%= @result[:item_name] || "査定結果" %></h1>
+      </div>
+
+      <% if @uploaded_images&.any? %>
+        <div class="guest-result-images">
+          <% @uploaded_images.each do |img| %>
+            <img src="data:<%= img[:content_type] %>;base64,<%= img[:data] %>"
+                 alt="査定した遺品" class="<%= @uploaded_images.size == 1 ? 'detail-image' : 'guest-photo-thumb' %>">
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="assessment-result">
+        <div class="assessment-price">
+          <span class="price-label">AI査定価格</span>
+          <span class="price-value">
+            <% if @result[:estimated_price] %>
+              約 <%= number_with_delimiter(@result[:estimated_price]) %>円
+            <% else %>
+              参考価格なし
+            <% end %>
+          </span>
+        </div>
+
+        <% if @result[:raw_data] %>
+          <div class="assessment-range">
+            <% min = @result[:raw_data]["estimated_price_min"] %>
+            <% max = @result[:raw_data]["estimated_price_max"] %>
+            <% if min && max %>
+              <span class="price-range">相場：<%= number_with_delimiter(min) %>円 〜 <%= number_with_delimiter(max) %>円</span>
+            <% end %>
+          </div>
+        <% end %>
+
+        <div class="assessment-action-suggestion">
+          <% action_label = { "sell" => "売る", "keep" => "残す", "dispose" => "処分する" }[@result[:suggested_action]] %>
+          <% if action_label %>
+            <span class="action-suggestion-badge action-<%= @result[:suggested_action] %>">AIの提案：<%= action_label %></span>
+          <% end %>
+        </div>
+
+        <div class="assessment-comment">
+          <h3><i class="fas fa-robot"></i> AIからのコメント</h3>
+          <p><%= @result[:ai_result] %></p>
+        </div>
+
+        <% if @result[:raw_data]&.dig("market_trend") %>
+          <div class="assessment-trend">
+            <h4>相場の傾向</h4>
+            <p><%= @result[:raw_data]["market_trend"] %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="guest-cta-box">
+        <h2>結果を保存して管理しませんか？</h2>
+        <p>無料登録すると、査定結果の保存・やることリスト・思い出ボックスなど全機能が使えます。</p>
+        <div class="guest-cta-actions">
+          <%= link_to "無料で登録して保存する", new_user_registration_path, class: "btn btn-primary btn-lg" %>
+          <%= link_to "もう1点査定する", new_guest_assessment_path, class: "btn btn-outline" %>
+        </div>
+      </div>
+    </div>
+
+  <% else %>
+    <div class="page-header">
+      <h1>査定できませんでした</h1>
+      <p class="page-subtitle text-red"><%= @result[:error] %></p>
+    </div>
+    <div class="form-actions">
+      <%= link_to "もう一度試す", new_guest_assessment_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

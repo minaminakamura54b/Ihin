@@ -1,0 +1,40 @@
+<% content_for :title, "遺品リスト | いひん" %>
+
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>遺品リスト</h1>
+      <p class="page-subtitle">
+        <%= @total_count %>点登録 ／ <%= @assessed_count %>点査定済み
+      </p>
+    </div>
+    <%= link_to new_item_path, class: "btn btn-primary" do %>
+      <i class="fas fa-plus"></i> 写真を追加
+    <% end %>
+  </div>
+
+  <% if @items.any? %>
+    <div class="filter-tabs">
+      <%= link_to "すべて", items_path, class: "filter-tab #{params[:action_filter].blank? ? 'active' : ''}" %>
+      <%= link_to "売る", items_path(action_filter: "sell"), class: "filter-tab filter-sell #{params[:action_filter] == 'sell' ? 'active' : ''}" %>
+      <%= link_to "残す", items_path(action_filter: "keep"), class: "filter-tab filter-keep #{params[:action_filter] == 'keep' ? 'active' : ''}" %>
+      <%= link_to "処分", items_path(action_filter: "dispose"), class: "filter-tab filter-dispose #{params[:action_filter] == 'dispose' ? 'active' : ''}" %>
+      <%= link_to "未分類", items_path(action_filter: "undecided"), class: "filter-tab #{params[:action_filter] == 'undecided' ? 'active' : ''}" %>
+    </div>
+
+    <div class="items-grid">
+      <%= render @items %>
+    </div>
+
+    <div class="pagination">
+      <%= paginate @items %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-icon">📦</div>
+      <h3>まだ遺品が登録されていません</h3>
+      <p>写真を撮ってAI査定を始めましょう</p>
+      <%= link_to "最初の遺品を登録する", new_item_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

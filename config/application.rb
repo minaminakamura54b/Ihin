@@ -16,12 +16,10 @@ module Ihin
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
-    # Configuration for the application, engines, and railties goes here.
-    #
-    # These settings can be overridden in specific environments using the files
-    # in config/environments, which are processed later.
-    #
-    # config.time_zone = "Central Time (US & Canada)"
-    # config.eager_load_paths << Rails.root.join("extras")
+    config.time_zone = "Tokyo"
+    config.i18n.default_locale = :ja
+    config.i18n.available_locales = [ :ja, :en ]
+
+    config.autoload_paths << Rails.root.join("app/services")
   end
 end

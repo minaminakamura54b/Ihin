@@ -1,0 +1,29 @@
+<% content_for :title, "思い出ボックス | いひん" %>
+
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>思い出ボックス</h1>
+      <p class="page-subtitle">大切な遺品の思い出を記録しておけます</p>
+    </div>
+    <%= link_to new_memory_path, class: "btn btn-primary" do %>
+      <i class="fas fa-plus"></i> 思い出を追加
+    <% end %>
+  </div>
+
+  <% if @memories.any? %>
+    <div class="memories-grid">
+      <%= render @memories %>
+    </div>
+    <div class="pagination">
+      <%= paginate @memories %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-icon">💝</div>
+      <h3>思い出がまだありません</h3>
+      <p>遺品の写真とエピソードを記録しておきましょう</p>
+      <%= link_to "思い出を追加する", new_memory_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

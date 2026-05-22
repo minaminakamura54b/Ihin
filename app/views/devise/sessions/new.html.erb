@@ -1,0 +1,38 @@
+<% content_for :title, "ログイン | いひん" %>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="brand-icon">🏮</span>
+      <h1>ログイン</h1>
+      <p>おかえりなさい</p>
+    </div>
+
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <div class="form-group">
+        <%= f.label :email, "メールアドレス", class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password, "パスワード", class: "form-label" %>
+        <%= f.password_field :password, autocomplete: "current-password", class: "form-input" %>
+      </div>
+
+      <% if devise_mapping.rememberable? %>
+        <div class="form-check">
+          <%= f.check_box :remember_me, class: "form-checkbox" %>
+          <%= f.label :remember_me, "ログイン状態を保持する" %>
+        </div>
+      <% end %>
+
+      <div class="form-actions">
+        <%= f.submit "ログイン", class: "btn btn-primary btn-full", data: { disable_with: "ログイン中..." } %>
+      </div>
+    <% end %>
+
+    <div class="auth-links">
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,155 @@
+<% content_for :title, "ダッシュボード | #{@business.name}" %>
+
+<div class="page-container">
+
+  <%# ===== 無料期間警告バナー ===== %>
+  <% if @business.free_period_active? %>
+    <div class="biz-free-banner">
+      <i class="fas fa-clock"></i>
+      無料期間はあと <strong><%= @business.free_period_remaining_days %>日</strong> です。
+      引き続きご利用いただくにはプランのアップグレードが必要です。
+      <%= link_to "プランを変更する →", edit_business_path(@business), class: "biz-free-banner-link" %>
+    </div>
+  <% end %>
+
+  <%# ===== ヘッダー ===== %>
+  <div class="biz-dashboard-header">
+    <div class="biz-dashboard-title">
+      <h1><%= @business.name %></h1>
+      <span class="plan-badge plan-<%= @plan %>"><%= @business.plan_label %></span>
+      <% if @pending_count > 0 %>
+        <span class="biz-badge-alert"><%= @pending_count %></span>
+      <% end %>
+    </div>
+    <div class="biz-dashboard-actions">
+      <%= link_to "プロフィールを編集", edit_business_path(@business), class: "btn btn-ghost" %>
+      <%= link_to "公開ページを見る", @business, class: "btn btn-outline", target: "_blank" %>
+    </div>
+  </div>
+
+  <%# ===== KPIカード ===== %>
+  <div class="biz-kpi-grid">
+    <div class="biz-kpi-card">
+      <div class="biz-kpi-icon biz-kpi-icon-new"><i class="fas fa-bell"></i></div>
+      <div class="biz-kpi-body">
+        <p class="biz-kpi-label">今月の新着</p>
+        <p class="biz-kpi-value"><%= @monthly_new_count %><span>件</span></p>
+      </div>
+    </div>
+    <div class="biz-kpi-card">
+      <div class="biz-kpi-icon biz-kpi-icon-pending"><i class="fas fa-comments"></i></div>
+      <div class="biz-kpi-body">
+        <p class="biz-kpi-label">対応中</p>
+        <p class="biz-kpi-value"><%= @contacted_count %><span>件</span></p>
+      </div>
+    </div>
+    <div class="biz-kpi-card">
+      <div class="biz-kpi-icon biz-kpi-icon-success"><i class="fas fa-check-circle"></i></div>
+      <div class="biz-kpi-body">
+        <p class="biz-kpi-label">今月の成約</p>
+        <p class="biz-kpi-value"><%= @closed_count %><span>件</span></p>
+      </div>
+    </div>
+    <div class="biz-kpi-card">
+      <div class="biz-kpi-icon biz-kpi-icon-plan"><i class="fas fa-envelope"></i></div>
+      <div class="biz-kpi-body">
+        <p class="biz-kpi-label">今月の残り連絡枠</p>
+        <p class="biz-kpi-value">
+          <% if @remaining_contacts.nil? %>
+            <span class="biz-unlimited">無制限</span>
+          <% else %>
+            <%= @remaining_contacts %><span>件</span>
+          <% end %>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <%# ===== メイン + サイドバー ===== %>
+  <div class="biz-layout">
+
+    <%# メインコンテンツ %>
+    <div class="biz-main">
+      <div class="biz-section">
+        <div class="section-header">
+          <h2>案件一覧</h2>
+          <span class="section-count"><%= @inquiries.total_count %>件</span>
+        </div>
+
+        <% if @inquiries.empty? %>
+          <div class="biz-empty">
+            <div class="biz-empty-icon"><i class="fas fa-inbox"></i></div>
+            <p>まだ問い合わせはありません</p>
+            <p class="text-muted">公開ページへのアクセスを増やすとご依頼が届きます</p>
+          </div>
+        <% else %>
+          <%= turbo_frame_tag "inquiry_list" do %>
+            <div class="biz-inquiry-list">
+              <% @inquiries.each do |inquiry| %>
+                <%= render "inquiry_card", inquiry: inquiry %>
+              <% end %>
+            </div>
+          <% end %>
+          <%= paginate @inquiries %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# サイドバー %>
+    <aside class="biz-sidebar">
+
+      <%# プラン情報 %>
+      <div class="biz-sidebar-card">
+        <h3 class="biz-sidebar-title"><i class="fas fa-star"></i> プラン情報</h3>
+        <div class="biz-plan-info">
+          <p class="biz-plan-name"><%= @business.plan_label %></p>
+          <p class="biz-plan-price">月額 ¥<%= number_with_delimiter(@business.monthly_price) %></p>
+          <div class="biz-plan-limit">
+            <span>月間連絡枠</span>
+            <strong>
+              <% if @remaining_contacts.nil? %>
+                無制限
+              <% else %>
+                残り <%= @remaining_contacts %>件
+              <% end %>
+            </strong>
+          </div>
+        </div>
+        <%= link_to "プランを変更する", @business, class: "btn btn-outline btn-full biz-plan-change-btn" %>
+      </div>
+
+      <%# 今月の収益 %>
+      <div class="biz-sidebar-card">
+        <h3 class="biz-sidebar-title"><i class="fas fa-chart-line"></i> 今月の収益</h3>
+        <div class="biz-revenue">
+          <p class="biz-revenue-amount">——</p>
+          <p class="biz-revenue-note">Stripe連携後に表示されます</p>
+        </div>
+      </div>
+
+      <%# 未対応通知 %>
+      <div class="biz-sidebar-card">
+        <h3 class="biz-sidebar-title">
+          <i class="fas fa-exclamation-circle biz-alert-icon"></i> 未対応案件
+          <% if @pending_count > 0 %>
+            <span class="biz-badge-alert biz-badge-sm"><%= @pending_count %></span>
+          <% end %>
+        </h3>
+        <% if @sidebar_pending.empty? %>
+          <p class="text-muted biz-sidebar-empty">未対応の案件はありません</p>
+        <% else %>
+          <ul class="biz-notification-list">
+            <% @sidebar_pending.each do |inq| %>
+              <li class="biz-notification-item">
+                <span class="biz-notification-name"><%= inq.user.name.split(/\s/).first %>さん</span>
+                <span class="biz-notification-msg"><%= inq.message.truncate(30) %></span>
+                <span class="biz-notification-date"><%= inq.created_at.strftime("%-m/%-d") %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
+      </div>
+
+    </aside>
+  </div>
+</div>

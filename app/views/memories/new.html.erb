@@ -1,0 +1,47 @@
+<% content_for :title, "思い出を追加 | いひん" %>
+
+<div class="page-container page-narrow">
+  <div class="page-header">
+    <h1>思い出を記録する</h1>
+    <p class="page-subtitle">写真とコメントで思い出を残しましょう</p>
+  </div>
+
+  <%= form_with(model: @memory) do |f| %>
+    <% if @memory.errors.any? %>
+      <div class="error-messages">
+        <ul>
+          <% @memory.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if @memory.item_id.present? %>
+      <%= f.hidden_field :item_id %>
+    <% else %>
+      <div class="form-group">
+        <%= f.label :item_id, "関連する遺品（任意）", class: "form-label" %>
+        <%= f.select :item_id,
+            current_user.items.order(:name).map { |i| [i.name || "名前未設定", i.id] },
+            { include_blank: "選択してください" }, class: "form-select" %>
+      </div>
+    <% end %>
+
+    <div class="form-group">
+      <%= f.label :photo, "思い出の写真（任意）", class: "form-label" %>
+      <%= f.file_field :photo, accept: "image/*", class: "form-file" %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :comment, "エピソード・思い出", class: "form-label" %>
+      <%= f.text_area :comment, class: "form-input form-textarea", rows: 5,
+          placeholder: "この品物にまつわる思い出やエピソードを書いてください..." %>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit "保存する", class: "btn btn-primary btn-full" %>
+      <%= link_to "キャンセル", memories_path, class: "btn btn-ghost btn-full" %>
+    </div>
+  <% end %>
+</div>

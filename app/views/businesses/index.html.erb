@@ -1,0 +1,42 @@
+<% content_for :title, "業者を探す | いひん" %>
+
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1>業者を探す</h1>
+      <p class="page-subtitle">信頼できる業者をご紹介します</p>
+    </div>
+  </div>
+
+  <div class="business-filter">
+    <%= form_with url: businesses_path, method: :get, local: true, class: "filter-form" do |f| %>
+      <div class="filter-row">
+        <%= f.select :category, [["すべての業種", ""],
+            ["遺品整理業者", "estate_clearance"],
+            ["買取業者", "buyback"],
+            ["司法書士", "judicial_scrivener"]],
+            {}, class: "form-select filter-select" %>
+        <%= f.text_field :area, placeholder: "エリアで絞り込み", class: "form-input filter-input",
+            value: params[:area] %>
+        <%= f.submit "検索", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @businesses.any? %>
+    <div class="businesses-grid">
+      <%= render @businesses %>
+    </div>
+    <% if @businesses.respond_to?(:total_pages) %>
+      <div class="pagination">
+        <%= paginate @businesses %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-icon">🤝</div>
+      <h3>該当する業者が見つかりません</h3>
+      <p>条件を変えて検索してみてください</p>
+    </div>
+  <% end %>
+</div>

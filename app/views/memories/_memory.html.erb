@@ -1,0 +1,35 @@
+<div class="memory-card" id="memory_<%= memory.id %>">
+  <div class="memory-photo">
+    <% if memory.photo.attached? %>
+      <%= image_tag memory.photo.variant(resize_to_fill: [300, 200]), alt: "思い出の写真", loading: "lazy" %>
+    <% elsif memory.item&.images&.attached? %>
+      <%= image_tag memory.item.images.first.variant(resize_to_fill: [300, 200]), alt: memory.item.name, loading: "lazy" %>
+    <% else %>
+      <div class="memory-photo-placeholder">
+        <i class="fas fa-heart"></i>
+      </div>
+    <% end %>
+  </div>
+  <div class="memory-content">
+    <% if memory.item %>
+      <div class="memory-item-name">
+        <i class="fas fa-link"></i>
+        <%= link_to memory.item.name || "遺品", item_path(memory.item), class: "memory-link" %>
+      </div>
+    <% end %>
+    <p class="memory-comment"><%= memory.comment %></p>
+    <div class="memory-meta">
+      <span class="memory-date"><%= memory.created_at.strftime("%Y年%m月%d日") %></span>
+      <div class="memory-actions">
+        <%= link_to memory_path(memory), class: "memory-action" do %>
+          <i class="fas fa-eye"></i>
+        <% end %>
+        <%= button_to memory_path(memory), method: :delete,
+            class: "memory-action memory-delete",
+            form: { data: { turbo_confirm: "削除しますか？" } } do %>
+          <i class="fas fa-trash"></i>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

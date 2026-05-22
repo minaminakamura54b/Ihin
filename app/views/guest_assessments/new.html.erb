@@ -1,0 +1,63 @@
+<% content_for :title, "AI査定を試す（登録不要）| いひん" %>
+
+<div class="page-container page-narrow">
+  <div class="page-header">
+    <div class="guest-badge">登録不要・無料</div>
+    <h1>AI査定を試してみる</h1>
+    <p class="page-subtitle">写真を1枚撮るだけでAIが品物を識別し、相場価格を査定します</p>
+  </div>
+
+  <div data-controller="assess">
+  <%= form_tag guest_assessment_path, method: :post, multipart: true,
+      data: { controller: "item-form", turbo: false, action: "submit->assess#submit" } do %>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
+    <div class="form-group">
+      <label class="form-label">遺品の写真</label>
+      <div class="upload-area" data-item-form-target="uploadArea" data-action="dragover->item-form#dragOver drop->item-form#drop">
+        <div class="upload-placeholder" data-item-form-target="placeholder">
+          <i class="fas fa-camera upload-icon"></i>
+          <p>タップして写真を選択</p>
+          <p class="upload-hint">またはドラッグ&ドロップ</p>
+        </div>
+        <div class="upload-preview hidden" data-item-form-target="preview">
+          <img src="" alt="プレビュー" class="preview-image" data-item-form-target="previewImage">
+        </div>
+        <input type="file" name="images[]" accept="image/*" capture="camera"
+             multiple class="upload-input"
+             data-action="change->item-form#preview"
+             data-item-form-target="fileInput">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">品物の名前（任意）</label>
+      <input type="text" name="name" class="form-input" placeholder="例：食器セット、着物、カメラなど">
+      <p class="form-hint">写真だけでもAIが自動で判別します</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">メモ（任意）</label>
+      <textarea name="memo" class="form-input form-textarea" rows="3"
+                placeholder="気になることや状態などをメモしておけます"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary btn-full" data-assess-target="button">
+        <i class="fas fa-robot"></i> AIで査定する
+      </button>
+    </div>
+  <% end %>
+
+  <div class="assess-loading hidden" data-assess-target="overlay">
+    <div class="assess-loading-inner">
+      <div class="assess-spinner"></div>
+      <p>AIが査定中です…少々お待ちください</p>
+    </div>
+  </div>
+  </div>
+
+  <div class="guest-note">
+    <p><i class="fas fa-lock"></i> 結果を保存・管理したい場合は<%= link_to "無料登録", new_user_registration_path %>が必要です</p>
+  </div>
+</div>
