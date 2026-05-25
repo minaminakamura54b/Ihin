@@ -1,3 +1,16 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="256" fill="red"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- 背景 -->
+  <rect width="64" height="64" rx="12" fill="#2c4f7c"/>
+  <!-- カメラ本体 -->
+  <rect x="8" y="21" width="48" height="32" rx="4" fill="white"/>
+  <!-- ファインダーバンプ -->
+  <rect x="22" y="15" width="13" height="8" rx="2" fill="white"/>
+  <!-- レンズ外円 -->
+  <circle cx="32" cy="37" r="12" fill="#2a7f6f"/>
+  <!-- レンズ内円 -->
+  <circle cx="32" cy="37" r="7" fill="#1f6557"/>
+  <!-- レンズ光沢 -->
+  <circle cx="28.5" cy="33.5" r="2.5" fill="rgba(255,255,255,0.5)"/>
+  <!-- フラッシュドット -->
+  <circle cx="50" cy="27" r="3" fill="#a8d8d0"/>
 </svg>

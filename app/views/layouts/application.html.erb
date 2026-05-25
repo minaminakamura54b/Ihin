@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <title><%= content_for(:title) || "いひん｜遺品AI査定サービス" %></title>
+    <title><%= content_for(:title) || "遺品AI査定" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="description" content="遺品の写真を撮るだけでAIが査定。遺族に寄り添う遺品管理サービスです。">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -21,7 +21,7 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-warm-50 min-h-screen">
+  <body>
     <%= render "shared/navbar" %>
 
     <% if notice %>

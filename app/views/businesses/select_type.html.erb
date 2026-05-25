@@ -1,0 +1,33 @@
+<% content_for :title, "業種を選択 | 遺品AI査定" %>
+
+<div class="auth-container" style="max-width: 760px;">
+  <div class="auth-card" style="padding: 40px;">
+    <div class="auth-header">
+      <span class="brand-icon"><i class="fas fa-camera"></i></span>
+      <h1>業者として登録する</h1>
+      <p>掲載する業種を選択してください</p>
+    </div>
+
+    <div class="select-type-grid">
+      <% [
+        { key: "estate_clearance",  label: "遺品整理業者",  icon: "fa-boxes-stacked", desc: "遺品の仕分け・搬出・清掃" },
+        { key: "buyback",           label: "買取業者",       icon: "fa-tags",          desc: "遺品の査定・買取" },
+        { key: "real_estate",       label: "不動産業者",     icon: "fa-house",         desc: "不動産売買・賃貸" },
+        { key: "tax_accountant",    label: "税理士",         icon: "fa-file-invoice",  desc: "相続税・準確定申告" },
+        { key: "judicial_scrivener",label: "司法書士",       icon: "fa-scale-balanced",desc: "相続登記・遺産分割" }
+      ].each do |type| %>
+        <%= link_to new_user_registration_path(role: "business", category: type[:key]),
+                    class: "select-type-card" do %>
+          <div class="select-type-icon"><i class="fas <%= type[:icon] %>"></i></div>
+          <h3><%= type[:label] %></h3>
+          <p><%= type[:desc] %></p>
+          <span class="select-type-link">この業種で登録 <i class="fas fa-arrow-right"></i></span>
+        <% end %>
+      <% end %>
+    </div>
+
+    <p class="auth-note">
+      すでに登録済みの方は <%= link_to "こちらからログイン", new_user_session_path %>
+    </p>
+  </div>
+</div>

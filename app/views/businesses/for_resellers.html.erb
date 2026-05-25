@@ -1,0 +1,152 @@
+<% content_for :title, "買取業者の方へ｜遺品AI査定" %>
+
+<div class="biz-lp">
+
+  <%# ヒーロー %>
+  <div class="biz-lp-hero">
+    <div class="section-container">
+      <span class="section-badge">FOR RESELLERS</span>
+      <h1>買取業者の方へ</h1>
+      <p class="biz-lp-lead">AIが査定を終えた遺品を持つ遺族と直接つながれます。<br>「売りたい」という意思が固まったタイミングでの出会いが可能です。</p>
+      <div class="biz-lp-hero-actions">
+        <%= link_to "無料で掲載を始める", new_user_registration_path(role: "business"), class: "btn btn-primary btn-lg" %>
+        <%= link_to "業者一覧を見る", businesses_path(category: "buyback"), class: "btn btn-outline btn-lg" %>
+      </div>
+    </div>
+  </div>
+
+  <%# なぜいひんのリードが質が高いか %>
+  <section class="biz-lp-section">
+    <div class="section-container">
+      <div class="section-header-center">
+        <span class="section-badge">THE OPPORTUNITY</span>
+        <h2>いひんの遺族が「売りたい」と確信している理由</h2>
+      </div>
+      <div class="biz-point-grid">
+        <div class="biz-point-card">
+          <div class="biz-point-icon"><i class="fas fa-robot"></i></div>
+          <h3>AI査定で相場を把握済み</h3>
+          <p>Claude AIによる査定を受け、品物の相場価格を理解した上で「売る」を選んでいます。根拠ある価格交渉が期待できます。</p>
+        </div>
+        <div class="biz-point-card">
+          <div class="biz-point-icon"><i class="fas fa-check-circle"></i></div>
+          <h3>処分の意思決定が済んでいる</h3>
+          <p>やることリストで「売る」に分類された品物を持つ遺族です。迷いが少なく、スムーズに商談が進む傾向があります。</p>
+        </div>
+        <div class="biz-point-card">
+          <div class="biz-point-icon"><i class="fas fa-boxes-stacked"></i></div>
+          <h3>まとまった品数の可能性</h3>
+          <p>遺品整理では複数の品物がまとめて出てきます。1件の問い合わせから複数品の買取につながるケースが多くあります。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# 掲載のメリット %>
+  <section class="biz-lp-section biz-lp-section-alt">
+    <div class="section-container">
+      <div class="section-header-center">
+        <span class="section-badge">BENEFITS</span>
+        <h2>掲載するメリット</h2>
+      </div>
+      <div class="biz-benefit-list">
+        <div class="biz-benefit-item">
+          <span class="biz-benefit-num">01</span>
+          <div>
+            <h3>買取意欲の高いリードを獲得</h3>
+            <p>AI査定で「売る」判断が出た遺品を持つ遺族と直接つながれます。アポイントの無駄がありません。</p>
+          </div>
+        </div>
+        <div class="biz-benefit-item">
+          <span class="biz-benefit-num">02</span>
+          <div>
+            <h3>写真・査定情報を事前確認</h3>
+            <p>問い合わせ前に遺族がアップロードした品物の写真をご確認いただける機能を順次提供予定です。</p>
+          </div>
+        </div>
+        <div class="biz-benefit-item">
+          <span class="biz-benefit-num">03</span>
+          <div>
+            <h3>感謝されるビジネス</h3>
+            <p>遺族にとって遺品の適正な買取は、経済的な支援でもあります。丁寧な対応が口コミにつながります。</p>
+          </div>
+        </div>
+        <div class="biz-benefit-item">
+          <span class="biz-benefit-num">04</span>
+          <div>
+            <h3>月額のみで追加費用なし</h3>
+            <p>成約件数に関係なく定額の月額プランのみです。成果が出るほど費用対効果が上がります。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# 料金プラン %>
+  <section class="biz-lp-section">
+    <div class="section-container">
+      <div class="section-header-center">
+        <span class="section-badge">PRICING</span>
+        <h2>料金プラン</h2>
+      </div>
+      <div class="business-plans">
+        <div class="plan-card">
+          <h3>フリー</h3>
+          <div class="plan-price">¥0<span>/月</span></div>
+          <ul>
+            <li>プロフィール掲載</li>
+            <li>月2件まで問い合わせ受付</li>
+            <li>エリア絞り込み表示</li>
+          </ul>
+          <%= link_to "無料で始める", new_user_registration_path(role: "business"), class: "btn btn-outline" %>
+        </div>
+        <div class="plan-card">
+          <h3>ベーシック</h3>
+          <div class="plan-price">¥10,000<span>/月</span></div>
+          <ul>
+            <li>プロフィール掲載</li>
+            <li>月10件まで問い合わせ受付</li>
+            <li>エリア絞り込み表示</li>
+          </ul>
+          <%= link_to "登録する", new_user_registration_path(role: "business"), class: "btn btn-outline" %>
+        </div>
+        <div class="plan-card plan-featured">
+          <div class="plan-badge">人気</div>
+          <h3>スタンダード</h3>
+          <div class="plan-price">¥20,000<span>/月</span></div>
+          <ul>
+            <li>ベーシックのすべて</li>
+            <li>月30件まで問い合わせ受付</li>
+            <li>優先表示</li>
+            <li>口コミ機能</li>
+          </ul>
+          <%= link_to "登録する", new_user_registration_path(role: "business"), class: "btn btn-primary" %>
+        </div>
+        <div class="plan-card">
+          <h3>プレミアム</h3>
+          <div class="plan-price">¥30,000<span>/月</span></div>
+          <ul>
+            <li>スタンダードのすべて</li>
+            <li>問い合わせ無制限</li>
+            <li>トップ表示</li>
+            <li>専任サポート</li>
+          </ul>
+          <%= link_to "登録する", new_user_registration_path(role: "business"), class: "btn btn-outline" %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <%# CTA %>
+  <section class="biz-lp-cta">
+    <div class="cta-content">
+      <h2>まずは無料プランで始めてみてください</h2>
+      <p>クレジットカード不要・設定5分</p>
+      <%= link_to "無料で掲載を始める", new_user_registration_path(role: "business"), class: "btn btn-primary btn-xl" %>
+      <p class="cta-note">
+        ご不明な点は <%= mail_to "support@ihin.example.com", "お問い合わせ" %> からご連絡ください
+      </p>
+    </div>
+  </section>
+
+</div>

@@ -1,4 +1,6 @@
 class ConsultationsController < ApplicationController
+  before_action :check_consultation_limit, only: [:create]
+
   def index
     @consultations = current_user.consultations.recent
   end
@@ -32,6 +34,12 @@ class ConsultationsController < ApplicationController
   end
 
   private
+
+  def check_consultation_limit
+    if current_user.consultations.where("created_at > ?", 1.hour.ago).count >= 20
+      render json: { error: "しばらく時間をおいてから試してください" }, status: :too_many_requests
+    end
+  end
 
   def parse_history(history_param)
     parsed = history_param.is_a?(String) ? JSON.parse(history_param) : history_param

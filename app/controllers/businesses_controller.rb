@@ -1,7 +1,8 @@
 class BusinessesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [ :index, :show ]
+  skip_before_action :authenticate_user!, only: [ :index, :show, :for_estate_clearance, :for_resellers, :select_type, :email_sent ]
+  # 審査待ちページは check_business_approval_status のループ回避のため skip しない（ApplicationControllerで制御済み）
   before_action :set_business, only: [:show, :edit, :update, :destroy, :subscribe, :unsubscribe, :dashboard]
-  before_action :authorize_business!, only: [:edit, :update, :destroy]
+  before_action :authorize_business!, only: [:edit, :update, :destroy, :subscribe, :unsubscribe]
   before_action :require_business_role, only: [:dashboard]
   before_action :require_business_owner!, only: [:dashboard]
 
@@ -10,6 +11,25 @@ class BusinessesController < ApplicationController
       current_user,
       category: params[:category]
     )
+  end
+
+  def select_type
+    # 業種選択画面（ログイン不要）
+  end
+
+  def email_sent
+    # 登録後のメール確認待ち案内画面（ログイン不要）
+  end
+
+  def pending
+    # 審査待ち画面（ログイン必須、ApplicationControllerで業者のみアクセス可）
+    @business = current_user.business
+  end
+
+  def for_estate_clearance
+  end
+
+  def for_resellers
   end
 
   def search

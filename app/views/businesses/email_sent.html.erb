@@ -1,0 +1,28 @@
+<% content_for :title, "確認メールを送信しました | 遺品AI査定" %>
+
+<div class="auth-container">
+  <div class="auth-card" style="text-align: center; padding: 48px 40px;">
+    <div style="font-size: 3rem; color: var(--teal); margin-bottom: 20px;">
+      <i class="fas fa-envelope-circle-check"></i>
+    </div>
+    <h1 style="font-size: 23px; margin-bottom: 12px;">確認メールを送信しました</h1>
+    <p style="color: var(--text-sub); line-height: 1.8; margin-bottom: 32px;">
+      ご登録のメールアドレスに確認メールを送信しました。<br>
+      メール内のリンクをクリックして、メールアドレスを確認してください。
+    </p>
+
+    <div class="notice-banner" style="text-align: left; margin-bottom: 28px;">
+      <strong>次のステップ</strong>
+      <ol style="margin-top: 8px; padding-left: 20px; line-height: 2;">
+        <li>確認メールのリンクをクリック</li>
+        <li>審査中メールが届きます（3〜5営業日）</li>
+        <li>承認後、ダッシュボードが利用可能になります</li>
+      </ol>
+    </div>
+
+    <p style="font-size: 12px; color: var(--text-hint);">
+      メールが届かない場合は迷惑メールフォルダをご確認ください。<br>
+      <%= link_to "確認メールを再送する", new_user_confirmation_path, style: "color: var(--teal);" %>
+    </p>
+  </div>
+</div>

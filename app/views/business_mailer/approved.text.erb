@@ -1,0 +1,15 @@
+<%= @user.name %> 様
+
+遺品AI査定への掲載申請が承認されました。
+
+本日より業者情報が掲載され、遺族からの問い合わせを受け付けられます。
+
+会社名：<%= @business.name %>
+業種：<%= @business.category_label %>
+プラン：<%= @business.plan_label %>
+
+ログインしてダッシュボードをご確認ください。
+<%= ENV.fetch("APP_HOST", "https://ihin.example.com") %>/users/sign_in
+
+---
+遺品AI査定 <%= ENV.fetch("APP_HOST", "https://ihin.example.com") %>

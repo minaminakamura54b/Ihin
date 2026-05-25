@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   devise_for :users, controllers: {
-    registrations: "users/registrations",
-    sessions: "users/sessions"
+    registrations:  "users/registrations",
+    sessions:       "users/sessions",
+    confirmations:  "users/confirmations"
   }
 
   root "home#index"
@@ -42,13 +43,23 @@ Rails.application.routes.draw do
     end
     collection do
       get :search
+      get :select_type
+      get :email_sent
+      get :pending
+      get :for_estate_clearance
+      get :for_resellers
     end
   end
 
   namespace :admin do
     root "dashboard#index"
     resources :users
-    resources :businesses
+    resources :businesses do
+      member do
+        post :approve
+        post :reject
+      end
+    end
     resources :inquiries
     resources :settings, only: [:index, :update]
   end

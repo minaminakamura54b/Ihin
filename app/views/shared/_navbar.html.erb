@@ -2,8 +2,8 @@
   <div class="navbar-container">
     <div class="navbar-brand">
       <%= link_to root_path, class: "brand-link" do %>
-        <span class="brand-icon">🏮</span>
-        <span class="brand-name">いひん</span>
+        <span class="brand-icon"><i class="fas fa-camera"></i></span>
+        <span class="brand-name">遺品<span class="brand-ai">AI査定</span></span>
       <% end %>
     </div>
 
@@ -44,7 +44,7 @@
       </div>
     <% else %>
       <div class="navbar-auth">
-        <%= link_to "AI査定を試す", new_guest_assessment_path, class: "btn btn-ghost nav-link-try" %>
+        <%= link_to "査定を試す", new_guest_assessment_path, class: "btn btn-ghost nav-link-try" %>
         <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline" %>
         <%= link_to "無料登録", new_user_registration_path, class: "btn btn-primary" %>
       </div>

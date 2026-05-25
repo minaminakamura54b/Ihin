@@ -39,7 +39,7 @@ class UserRegistrationTest < ActionDispatch::IntegrationTest
 
   # ===== business ユーザー登録 =====
 
-  test "business ユーザーが登録するとBusinessが作成されてdashboardにリダイレクト" do
+  test "business ユーザーが登録すると審査待ち状態の Business が作成されて email_sent にリダイレクト" do
     assert_difference "User.count", 1 do
       assert_difference "Business.count", 1 do
         post user_registration_path, params: {
@@ -57,7 +57,10 @@ class UserRegistrationTest < ActionDispatch::IntegrationTest
     assert user.business?
     assert_not_nil user.business
     assert user.business.free?
-    assert_redirected_to dashboard_business_path(user.business)
+    # 新規登録は審査待ち・非公開状態
+    assert user.business.pending?
+    assert_not user.business.active?
+    assert_redirected_to email_sent_businesses_path
   end
 
   test "business ユーザー登録時に TodoItem は作成されない" do

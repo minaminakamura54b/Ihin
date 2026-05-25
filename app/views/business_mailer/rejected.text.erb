@@ -1,0 +1,11 @@
+<%= @user.name %> 様
+
+遺品AI査定への掲載申請について、今回は承認が難しい状況となりました。
+
+会社名：<%= @business.name %>
+却下理由：<%= @business.rejected_reason %>
+
+内容を修正の上、再度お申し込みいただくことが可能です。
+
+---
+遺品AI査定 <%= ENV.fetch("APP_HOST", "https://ihin.example.com") %>

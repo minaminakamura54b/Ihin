@@ -16,10 +16,7 @@ class MemoriesController < ApplicationController
   def create
     @memory = current_user.memories.new(memory_params)
     if @memory.save
-      respond_to do |format|
-        format.html { redirect_to memories_path, notice: "思い出を保存しました" }
-        format.turbo_stream
-      end
+      redirect_to memories_path, notice: "思い出を保存しました"
     else
       render :new, status: :unprocessable_entity
     end

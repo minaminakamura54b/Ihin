@@ -1,0 +1,21 @@
+<p><%= @user.name %> 様</p>
+
+<p>遺品AI査定への掲載申請について、誠に恐れ入りますが今回は承認が難しい状況となりました。</p>
+
+<table style="border-collapse:collapse; margin: 16px 0;">
+  <tr>
+    <td style="padding: 6px 16px 6px 0; color: #5a5a5a; white-space: nowrap;">会社名</td>
+    <td style="padding: 6px 0;"><strong><%= @business.name %></strong></td>
+  </tr>
+  <tr>
+    <td style="padding: 6px 16px 6px 0; color: #5a5a5a; vertical-align: top;">却下理由</td>
+    <td style="padding: 6px 0;"><%= @business.rejected_reason %></td>
+  </tr>
+</table>
+
+<p>内容を修正の上、再度お申し込みいただくことが可能です。<br>
+ご不明な点がございましたら、お手数ですがお問い合わせください。</p>
+
+<p style="margin-top: 32px; color: #999; font-size: 12px;">
+  遺品AI査定（<%= ENV.fetch("APP_HOST", "https://ihin.example.com") %>）
+</p>

@@ -1,25 +1,38 @@
-<% content_for :title, "新規登録 | いひん" %>
+<% content_for :title, "新規登録 | 遺品AI査定" %>
+<% role     = @role     || params.dig(:user, :role)              || "family" %>
+<% category = @category || params.dig(:user, :business_category) || "estate_clearance" %>
 
 <div class="auth-container">
   <div class="auth-card">
     <div class="auth-header">
-      <span class="brand-icon">🏮</span>
-      <h1>無料で登録する</h1>
-      <p>遺族・家族は完全無料でご利用いただけます</p>
+      <span class="brand-icon"><i class="fas fa-camera"></i></span>
+      <% if role == "business" %>
+        <h1>業者として登録する</h1>
+        <p><%= Business::LICENSE_LABELS[category] || "業者情報" %>をご用意の上ご登録ください</p>
+      <% else %>
+        <h1>無料で登録する</h1>
+        <p>遺族・家族は完全無料でご利用いただけます</p>
+      <% end %>
     </div>
 
     <%= form_for(resource, as: resource_name, url: registration_path(resource_name),
         data: { controller: "registration" }) do |f| %>
       <%= render "devise/shared/error_messages", resource: resource %>
 
+      <%# ロールを hidden で渡す（業者フローは select_type から来るため） %>
+      <%= f.hidden_field :role, value: role %>
+
       <div class="form-group">
-        <%= f.label :name, "お名前", class: "form-label" %>
-        <%= f.text_field :name, autofocus: true, class: "form-input", placeholder: "例：山田 太郎" %>
+        <% label = role == "business" ? "担当者名（代表者名）" : "お名前" %>
+        <%= f.label :name, label, class: "form-label" %>
+        <%= f.text_field :name, autofocus: true, class: "form-input",
+              placeholder: role == "business" ? "例：山田 太郎（担当者名）" : "例：山田 太郎" %>
       </div>
 
       <div class="form-group">
         <%= f.label :email, "メールアドレス", class: "form-label" %>
-        <%= f.email_field :email, autocomplete: "email", class: "form-input", placeholder: "example@email.com" %>
+        <%= f.email_field :email, autocomplete: "email", class: "form-input",
+              placeholder: "example@email.com" %>
       </div>
 
       <div class="form-group">
@@ -33,17 +46,9 @@
         <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-input" %>
       </div>
 
-      <div class="form-group">
-        <%= f.label :role, "ご利用目的", class: "form-label" %>
-        <%= f.select :role, [["遺族・家族として利用（無料）", "family"],
-            ["業者として登録（有料）", "business"]],
-            { selected: params[:role] || "family" },
-            class: "form-select",
-            data: { action: "change->registration#toggleAddress" } %>
-      </div>
-
-      <%# 遺族向けエリア入力（業者選択時は非表示） %>
-      <div data-registration-target="addressSection">
+      <%# ===== 遺族向けエリア（業者の場合は非表示） ===== %>
+      <div data-registration-target="addressSection"
+           style="<%= role == 'business' ? 'display:none;' : '' %>">
         <div class="form-group">
           <%= f.label :prefecture, "都道府県", class: "form-label" %>
           <%= f.text_field :prefecture, class: "form-input", placeholder: "例：東京都" %>
@@ -54,8 +59,71 @@
         </div>
       </div>
 
+      <%# ===== 業者向けフィールド（遺族の場合は非表示） ===== %>
+      <div data-registration-target="businessSection"
+           style="<%= role != 'business' ? 'display:none;' : '' %>">
+
+        <div class="form-divider">業者情報</div>
+
+        <div class="form-group">
+          <%= label_tag :company_name, "会社名 / 事務所名", class: "form-label" %>
+          <%= text_field_tag "user[company_name]", params.dig(:user, :company_name), class: "form-input",
+                placeholder: "例：山田遺品整理株式会社" %>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :business_category, "業種", class: "form-label" %>
+          <%= select_tag "user[business_category]",
+                options_for_select(
+                  Business.categories.keys.map { |k|
+                    b = Business.new(category: k)
+                    [b.category_label, k]
+                  },
+                  category
+                ),
+                class: "form-select",
+                data: { action: "change->registration#updateLicenseLabel",
+                        registration_target: "categorySelect" } %>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-registration-target="licenseLabel">
+            <%= Business::LICENSE_LABELS[category] || "許可証・登録番号" %>
+          </label>
+          <p class="form-hint">業種に応じた許可証・登録番号を入力してください</p>
+          <%= text_field_tag "user[license_number]", params.dig(:user, :license_number), class: "form-input",
+                placeholder: "例：東京都公安委員会 許可 123456789号" %>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :phone, "電話番号", class: "form-label" %>
+          <%= telephone_field_tag "user[phone]", params.dig(:user, :phone), class: "form-input",
+                placeholder: "例：03-1234-5678" %>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :area, "対応エリア（都道府県）", class: "form-label" %>
+          <%= text_field_tag "user[area]", params.dig(:user, :area), class: "form-input",
+                placeholder: "例：東京都、神奈川県、埼玉県" %>
+        </div>
+
+        <div class="form-group">
+          <%= label_tag :description, "会社紹介文（200文字以内）", class: "form-label" %>
+          <%= text_area_tag "user[description]", params.dig(:user, :description), class: "form-input",
+                rows: 4, maxlength: 200,
+                placeholder: "会社の特徴・強みをご記入ください" %>
+        </div>
+
+        <div class="notice-banner" style="margin-bottom: 16px;">
+          <i class="fas fa-info-circle"></i>
+          登録後、メールアドレスの確認と審査があります。承認後にサービスをご利用いただけます。
+        </div>
+      </div>
+
       <div class="form-actions">
-        <%= f.submit "登録する", class: "btn btn-primary btn-full", data: { disable_with: "登録中..." } %>
+        <%= f.submit role == "business" ? "申請する" : "登録する",
+              class: "btn btn-primary btn-full",
+              data: { disable_with: role == "business" ? "申請中..." : "登録中..." } %>
       </div>
     <% end %>
 

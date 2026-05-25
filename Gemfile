@@ -27,6 +27,9 @@ gem "aws-sdk-s3", require: false
 # ページネーション
 gem "kaminari"
 
+# メール送信
+gem "resend"
+
 # 環境変数
 gem "dotenv-rails"
 

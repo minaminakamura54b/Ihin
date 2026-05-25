@@ -12,6 +12,9 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def update
+    if @user == current_user && user_params[:role].present? && user_params[:role] != "admin"
+      redirect_to admin_user_path(@user), alert: "自分自身の権限を変更することはできません" and return
+    end
     if @user.update(user_params)
       redirect_to admin_user_path(@user), notice: "更新しました"
     else
@@ -20,6 +23,9 @@ class Admin::UsersController < Admin::BaseController
   end
 
   def destroy
+    if @user == current_user
+      redirect_to admin_users_path, alert: "自分自身のアカウントは削除できません" and return
+    end
     @user.destroy
     redirect_to admin_users_path, notice: "削除しました"
   end

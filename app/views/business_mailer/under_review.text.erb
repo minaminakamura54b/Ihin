@@ -1,0 +1,14 @@
+<%= @user.name %> 様
+
+この度は遺品AI査定への掲載申請をいただき、誠にありがとうございます。
+
+以下の内容で申請を受け付けました。通常3〜5営業日以内にご連絡いたします。
+
+会社名：<%= @business.name %>
+業種：<%= @business.category_label %>
+対応エリア：<%= @business.area.presence || "未入力" %>
+
+審査結果はメールにてお知らせします。
+
+---
+遺品AI査定 <%= ENV.fetch("APP_HOST", "https://ihin.example.com") %>

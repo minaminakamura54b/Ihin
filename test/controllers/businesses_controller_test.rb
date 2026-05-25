@@ -4,6 +4,8 @@ class BusinessesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @owner       = create(:user, :business_role)
     @business    = @owner.business
+    # テスト用に承認済み状態にしておく（本番は管理者が手動承認）
+    @business.update!(approval_status: :approved, active: true)
     @family_user = create(:user)
   end
 
@@ -44,6 +46,7 @@ class BusinessesControllerTest < ActionDispatch::IntegrationTest
 
   test "dashboard は別の業者がアクセスするとリダイレクト" do
     other_biz_user = create(:user, :business_role)
+    other_biz_user.business.update!(approval_status: :approved, active: true)
     sign_in other_biz_user
     get dashboard_business_path(@business)
     assert_redirected_to root_path

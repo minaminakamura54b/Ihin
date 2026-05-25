@@ -1,37 +1,21 @@
 <footer class="footer">
   <div class="footer-container">
     <div class="footer-brand">
-      <span class="brand-icon">🏮</span>
-      <span class="brand-name">いひん</span>
-      <p class="footer-tagline">大切な方の遺品を、心を込めて</p>
+      <span class="brand-icon"><i class="fas fa-camera"></i></span>
+      <span class="brand-name">遺品<span class="brand-ai">AI査定</span></span>
     </div>
     <div class="footer-links">
       <div class="footer-col">
-        <h4>サービス</h4>
         <ul>
           <li><%= link_to "AI査定とは", "#" %></li>
           <li><%= link_to "業者マッチング", businesses_path %></li>
-          <li><%= link_to "よくある質問", "#" %></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>業者の方へ</h4>
-        <ul>
           <li><%= link_to "業者登録", new_user_registration_path(role: "business") %></li>
           <li><%= link_to "料金プラン", "#" %></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>その他</h4>
-        <ul>
           <li><%= link_to "プライバシーポリシー", "#" %></li>
           <li><%= link_to "利用規約", "#" %></li>
-          <li><%= link_to "お問い合わせ", "#" %></li>
         </ul>
       </div>
     </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; <%= Time.current.year %> いひん. All rights reserved.</p>
+    <span class="footer-copyright">&copy; <%= Time.current.year %> 遺品AI査定. All rights reserved.</span>
   </div>
 </footer>

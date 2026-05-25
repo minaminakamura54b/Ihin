@@ -14,10 +14,7 @@ class TodoItemsController < ApplicationController
   def create
     @todo_item = current_user.todo_items.new(todo_item_params)
     if @todo_item.save
-      respond_to do |format|
-        format.html { redirect_to todo_items_path, notice: "タスクを追加しました" }
-        format.turbo_stream
-      end
+      redirect_to todo_items_path, notice: "タスクを追加しました"
     else
       render :new, status: :unprocessable_entity
     end

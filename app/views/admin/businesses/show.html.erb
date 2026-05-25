@@ -5,34 +5,80 @@
     <%= link_to "業者管理", admin_businesses_path %> &rsaquo; <%= @business.name %>
   </div>
 
+  <% if @business.pending? %>
+    <div class="flash flash-notice" style="margin-bottom: 20px;">
+      <i class="fas fa-hourglass-half"></i> この業者は審査待ちです。内容を確認して承認または却下してください。
+    </div>
+  <% end %>
+
   <div class="admin-detail-card">
     <dl class="detail-list">
       <dt>ID</dt><dd><%= @business.id %></dd>
-      <dt>業者名</dt><dd><%= @business.name %></dd>
-      <dt>担当ユーザー</dt><dd><%= @business.user.name %> (<%= @business.user.email %>)</dd>
+      <dt>会社名</dt><dd><%= @business.name %></dd>
+      <dt>担当者</dt><dd><%= @business.user.name %> (<%= @business.user.email %>)</dd>
       <dt>業種</dt><dd><%= @business.category_label %></dd>
-      <dt>エリア</dt><dd><%= @business.area %></dd>
+      <dt>許可証番号</dt><dd><%= @business.license_number.presence || "未入力" %></dd>
+      <dt>エリア</dt><dd><%= @business.area.presence || "未入力" %></dd>
+      <dt>電話番号</dt><dd><%= @business.phone.presence || "未入力" %></dd>
+      <dt>紹介文</dt><dd style="white-space: pre-wrap;"><%= @business.description.presence || "未入力" %></dd>
       <dt>プラン</dt><dd><%= @business.plan_label %></dd>
-      <dt>状態</dt>
+      <dt>審査ステータス</dt>
+      <dd>
+        <% status_class = { "pending" => "badge-warning", "approved" => "badge-green", "rejected" => "badge-red" }[@business.approval_status] %>
+        <span class="badge <%= status_class %>"><%= @business.approval_status_label %></span>
+      </dd>
+      <dt>掲載状態</dt>
       <dd>
         <span class="badge <%= @business.active? ? 'badge-green' : 'badge-gray' %>">
-          <%= @business.active? ? "有効" : "無効" %>
+          <%= @business.active? ? "公開中" : "非公開" %>
         </span>
       </dd>
+      <% if @business.rejected_reason.present? %>
+        <dt>却下理由</dt><dd style="color: var(--danger);"><%= @business.rejected_reason %></dd>
+      <% end %>
       <dt>Stripe顧客ID</dt><dd><%= @business.stripe_customer_id.presence || "未登録" %></dd>
-      <dt>Stripeサブスクリプション</dt><dd><%= @business.stripe_subscription_id.presence || "未登録" %></dd>
       <dt>登録日</dt><dd><%= @business.created_at.strftime("%Y年%m月%d日") %></dd>
     </dl>
-    <div class="form-actions" style="flex-direction: row;">
-      <%= link_to "編集", edit_admin_business_path(@business), class: "btn btn-primary" %>
-      <%= link_to "一覧へ", admin_businesses_path, class: "btn btn-ghost" %>
-    </div>
+
+    <%# 審査待ちの場合は承認・却下フォームを表示 %>
+    <% if @business.pending? %>
+      <div class="approval-actions">
+        <%= button_to "承認する", approve_admin_business_path(@business),
+              method: :post,
+              class: "btn btn-primary",
+              data: { turbo_confirm: "#{@business.name} を承認してよいですか？承認メールが送信されます。" } %>
+
+        <div class="reject-form">
+          <%= form_with url: reject_admin_business_path(@business), method: :post do |f| %>
+            <%= f.text_area :reason, class: "form-input",
+                  placeholder: "却下理由を入力してください（必須）", rows: 2,
+                  style: "resize: vertical; min-height: 60px;" %>
+            <%= f.submit "却下する", class: "btn btn-danger" %>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <div class="form-actions" style="flex-direction: row; gap: 10px;">
+        <%= link_to "編集", edit_admin_business_path(@business), class: "btn btn-primary" %>
+        <% if @business.approved? %>
+          <%= form_with url: reject_admin_business_path(@business), method: :post, style: "display:inline;" do |f| %>
+            <%= f.hidden_field :reason, value: "管理者により承認を取消しました" %>
+            <%= f.submit "承認取消", class: "btn btn-ghost",
+                  data: { turbo_confirm: "承認を取消しますか？" } %>
+          <% end %>
+        <% end %>
+        <%= link_to "一覧へ", admin_businesses_path, class: "btn btn-ghost" %>
+      </div>
+    <% end %>
   </div>
 </div>
 
 <style>
-.admin-detail-card { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); }
-.detail-list { display: grid; grid-template-columns: 180px 1fr; gap: 12px 20px; margin-bottom: 28px; }
-.detail-list dt { font-weight: 600; color: var(--color-text-light); font-size: 0.9rem; }
-.detail-list dd { font-size: 0.95rem; }
+.admin-detail-card { background: white; border-radius: var(--radius); padding: 32px; }
+.detail-list { display: grid; grid-template-columns: 160px 1fr; gap: 10px 20px; margin-bottom: 28px; }
+.detail-list dt { font-weight: 600; color: var(--text-sub); font-size: 13px; }
+.detail-list dd { font-size: 14px; }
+.approval-actions { display: flex; flex-direction: column; gap: 16px; border-top: 0.5px solid var(--border); padding-top: 24px; }
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-danger:hover { opacity: 0.85; }
 </style>

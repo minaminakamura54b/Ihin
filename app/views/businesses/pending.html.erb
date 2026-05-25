@@ -1,0 +1,41 @@
+<% content_for :title, "審査中 | 遺品AI査定" %>
+
+<div class="auth-container" style="max-width: 600px;">
+  <div class="auth-card" style="text-align: center; padding: 48px 40px;">
+    <div style="font-size: 3rem; color: var(--warning); margin-bottom: 20px;">
+      <i class="fas fa-hourglass-half"></i>
+    </div>
+    <h1 style="font-size: 23px; margin-bottom: 12px;">審査中です</h1>
+    <p style="color: var(--text-sub); line-height: 1.8; margin-bottom: 32px;">
+      申請内容を確認しています。<br>
+      通常3〜5営業日以内に審査結果をメールでお知らせします。
+    </p>
+
+    <% if @business %>
+      <div class="pending-info-card">
+        <dl class="pending-info-list">
+          <dt>会社名</dt>
+          <dd><%= @business.name %></dd>
+          <dt>業種</dt>
+          <dd><%= @business.category_label %></dd>
+          <dt>ステータス</dt>
+          <dd>
+            <span class="badge badge-warning">審査待ち</span>
+          </dd>
+          <dt>申請日</dt>
+          <dd><%= @business.created_at.strftime("%Y年%m月%d日") %></dd>
+        </dl>
+      </div>
+    <% end %>
+
+    <p style="margin-top: 28px; font-size: 13px; color: var(--text-hint);">
+      ご不明な点がございましたら<br>
+      メールにてお問い合わせください。
+    </p>
+
+    <%= link_to "ログアウト", destroy_user_session_path,
+          data: { turbo_method: :delete },
+          class: "btn btn-ghost",
+          style: "margin-top: 24px;" %>
+  </div>
+</div>

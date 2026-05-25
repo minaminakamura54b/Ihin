@@ -24,7 +24,11 @@ class InquiriesController < ApplicationController
     unless @business.user == current_user
       redirect_to root_path, alert: "権限がありません" and return
     end
-    @inquiry.update(status: params.dig(:inquiry, :status))
+    status = params.dig(:inquiry, :status)
+    unless Inquiry.statuses.key?(status)
+      head :unprocessable_entity and return
+    end
+    @inquiry.update(status: status)
     respond_to do |format|
       format.turbo_stream do
         render turbo_stream: turbo_stream.replace(

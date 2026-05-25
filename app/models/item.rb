@@ -6,6 +6,7 @@ class Item < ApplicationRecord
   enum :action, { undecided: 0, sell: 1, keep: 2, dispose: 3, memo: 4 }
 
   validates :user, presence: true
+  validate :validate_images
 
   scope :assessed, -> { where.not(ai_result: nil) }
   scope :pending_assessment, -> { where(ai_result: nil) }
@@ -31,6 +32,19 @@ class Item < ApplicationRecord
     when "dispose" then "red"
     when "memo"    then "yellow"
     else "gray"
+    end
+  end
+
+  private
+
+  def validate_images
+    images.each do |image|
+      unless image.content_type.start_with?("image/")
+        errors.add(:images, "は画像ファイル（JPEG・PNG・WebP等）を選択してください")
+      end
+      if image.byte_size > 20.megabytes
+        errors.add(:images, "は1ファイルあたり20MB以内にしてください")
+      end
     end
   end
 end

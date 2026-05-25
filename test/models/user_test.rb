@@ -61,11 +61,13 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "business ユーザー作成時の Business は無料プランで active" do
+  test "business ユーザー作成時の Business は無料プランで審査待ち（inactive）" do
     user = create(:user, :business_role)
     assert_not_nil user.business
     assert user.business.free?
-    assert user.business.active?
+    # 新規登録は審査待ち・非公開状態で作成される
+    assert_not user.business.active?
+    assert user.business.pending?
     assert_equal "#{user.name}の会社", user.business.name
   end
 
@@ -85,6 +87,8 @@ class UserTest < ActiveSupport::TestCase
 
   test "business_user? は business role かつ active な Business がある場合 true" do
     user = create(:user, :business_role)
+    # 承認後に active: true にする（本番フローでは管理者が承認）
+    user.business.update!(active: true, approval_status: :approved)
     assert user.business_user?
   end
 

@@ -68,6 +68,9 @@ class ItemsController < ApplicationController
   end
 
   def update_action
+    unless Item.actions.key?(params[:action_type])
+      head :unprocessable_entity and return
+    end
     if @item.update(action: params[:action_type])
       respond_to do |format|
         format.html { redirect_to @item, notice: "分類を更新しました" }

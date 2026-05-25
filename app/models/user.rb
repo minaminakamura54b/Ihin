@@ -1,8 +1,8 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable, :confirmable
 
-  enum :role, { family: 0, business: 1, admin: 2 }
+  enum :role, { family: 0, business: 1, admin: 2 }, default: :family
 
   has_many :items, dependent: :destroy
   has_many :todo_items, dependent: :destroy
@@ -29,10 +29,12 @@ class User < ApplicationRecord
   end
 
   def create_free_business
+    # 新規業者登録時は審査待ち・非公開状態で作成する
     create_business!(
       name: "#{name}の会社",
       plan: :free,
-      active: true
+      active: false,
+      approval_status: :pending
     )
   end
 end

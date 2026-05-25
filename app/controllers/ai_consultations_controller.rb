@@ -1,4 +1,5 @@
 class AiConsultationsController < ApplicationController
+  before_action :authenticate_user!
   def show
     @past_consultations = current_user.consultations.recent.limit(20).reverse
     @suggested_questions = [
