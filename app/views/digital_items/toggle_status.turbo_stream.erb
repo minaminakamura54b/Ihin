@@ -1,0 +1,21 @@
+<%# アイテムカードを更新（ステータス変更後の見た目） %>
+<%= turbo_stream.replace "digital_item_#{@digital_item.id}" do %>
+  <%= render "digital_item", item: @digital_item %>
+<% end %>
+
+<%# プログレスバーを更新 %>
+<% pct = @total > 0 ? (@completed.to_f / @total * 100).round : 0 %>
+<%= turbo_stream.replace "digital_progress" do %>
+  <div class="digital-progress-card" id="digital_progress">
+    <div class="digital-progress-header">
+      <span class="progress-label"><%= @completed %>/<%= @total %>件 完了</span>
+      <span class="progress-pct"><%= pct %>%</span>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" style="width: <%= pct %>%"></div>
+    </div>
+    <% if pct == 100 && @total > 0 %>
+      <p class="progress-complete-msg"><i class="fas fa-check-circle"></i> すべての整理が完了しました！</p>
+    <% end %>
+  </div>
+<% end %>

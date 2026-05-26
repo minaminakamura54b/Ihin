@@ -29,7 +29,22 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :memories
+  resources :memories do
+    member do
+      post :generate_ai_summary
+      patch :toggle_share
+    end
+  end
+  get "shared/:token", to: "memories#shared", as: :shared_memory
+
+  resources :digital_items, only: [:index, :create, :destroy] do
+    member do
+      patch :toggle_status
+    end
+    collection do
+      post :ai_generate
+    end
+  end
 
   resource :ai_consultation, only: [:show]
   resources :consultations, only: [:create, :index]

@@ -16,6 +16,11 @@ class BulkAssessment < ApplicationRecord
     bulk_assessment_items.where(status: :completed).sum(:estimated_price)
   end
 
+  # 「全部売った場合」の合計金額（sell推奨かつ価格あり）
+  def total_sell_price
+    bulk_assessment_items.where(status: :completed, suggested_action: "sell").sum(:estimated_price)
+  end
+
   def all_done?
     bulk_assessment_items.all? { |i| i.completed? || i.failed? }
   end

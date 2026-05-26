@@ -5,28 +5,48 @@ class BulkAssessmentJob < ApplicationJob
     bulk = BulkAssessment.find(bulk_assessment_id)
     bulk.update!(status: :processing)
 
-    bulk.bulk_assessment_items.order(:position).each do |item|
-      next if item.completed?
+    items = bulk.bulk_assessment_items
+                .order(:position)
+                .reject(&:completed?)
 
-      item.update!(status: :processing)
-      result = assess_item(item)
+    # 全点を並列処理
+    threads = items.map do |item|
+      Thread.new do
+        ActiveRecord::Base.connection_pool.with_connection do
+          item.update!(status: :processing)
+          result = assess_item(item)
 
-      if result[:success]
-        safe_action = BulkAssessmentItem::VALID_ACTIONS.include?(result[:suggested_action]) ? result[:suggested_action] : nil
-        item.update!(
-          status: :completed,
-          ai_result: result[:ai_result],
-          estimated_price: result[:estimated_price],
-          suggested_action: safe_action
-        )
-      else
-        item.update!(status: :failed, error_message: result[:error])
+          if result[:success]
+            safe_action = BulkAssessmentItem::VALID_ACTIONS
+                            .include?(result[:suggested_action]) ?
+                            result[:suggested_action] : nil
+            item.update!(
+              status:           :completed,
+              ai_result:        result[:ai_result],
+              estimated_price:  result[:estimated_price],
+              suggested_action: safe_action
+            )
+          else
+            item.update!(
+              status:        :failed,
+              error_message: result[:error]
+            )
+          end
+        end
       end
     end
 
-    bulk.update!(status: :completed)
+    # 全スレッドの完了を待つ
+    threads.each(&:join)
+
+    # 全件失敗の場合はbulkもfailedにする
+    reloaded = bulk.bulk_assessment_items.reload
+    final_status = reloaded.all?(&:failed?) ? :failed : :completed
+    bulk.update!(status: final_status)
+
   rescue => e
-    BulkAssessment.find_by(id: bulk_assessment_id)&.update(status: :failed)
+    BulkAssessment.find_by(id: bulk_assessment_id)
+                  &.update(status: :failed)
     raise
   end
 
@@ -41,8 +61,8 @@ class BulkAssessmentJob < ApplicationJob
 
     AiAssessmentService.assess_upload(
       images: images,
-      name: item.display_name,
-      memo: nil
+      name:   item.display_name,
+      memo:   item.memo.presence
     )
   end
 end

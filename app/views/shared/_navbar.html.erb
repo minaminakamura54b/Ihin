@@ -16,7 +16,8 @@
 
           <% if current_user.family? %>
             <%# ===== 遺族向けリンク ===== %>
-            <%= link_to "AI査定", items_path, class: "nav-link #{controller_name == 'items' ? 'active' : ''}" %>
+            <%= link_to "査定する", new_bulk_assessment_path, class: "nav-link #{controller_name == 'bulk_assessments' ? 'active' : ''}" %>
+            <%= link_to "遺品リスト", items_path, class: "nav-link #{controller_name == 'items' ? 'active' : ''}" %>
             <%= link_to "やることリスト", todo_items_path, class: "nav-link #{controller_name == 'todo_items' ? 'active' : ''}" %>
             <%= link_to "思い出ボックス", memories_path, class: "nav-link #{controller_name == 'memories' ? 'active' : ''}" %>
             <%= link_to "業者を探す", businesses_path, class: "nav-link #{controller_name == 'businesses' ? 'active' : ''}" %>
@@ -44,7 +45,7 @@
       </div>
     <% else %>
       <div class="navbar-auth">
-        <%= link_to "査定を試す", new_guest_assessment_path, class: "btn btn-ghost nav-link-try" %>
+        <%= link_to "査定を試す", new_bulk_assessment_path, class: "btn btn-ghost nav-link-try" %>
         <%= link_to "ログイン", new_user_session_path, class: "btn btn-outline" %>
         <%= link_to "無料登録", new_user_registration_path, class: "btn btn-primary" %>
       </div>

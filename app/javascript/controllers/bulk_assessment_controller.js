@@ -10,14 +10,20 @@ export default class extends Controller {
 
   addItem() {
     const count = this.itemTargets.length
+
+    // 5点の絶対上限チェック
     if (count >= this.maxItemsValue) return
-    if (count >= this.remainingValue && this.remainingValue < 99) return
+
+    // ゲストの残り件数チェック（クリック時のみ判定）
+    if (this.remainingValue < 99 && count >= this.remainingValue) {
+      alert(`残り${this.remainingValue}点まで無料で査定できます。無料登録すると制限なくご利用いただけます。`)
+      return
+    }
 
     const template = this.buildItemTemplate(count)
     this.itemListTarget.insertAdjacentHTML("beforeend", template)
     this.updateUI()
 
-    // Stimulus auto-registers new elements, but we need to scroll to it
     const newItem = this.itemTargets[this.itemTargets.length - 1]
     newItem.scrollIntoView({ behavior: "smooth", block: "start" })
   }
@@ -47,13 +53,13 @@ export default class extends Controller {
 
   updateUI() {
     const count = this.itemTargets.length
-    const max = Math.min(this.maxItemsValue, this.remainingValue < 99 ? this.remainingValue : this.maxItemsValue)
 
+    // ボタン表示は5点上限のみで判定（ゲストの残り件数はクリック時に判定）
     if (this.hasAddButtonTarget) {
-      this.addButtonTarget.classList.toggle("hidden", count >= max)
+      this.addButtonTarget.classList.toggle("hidden", count >= this.maxItemsValue)
     }
     if (this.hasCountTextTarget) {
-      this.countTextTarget.textContent = `現在 ${count}点 登録中`
+      this.countTextTarget.textContent = `現在 ${count}点 登録中（最大5点）`
     }
   }
 
@@ -61,19 +67,19 @@ export default class extends Controller {
     return `
       <div class="bulk-item-card" data-bulk-assessment-target="item">
         <div class="bulk-item-header">
-          <h3 class="bulk-item-title">遺品 <span data-bulk-assessment-target="itemNumber">${index + 1}</span></h3>
+          <h3 class="bulk-item-title">商品 <span data-bulk-assessment-target="itemNumber">${index + 1}</span></h3>
           <button type="button" class="btn-icon btn-danger-ghost"
                   data-action="click->bulk-assessment#removeItem" title="削除">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <div class="form-group">
-          <label class="form-label">品物の名前（任意）</label>
+          <label class="form-label">商品名（任意）</label>
           <input type="text" name="items[${index}][name]" class="form-input"
                  placeholder="例：腕時計、着物、カメラなど">
         </div>
         <div class="form-group">
-          <label class="form-label">写真（最大5枚）</label>
+          <label class="form-label">この商品の写真（1〜5枚）</label>
           <div class="upload-area upload-area-sm" data-controller="item-form"
                data-action="dragover->item-form#dragOver drop->item-form#drop"
                data-item-form-target="uploadArea">
@@ -90,6 +96,12 @@ export default class extends Controller {
                    data-action="change->item-form#preview"
                    data-item-form-target="fileInput">
           </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">メモ（任意）</label>
+          <textarea name="items[${index}][memo]" class="form-input"
+                    rows="2" maxlength="500"
+                    placeholder="状態・入手経緯など気になることをメモしておけます"></textarea>
         </div>
       </div>
     `

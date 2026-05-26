@@ -30,7 +30,8 @@ class GuestAssessmentsController < ApplicationController
       memo: params[:memo].presence
     )
 
-    guest_session_record.add_items(1) unless user_signed_in?
+    # 査定成功時のみカウントを加算する（失敗はカウントしない）
+    guest_session_record.add_items(1) if !user_signed_in? && @result[:success]
 
     if @result[:processed_images]&.any?
       @uploaded_images = @result[:processed_images].map do |img|

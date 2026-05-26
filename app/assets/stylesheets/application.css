@@ -1392,10 +1392,30 @@ img { max-width: 100%; height: auto; display: block; }
   border-radius: var(--radius);
   padding: 18px;
   margin-bottom: 22px;
-  text-align: center;
 }
-.total-label { display: block; font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
-.total-value { font-size: 23px; font-weight: 700; }
+.total-row { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; }
+.total-row + .total-row { border-top: 1px solid rgba(255,255,255,0.15); margin-top: 8px; padding-top: 10px; }
+.total-label { font-size: 12px; opacity: 0.8; }
+.total-value { font-size: 22px; font-weight: 700; }
+.total-sell-row .total-label { font-size: 11px; opacity: 0.7; }
+.total-sell-value { font-size: 18px; color: #fcd34d; }
+
+.bulk-business-cta {
+  background: var(--white);
+  border: 1.5px solid var(--teal);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 18px;
+}
+.business-cta-inner { display: flex; align-items: flex-start; gap: 14px; }
+.business-cta-icon { font-size: 28px; color: var(--teal); flex-shrink: 0; margin-top: 2px; }
+.business-cta-text { flex: 1; }
+.business-cta-text strong { display: block; font-size: 14px; margin-bottom: 4px; }
+.business-cta-text p { font-size: 12px; color: var(--text-sub); margin: 0 0 12px; }
+@media (min-width: 600px) {
+  .business-cta-inner { align-items: center; }
+  .business-cta-text p { margin-bottom: 0; }
+}
 
 .bulk-items-grid { display: grid; gap: 12px; margin-bottom: 28px; }
 .bulk-result-card {
@@ -1667,3 +1687,110 @@ img { max-width: 100%; height: auto; display: block; }
   .hero-title { font-size: 24px; }
   .biz-kpi-grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ===== デジタル遺品整理 ===== */
+.digital-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: white; border-radius: var(--radius);
+  padding: 14px 16px; border-left: 3px solid var(--border);
+  transition: opacity 0.2s;
+}
+.digital-item-completed { border-left-color: var(--teal); opacity: 0.7; }
+.digital-item-in_progress { border-left-color: #f59e0b; }
+.digital-item-unchecked { border-left-color: var(--border); }
+.digital-item-left { flex-shrink: 0; padding-top: 2px; }
+.digital-item-body { flex: 1; min-width: 0; }
+.digital-item-name { font-size: 15px; font-weight: 500; word-break: break-word; }
+.digital-item-name.strikethrough { text-decoration: line-through; color: var(--text-sub); }
+.digital-item-notes { font-size: 12px; color: var(--text-sub); margin-top: 4px; word-break: break-word; }
+.digital-item-right { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+.status-toggle {
+  background: none; border: none; cursor: pointer;
+  font-size: 20px; padding: 0; line-height: 1;
+  transition: opacity 0.2s;
+}
+.status-toggle-unchecked   { color: var(--border); }
+.status-toggle-in_progress { color: #f59e0b; }
+.status-toggle-completed   { color: var(--teal); }
+.status-toggle:hover { opacity: 0.7; }
+.priority-badge {
+  font-size: 11px; padding: 2px 7px; border-radius: 999px; font-weight: 600;
+}
+.priority-1 { background: #fee2e2; color: #dc2626; }
+.priority-2 { background: #fef3c7; color: #d97706; }
+.priority-3 { background: #f0fdf4; color: var(--teal); }
+.status-label { font-size: 11px; color: var(--text-sub); }
+.status-label-in_progress { color: #d97706; }
+.status-label-completed   { color: var(--teal); }
+.btn-icon { background: none; border: none; cursor: pointer; padding: 4px; font-size: 14px; transition: opacity 0.2s; }
+.btn-icon:hover { opacity: 0.7; }
+.text-danger { color: var(--danger, #dc2626); }
+
+/* ===== 記念館 ===== */
+.memorial-hero { text-align: center; padding: 40px 20px; background: white; border-radius: var(--radius); margin-bottom: 24px; }
+.memorial-title { font-size: 28px; color: var(--navy); margin-bottom: 8px; }
+.memorial-subtitle { color: var(--text-sub); font-size: 15px; }
+.memorial-ai-summary { background: var(--teal-light, #f0faf8); border-left: 3px solid var(--teal); padding: 20px 24px; border-radius: var(--radius); margin-bottom: 24px; font-size: 15px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
+.memorial-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.memorial-card { background: white; border-radius: var(--radius); overflow: hidden; }
+.memorial-card-photo { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.memorial-card-body { padding: 12px 14px; }
+.memorial-card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.memorial-card-desc { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
+.share-box { background: var(--bg); border-radius: var(--radius); padding: 20px 24px; }
+.share-url-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.share-url-input { flex: 1; min-width: 0; font-size: 13px; padding: 8px 12px; border: 0.5px solid var(--border); border-radius: var(--radius); background: white; }
+.memorial-shared-page { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+@media (max-width: 600px) {
+  .memorial-grid { grid-template-columns: repeat(2, 1fr); }
+  .share-url-row { flex-direction: column; }
+}
+
+/* ===== 開発環境デバッグバー ===== */
+#dev-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 9999;
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+}
+.dev-bar-toggle {
+  position: absolute;
+  bottom: 100%; right: 12px;
+  background: #1e293b;
+  color: #94a3b8;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px 4px 0 0;
+  cursor: pointer;
+  font-size: 12px;
+}
+.dev-bar-toggle:hover { color: #fff; }
+.dev-bar-content {
+  background: #0f172a;
+  border-top: 2px solid #3b82f6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 6px 12px;
+  overflow-x: auto;
+}
+.dev-bar-content.hidden { display: none; }
+.dev-bar-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 2px 12px 2px 0;
+  border-right: 1px solid #1e293b;
+  margin-right: 12px;
+  white-space: nowrap;
+}
+.dev-bar-row:last-child { border-right: none; }
+.dev-bar-label {
+  color: #64748b;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dev-bar-value { color: #e2e8f0; }
+.dev-bar-guest { color: #f59e0b; }

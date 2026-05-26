@@ -1,0 +1,41 @@
+<% content_for :title, "#{@memory.display_title} | デジタル記念館" %>
+
+<div class="memorial-shared-page">
+  <div class="memorial-hero" style="margin-bottom: 32px;">
+    <i class="fas fa-heart" style="font-size: 28px; color: var(--teal); margin-bottom: 12px;"></i>
+    <h1 class="memorial-title"><%= @memory.display_title %></h1>
+    <p class="memorial-subtitle"><%= @memory.created_at.strftime("%Y年%m月%d日") %></p>
+  </div>
+
+  <%# 写真 %>
+  <% if @memory.photo.attached? %>
+    <%= image_tag @memory.photo.variant(resize_to_limit: [700, 600]),
+          style: "width: 100%; border-radius: var(--radius); margin-bottom: 24px; display: block;",
+          alt: @memory.display_title %>
+  <% end %>
+
+  <%# AI追悼文 %>
+  <% if @memory.ai_summary.present? %>
+    <div class="memorial-ai-summary">
+      <%= @memory.ai_summary %>
+    </div>
+  <% end %>
+
+  <%# エピソード %>
+  <% text = @memory.description.presence || @memory.comment.presence %>
+  <% if text.present? %>
+    <div class="memory-detail-comment">
+      <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--navy);">エピソード・思い出</h2>
+      <p style="white-space: pre-wrap; line-height: 1.8;"><%= text %></p>
+    </div>
+  <% end %>
+
+  <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 0.5px solid var(--border);">
+    <p style="font-size: 13px; color: var(--text-sub);">
+      遺品AI査定 — デジタル記念館
+    </p>
+    <%= link_to "無料で記念館を作る", new_user_registration_path,
+          class: "btn btn-outline",
+          style: "margin-top: 12px;" %>
+  </div>
+</div>

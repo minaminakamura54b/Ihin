@@ -1,0 +1,40 @@
+<div class="digital-item digital-item-<%= item.status %>" id="digital_item_<%= item.id %>">
+  <div class="digital-item-left">
+    <%# ステータストグルボタン %>
+    <%= button_to toggle_status_digital_item_path(item),
+          method: :patch,
+          class: "status-toggle status-toggle-#{item.status}",
+          form: { data: { turbo_stream: true } },
+          title: { "unchecked" => "未対応", "in_progress" => "対応中", "completed" => "完了" }[item.status] do %>
+      <% case item.status %>
+      <% when "unchecked"   %><i class="fas fa-circle"></i>
+      <% when "in_progress" %><i class="fas fa-spinner"></i>
+      <% when "completed"   %><i class="fas fa-check-circle"></i>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="digital-item-body">
+    <span class="digital-item-name <%= item.completed? ? 'strikethrough' : '' %>">
+      <%= item.service_name %>
+    </span>
+    <% if item.notes.present? %>
+      <p class="digital-item-notes"><%= item.notes %></p>
+    <% end %>
+  </div>
+
+  <div class="digital-item-right">
+    <span class="priority-badge priority-<%= item.priority %>"><%= item.priority_label %></span>
+    <% if item.status != "unchecked" %>
+      <span class="status-label status-label-<%= item.status %>">
+        <%= { "in_progress" => "対応中", "completed" => "完了" }[item.status] %>
+      </span>
+    <% end %>
+    <%= button_to digital_item_path(item),
+          method: :delete,
+          class: "btn-icon text-danger",
+          form: { data: { turbo_confirm: "「#{item.service_name}」を削除しますか？", turbo_stream: true } } do %>
+      <i class="fas fa-trash-alt"></i>
+    <% end %>
+  </div>
+</div>

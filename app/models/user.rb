@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :items, dependent: :destroy
   has_many :todo_items, dependent: :destroy
   has_many :memories, dependent: :destroy
+  has_many :digital_items, dependent: :destroy
+  has_many :bulk_assessments, dependent: :destroy
   has_one :business, dependent: :destroy
   has_many :inquiries, dependent: :destroy
   has_many :consultations, dependent: :destroy

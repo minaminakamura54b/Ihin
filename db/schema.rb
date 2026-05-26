@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_085209) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_25_103952) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_085209) do
     t.datetime "created_at", null: false
     t.text "error_message"
     t.integer "estimated_price"
+    t.text "memo"
     t.string "name"
     t.integer "position", default: 1, null: false
     t.integer "status", default: 0, null: false
@@ -105,6 +106,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_085209) do
     t.index ["user_id"], name: "index_consultations_on_user_id"
   end
 
+  create_table "digital_items", force: :cascade do |t|
+    t.integer "category", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.text "notes"
+    t.integer "priority", default: 2, null: false
+    t.string "service_name", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id", "category"], name: "index_digital_items_on_user_id_and_category"
+    t.index ["user_id", "status"], name: "index_digital_items_on_user_id_and_status"
+    t.index ["user_id"], name: "index_digital_items_on_user_id"
+  end
+
   create_table "guest_assessment_sessions", force: :cascade do |t|
     t.integer "assessed_count", default: 0, null: false
     t.datetime "created_at", null: false
@@ -140,12 +155,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_085209) do
   end
 
   create_table "memories", force: :cascade do |t|
+    t.text "ai_summary"
     t.text "comment"
     t.datetime "created_at", null: false
+    t.text "description"
     t.bigint "item_id"
+    t.string "share_token"
+    t.boolean "shared", default: false, null: false
+    t.string "title"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["item_id"], name: "index_memories_on_item_id"
+    t.index ["share_token"], name: "index_memories_on_share_token", unique: true
     t.index ["user_id"], name: "index_memories_on_user_id"
   end
 
@@ -308,6 +329,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_085209) do
   add_foreign_key "bulk_assessments", "users"
   add_foreign_key "businesses", "users"
   add_foreign_key "consultations", "users"
+  add_foreign_key "digital_items", "users"
   add_foreign_key "inquiries", "businesses"
   add_foreign_key "inquiries", "items"
   add_foreign_key "inquiries", "users"

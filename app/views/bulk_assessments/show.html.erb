@@ -37,8 +37,16 @@
   <%# 合計価格（完了時のみ） %>
   <% if @bulk.completed? && @bulk.total_estimated_price > 0 %>
     <div class="bulk-total-price">
-      <span class="total-label">合計推定価格</span>
-      <span class="total-value">約 <%= number_with_delimiter(@bulk.total_estimated_price) %>円</span>
+      <div class="total-row">
+        <span class="total-label">合計推定価格</span>
+        <span class="total-value">約 <%= number_with_delimiter(@bulk.total_estimated_price) %>円</span>
+      </div>
+      <% if @bulk.total_sell_price > 0 %>
+        <div class="total-row total-sell-row">
+          <span class="total-label">全部売った場合</span>
+          <span class="total-value total-sell-value">約 <%= number_with_delimiter(@bulk.total_sell_price) %>円</span>
+        </div>
+      <% end %>
     </div>
   <% end %>
 
@@ -50,11 +58,10 @@
           <span class="bulk-result-number"><%= item.position %></span>
           <h3><%= item.display_name %></h3>
           <span class="bulk-status-badge status-<%= item.status %>">
-            <% case item.status %>
-            <% when "pending"    then %><i class="fas fa-clock"></i> 待機中
-            <% when "processing" then %><i class="fas fa-spinner fa-spin"></i> 査定中
-            <% when "completed"  then %><i class="fas fa-check"></i> 完了
-            <% when "failed"     then %><i class="fas fa-exclamation-triangle"></i> 失敗
+            <% if item.pending?    %><i class="fas fa-clock"></i> 待機中
+            <% elsif item.processing? %><i class="fas fa-spinner fa-spin"></i> 査定中
+            <% elsif item.completed?  %><i class="fas fa-check"></i> 完了
+            <% elsif item.failed?     %><i class="fas fa-exclamation-triangle"></i> 失敗
             <% end %>
           </span>
         </div>
@@ -105,6 +112,20 @@
   </div>
 
   <% if @bulk.completed? %>
+    <%# 業者相談ボタン %>
+    <div class="bulk-business-cta">
+      <div class="business-cta-inner">
+        <i class="fas fa-store business-cta-icon"></i>
+        <div class="business-cta-text">
+          <strong>遺品の買取・整理を業者に相談しませんか？</strong>
+          <p>地域の買取業者・遺品整理業者をAIがご紹介します。無料でご利用いただけます。</p>
+        </div>
+        <%= link_to businesses_path, class: "btn btn-primary" do %>
+          <i class="fas fa-search"></i> 業者に相談する
+        <% end %>
+      </div>
+    </div>
+
     <div class="bulk-cta">
       <% if user_signed_in? %>
         <%= link_to "もう一度一括査定する", new_bulk_assessment_path, class: "btn btn-outline" %>

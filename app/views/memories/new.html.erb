@@ -3,19 +3,17 @@
 <div class="page-container page-narrow">
   <div class="page-header">
     <h1>思い出を記録する</h1>
-    <p class="page-subtitle">写真とコメントで思い出を残しましょう</p>
+    <p class="page-subtitle">写真とエピソードで大切な記憶を残しましょう</p>
   </div>
 
   <%= form_with(model: @memory) do |f| %>
-    <% if @memory.errors.any? %>
-      <div class="error-messages">
-        <ul>
-          <% @memory.errors.each do |error| %>
-            <li><%= error.full_message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
+    <%= render "devise/shared/error_messages", resource: @memory %>
+
+    <div class="form-group">
+      <%= f.label :title, "タイトル（任意）", class: "form-label" %>
+      <%= f.text_field :title, class: "form-input",
+            placeholder: "例：お父さんの形見の時計" %>
+    </div>
 
     <% if @memory.item_id.present? %>
       <%= f.hidden_field :item_id %>
@@ -23,8 +21,8 @@
       <div class="form-group">
         <%= f.label :item_id, "関連する遺品（任意）", class: "form-label" %>
         <%= f.select :item_id,
-            current_user.items.order(:name).map { |i| [i.name || "名前未設定", i.id] },
-            { include_blank: "選択してください" }, class: "form-select" %>
+              current_user.items.order(:name).map { |i| [i.name || "名前未設定", i.id] },
+              { include_blank: "選択してください" }, class: "form-select" %>
       </div>
     <% end %>
 
@@ -34,9 +32,10 @@
     </div>
 
     <div class="form-group">
-      <%= f.label :comment, "エピソード・思い出", class: "form-label" %>
-      <%= f.text_area :comment, class: "form-input form-textarea", rows: 5,
-          placeholder: "この品物にまつわる思い出やエピソードを書いてください..." %>
+      <%= f.label :description, "エピソード・思い出", class: "form-label" %>
+      <%= f.text_area :description, class: "form-input form-textarea", rows: 6,
+            placeholder: "この品物にまつわる思い出やエピソードを書いてください…" %>
+      <p class="form-hint">登録後、AIに追悼文を生成してもらうこともできます</p>
     </div>
 
     <div class="form-actions">

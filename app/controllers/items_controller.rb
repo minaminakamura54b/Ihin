@@ -1,5 +1,6 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: [ :show, :edit, :update, :destroy, :assess, :update_action ]
+  before_action :set_item,          only: [ :show, :edit, :update, :destroy, :assess, :update_action ]
+  before_action :check_assess_limit, only: [ :assess ]
 
   def index
     @items = current_user.items
@@ -85,6 +86,27 @@ class ItemsController < ApplicationController
 
   def set_item
     @item = current_user.items.find(params[:id])
+  end
+
+  # 過去1時間の査定回数が上限に達している場合はアクセスを制限する
+  def check_assess_limit
+    recent_count = current_user.items
+      .where("updated_at > ?", 1.hour.ago)
+      .where.not(ai_result: nil)
+      .count
+    return if recent_count < 10
+
+    message = "1時間あたりの査定回数の上限に達しました。しばらく時間をおいてください。"
+    respond_to do |format|
+      format.html { redirect_to items_path, alert: message }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.replace(
+          "assessment_result",
+          partial: "items/assessment_error",
+          locals: { error: message }
+        )
+      end
+    end
   end
 
   def item_params

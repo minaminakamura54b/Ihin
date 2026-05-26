@@ -53,7 +53,7 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
-  # 開発環境でもSolid Queueを使う（asyncアダプターより信頼性が高い）
+  # 開発環境でもSolid Queueを使う（本番と同じ挙動で検証できる）
   config.active_job.queue_adapter = :solid_queue
 
   # Highlight code that triggered redirect in logs.

@@ -1,6 +1,6 @@
 <div class="bulk-item-card" data-bulk-assessment-target="item">
   <div class="bulk-item-header">
-    <h3 class="bulk-item-title">遺品 <span data-bulk-assessment-target="itemNumber"><%= index + 1 %></span></h3>
+    <h3 class="bulk-item-title">商品 <span data-bulk-assessment-target="itemNumber"><%= index + 1 %></span></h3>
     <% if index > 0 %>
       <button type="button" class="btn-icon btn-danger-ghost"
               data-action="click->bulk-assessment#removeItem"
@@ -17,13 +17,13 @@
   </div>
 
   <div class="form-group">
-    <label class="form-label">品物の名前（任意）</label>
+    <label class="form-label">商品名（任意）</label>
     <input type="text" name="items[<%= index %>][name]" class="form-input"
            placeholder="例：腕時計、着物、カメラなど">
   </div>
 
   <div class="form-group">
-    <label class="form-label">写真（最大5枚）</label>
+    <label class="form-label">この商品の写真（1〜5枚）</label>
     <div class="upload-area upload-area-sm" data-controller="item-form"
          data-action="dragover->item-form#dragOver drop->item-form#drop"
          data-item-form-target="uploadArea">
@@ -40,5 +40,12 @@
              data-action="change->item-form#preview"
              data-item-form-target="fileInput">
     </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">メモ（任意）</label>
+    <textarea name="items[<%= index %>][memo]" class="form-input"
+              rows="2" maxlength="500"
+              placeholder="状態・入手経緯など気になることをメモしておけます"></textarea>
   </div>
 </div>

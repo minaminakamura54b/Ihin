@@ -18,7 +18,7 @@
             <span><%= current_user.items.count %>点登録済み</span>
             <span><%= current_user.items.assessed.count %>点査定済み</span>
           </div>
-          <%= link_to "写真を追加する", new_item_path, class: "card-btn btn btn-primary" %>
+          <%= link_to "まとめて査定する", new_bulk_assessment_path, class: "card-btn btn btn-primary" %>
         </div>
       </div>
 

@@ -1,0 +1,43 @@
+<% if Rails.env.development? %>
+  <div id="dev-bar" data-controller="dev-bar">
+    <button class="dev-bar-toggle" data-action="dev-bar#toggle" title="デバッグ情報">
+      <i class="fas fa-bug"></i>
+    </button>
+    <div class="dev-bar-content" data-dev-bar-target="content">
+      <div class="dev-bar-row">
+        <span class="dev-bar-label">URL</span>
+        <span class="dev-bar-value"><%= request.path %></span>
+      </div>
+      <div class="dev-bar-row">
+        <span class="dev-bar-label">Controller</span>
+        <span class="dev-bar-value"><%= controller_path %>#<%= action_name %></span>
+      </div>
+      <div class="dev-bar-row">
+        <span class="dev-bar-label">Format</span>
+        <span class="dev-bar-value"><%= request.format.symbol %></span>
+      </div>
+      <% if user_signed_in? %>
+        <div class="dev-bar-row">
+          <span class="dev-bar-label">User</span>
+          <span class="dev-bar-value">#<%= current_user.id %> <%= current_user.email %> (<%= current_user.role %>)</span>
+        </div>
+      <% else %>
+        <div class="dev-bar-row">
+          <span class="dev-bar-label">User</span>
+          <span class="dev-bar-value dev-bar-guest">ゲスト（session: <%= session[:guest_token]&.slice(0,8) %>...）</span>
+        </div>
+      <% end %>
+      <% debug_params = params.to_unsafe_h.except("controller", "action", "authenticity_token") %>
+      <% if debug_params.any? %>
+        <div class="dev-bar-row">
+          <span class="dev-bar-label">Params</span>
+          <span class="dev-bar-value"><%= debug_params.inspect.truncate(120) %></span>
+        </div>
+      <% end %>
+      <div class="dev-bar-row">
+        <span class="dev-bar-label">Jobs (queued)</span>
+        <span class="dev-bar-value"><%= SolidQueue::Job.where(finished_at: nil).where.not(scheduled_at: nil..Time.current).count rescue '?' %> / <%= SolidQueue::Job.count rescue '?' %> total</span>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -1,15 +1,20 @@
-<% content_for :title, "思い出 | 遺品AI査定" %>
+<% content_for :title, "#{@memory.display_title} | 遺品AI査定" %>
 
 <div class="page-container page-narrow">
   <div class="breadcrumb">
-    <%= link_to "思い出ボックス", memories_path %> &rsaquo; 思い出の記録
+    <%= link_to "デジタル記念館", memories_path %> &rsaquo; <%= @memory.display_title %>
   </div>
 
   <div class="memory-detail">
+    <%# タイトル %>
+    <h1 style="font-size: 22px; color: var(--navy); margin-bottom: 16px;"><%= @memory.display_title %></h1>
+
+    <%# 写真 %>
     <% if @memory.photo.attached? %>
-      <%= image_tag @memory.photo.variant(resize_to_limit: [600, 500]), class: "memory-detail-photo" %>
+      <%= image_tag @memory.photo.variant(resize_to_limit: [700, 600]), class: "memory-detail-photo" %>
     <% end %>
 
+    <%# 関連遺品 %>
     <% if @memory.item %>
       <div class="memory-item-link">
         <i class="fas fa-box"></i>
@@ -17,17 +22,69 @@
       </div>
     <% end %>
 
-    <div class="memory-detail-comment">
-      <p><%= @memory.comment %></p>
-    </div>
+    <%# エピソード %>
+    <% text = @memory.description.presence || @memory.comment.presence %>
+    <% if text.present? %>
+      <div class="memory-detail-comment">
+        <p style="white-space: pre-wrap;"><%= text %></p>
+      </div>
+    <% end %>
+
+    <%# AI追悼文 %>
+    <% if @memory.ai_summary.present? %>
+      <div class="memorial-ai-summary">
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px;"><i class="fas fa-robot"></i> AIが生成した追悼文</p>
+        <%= @memory.ai_summary %>
+      </div>
+    <% end %>
 
     <p class="memory-detail-date"><%= @memory.created_at.strftime("%Y年%m月%d日") %></p>
 
-    <div class="form-actions">
-      <%= link_to "編集", edit_memory_path(@memory), class: "btn btn-outline" %>
+    <%# アクションボタン群 %>
+    <div class="form-actions" style="flex-wrap: wrap; gap: 10px;">
+      <%# AI追悼文を生成 %>
+      <%= button_to "AIで追悼文を生成",
+            generate_ai_summary_memory_path(@memory),
+            method: :post,
+            class: "btn btn-outline",
+            data: { turbo_confirm: "AIが追悼文を生成します。既存の追悼文は上書きされます。" } %>
+
+      <%# 家族共有トグル %>
+      <% if @memory.shared? %>
+        <div class="share-box" style="flex: 1; min-width: 240px;">
+          <p style="font-size: 13px; font-weight: 600; color: var(--teal);">
+            <i class="fas fa-share-alt"></i> 共有URLが有効です
+          </p>
+          <div class="share-url-row">
+            <input type="text" class="share-url-input" readonly
+                   value="<%= shared_memory_url(@memory.share_token) %>"
+                   id="share_url_<%= @memory.id %>">
+            <button type="button" class="btn btn-outline btn-sm"
+                    onclick="navigator.clipboard.writeText(document.getElementById('share_url_<%= @memory.id %>').value); this.textContent='コピーしました'">
+              URLをコピー
+            </button>
+          </div>
+          <%= button_to "共有を停止する",
+                toggle_share_memory_path(@memory),
+                method: :patch,
+                class: "btn btn-ghost btn-sm",
+                style: "margin-top: 8px;",
+                data: { turbo_confirm: "共有を停止すると、共有URLにアクセスできなくなります。" } %>
+        </div>
+      <% else %>
+        <%= button_to "家族に共有する",
+              toggle_share_memory_path(@memory),
+              method: :patch,
+              class: "btn btn-outline",
+              data: { turbo_confirm: "共有URLを発行します。URLを知っている人なら誰でも閲覧できます。" } %>
+      <% end %>
+    </div>
+
+    <div class="form-actions" style="margin-top: 8px;">
+      <%= link_to "編集", edit_memory_path(@memory), class: "btn btn-ghost" %>
       <%= button_to "削除", memory_path(@memory), method: :delete,
-          class: "btn btn-danger",
-          data: { turbo_confirm: "削除しますか？" } %>
+            class: "btn btn-danger",
+            data: { turbo_confirm: "削除しますか？" } %>
     </div>
   </div>
 </div>

@@ -1,0 +1,116 @@
+<% content_for :title, "デジタル遺品整理 | 遺品AI査定" %>
+
+<div class="page-container">
+  <div class="page-header">
+    <h1><i class="fas fa-mobile-alt"></i> デジタル遺品整理</h1>
+    <p class="page-subtitle">故人のSNS・サブスク・デバイスを整理しましょう</p>
+  </div>
+
+  <%# 完了率プログレスバー %>
+  <div class="digital-progress-card" id="digital_progress">
+    <% pct = @total > 0 ? (@completed.to_f / @total * 100).round : 0 %>
+    <div class="digital-progress-header">
+      <span class="progress-label"><%= @completed %>/<%= @total %>件 完了</span>
+      <span class="progress-pct"><%= pct %>%</span>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" style="width: <%= pct %>%"></div>
+    </div>
+    <% if pct == 100 && @total > 0 %>
+      <p class="progress-complete-msg"><i class="fas fa-check-circle"></i> すべての整理が完了しました！</p>
+    <% end %>
+  </div>
+
+  <%# AI生成ボタン %>
+  <div class="digital-ai-section">
+    <%= button_to "AIにリストを作ってもらう", ai_generate_digital_items_path,
+          method: :post,
+          class: "btn btn-primary",
+          data: { turbo_confirm: "AIがよく使われるデジタルサービスのリストを自動生成します。既存のリストは変わりません。実行しますか？" } %>
+    <p class="form-hint">よく使われるSNS・サブスク・デバイスを自動でリストアップします</p>
+  </div>
+
+  <%# カテゴリタブ %>
+  <div class="filter-tabs" style="margin-bottom: 16px;">
+    <% DigitalItem.categories.keys.each do |cat| %>
+      <% count = (@by_category[cat] || []).count %>
+      <%= link_to digital_items_path(category: cat),
+            class: "filter-tab #{@active_tab == cat ? 'active' : ''}",
+            id: "tab_#{cat}" do %>
+        <i class="fas <%= DigitalItem::CATEGORY_ICONS[cat] %>"></i>
+        <%= DigitalItem::CATEGORY_LABELS[cat] %>
+        <span class="tab-count"><%= count %></span>
+      <% end %>
+    <% end %>
+  </div>
+
+  <%# アイテムリスト %>
+  <div id="digital_items_list">
+    <% items_in_tab = (@by_category[@active_tab] || []).sort_by { |i| [i.priority, i.created_at] } %>
+    <% if items_in_tab.any? %>
+      <div class="digital-items-list">
+        <% items_in_tab.each do |item| %>
+          <%= render "digital_item", item: item %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <p>このカテゴリにはまだ項目がありません</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# 手動追加フォーム %>
+  <div class="digital-add-section" id="digital_item_form">
+    <h2 class="section-title"><i class="fas fa-plus-circle"></i> 手動で追加</h2>
+    <%= form_with model: DigitalItem.new, url: digital_items_path do |f| %>
+      <div class="form-row">
+        <div class="form-group form-group-grow">
+          <%= f.label :service_name, "サービス名", class: "form-label" %>
+          <%= f.text_field :service_name, class: "form-input",
+                placeholder: "例：LINE、Netflix、iPhoneなど" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :category, "カテゴリ", class: "form-label" %>
+          <%= f.select :category,
+                DigitalItem::CATEGORY_LABELS.map { |k, v| [v, k] },
+                { selected: @active_tab },
+                class: "form-select" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :priority, "優先度", class: "form-label" %>
+          <%= f.select :priority,
+                [["高", 1], ["中", 2], ["低", 3]],
+                { selected: 2 },
+                class: "form-select" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label :notes, "メモ（任意）", class: "form-label" %>
+        <%= f.text_area :notes, class: "form-input", rows: 2,
+              placeholder: "アカウント情報や対応方法など" %>
+      </div>
+      <div class="form-actions">
+        <%= f.submit "追加する", class: "btn btn-outline" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+.digital-progress-card { background: white; border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; }
+.digital-progress-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
+.progress-pct { color: var(--teal); }
+.progress-complete-msg { color: var(--teal); font-weight: 600; margin-top: 10px; font-size: 14px; }
+.digital-ai-section { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.digital-ai-section .form-hint { margin: 0; }
+.tab-count { background: var(--bg); border-radius: 999px; padding: 0 6px; font-size: 11px; margin-left: 4px; }
+.filter-tab.active .tab-count { background: rgba(255,255,255,0.25); }
+.digital-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.digital-add-section { background: white; border-radius: var(--radius); padding: 24px; margin-top: 24px; }
+.form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.form-group-grow { flex: 1; min-width: 160px; }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-sub); }
+.empty-state i { font-size: 32px; margin-bottom: 12px; display: block; }
+</style>

@@ -1,23 +1,49 @@
-<% content_for :title, "思い出ボックス | 遺品AI査定" %>
+<% content_for :title, "デジタル記念館 | 遺品AI査定" %>
 
 <div class="page-container">
-  <div class="page-header">
-    <div>
-      <h1>思い出ボックス</h1>
-      <p class="page-subtitle">大切な遺品の思い出を記録しておけます</p>
-    </div>
-    <%= link_to new_memory_path, class: "btn btn-primary" do %>
+  <%# 記念館ヒーロー %>
+  <div class="memorial-hero">
+    <i class="fas fa-heart" style="font-size: 32px; color: var(--teal); margin-bottom: 12px;"></i>
+    <h1 class="memorial-title">デジタル記念館</h1>
+    <p class="memorial-subtitle">大切な方との思い出を、写真とエピソードで永久保存</p>
+    <%= link_to new_memory_path, class: "btn btn-primary", style: "margin-top: 16px;" do %>
       <i class="fas fa-plus"></i> 思い出を追加
     <% end %>
   </div>
 
+  <%# AIによる追悼文（ある場合のみ） %>
+  <% if @ai_summary.present? %>
+    <div class="memorial-ai-summary">
+      <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px;"><i class="fas fa-robot"></i> AIが生成した追悼文</p>
+      <%= @ai_summary %>
+    </div>
+  <% end %>
+
   <% if @memories.any? %>
-    <div class="memories-grid">
-      <%= render @memories %>
+    <div class="memorial-grid">
+      <% @memories.each do |memory| %>
+        <%= link_to memory_path(memory), class: "memorial-card" do %>
+          <% if memory.photo.attached? %>
+            <%= image_tag memory.photo.variant(resize_to_fill: [300, 300]), class: "memorial-card-photo", alt: memory.display_title %>
+          <% else %>
+            <div class="memorial-card-photo" style="background: var(--bg); display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-image" style="font-size: 32px; color: var(--border);"></i>
+            </div>
+          <% end %>
+          <div class="memorial-card-body">
+            <p class="memorial-card-title"><%= memory.display_title %></p>
+            <% text = memory.description.presence || memory.comment.presence %>
+            <% if text.present? %>
+              <p class="memorial-card-desc"><%= truncate(text, length: 50) %></p>
+            <% end %>
+            <% if memory.shared? %>
+              <span style="font-size: 11px; color: var(--teal);"><i class="fas fa-share-alt"></i> 共有中</span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
     </div>
-    <div class="pagination">
-      <%= paginate @memories %>
-    </div>
+    <div class="pagination"><%= paginate @memories %></div>
   <% else %>
     <div class="empty-state">
       <div class="empty-icon">💝</div>

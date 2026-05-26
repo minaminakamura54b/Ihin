@@ -7,6 +7,21 @@
     <p class="page-subtitle">写真を1枚撮るだけでAIが品物を識別し、相場価格を査定します</p>
   </div>
 
+  <%# 残り査定数・上限バナー %>
+  <% unless user_signed_in? %>
+    <% if @remaining.to_i > 0 %>
+      <div class="guest-limit-banner">
+        <i class="fas fa-gift"></i>
+        残り <strong><%= @remaining %>点</strong> まで無料で査定できます
+      </div>
+    <% elsif @remaining == 0 %>
+      <div class="guest-limit-banner guest-limit-banner-full">
+        <i class="fas fa-lock"></i> 無料査定の上限（<%= AppSetting.guest_assessment_limit %>点）に達しました。
+        <%= link_to "無料登録で無制限に使う", new_user_registration_path, class: "link-white" %>
+      </div>
+    <% end %>
+  <% end %>
+
   <div data-controller="assess">
   <%= form_tag guest_assessment_path, method: :post, multipart: true,
       data: { controller: "item-form", turbo: false, action: "submit->assess#submit" } do %>

@@ -1,12 +1,24 @@
-<% content_for :title, "複数遺品の一括査定 | 遺品AI査定" %>
+<% content_for :title, "複数商品の一括査定 | 遺品AI査定" %>
 
 <div class="page-container page-narrow">
   <div class="page-header">
     <% unless user_signed_in? %>
       <div class="guest-badge">登録不要・無料</div>
     <% end %>
-    <h1>複数遺品の一括査定</h1>
-    <p class="page-subtitle">最大5点の遺品をまとめてAIが査定します。複数の角度から撮影すると精度が上がります。</p>
+    <h1>複数商品を一括査定</h1>
+    <p class="page-subtitle">
+      異なる商品を最大5点まで登録して、まとめてAIが査定します。<br>
+      <strong>商品ごとに別々の写真を添付できます。</strong>
+    </p>
+  </div>
+
+  <%# 使い方ガイド %>
+  <div class="bulk-how-to">
+    <div class="how-to-step"><span class="how-to-num">1</span> 商品名と写真を入力</div>
+    <div class="how-to-arrow">→</div>
+    <div class="how-to-step"><span class="how-to-num">2</span>「商品を追加」で最大5点登録</div>
+    <div class="how-to-arrow">→</div>
+    <div class="how-to-step"><span class="how-to-num">3</span> まとめて査定開始</div>
   </div>
 
   <% unless user_signed_in? %>
@@ -56,15 +68,15 @@
         <button type="button" class="btn btn-outline btn-full"
                 data-bulk-assessment-target="addButton"
                 data-action="click->bulk-assessment#addItem">
-          <i class="fas fa-plus"></i> 遺品を追加（最大5点）
+          <i class="fas fa-plus"></i> 別の商品を追加する
         </button>
-        <p class="form-hint" data-bulk-assessment-target="countText">現在 1点 登録中</p>
+        <p class="form-hint" data-bulk-assessment-target="countText">現在 1点 登録中（最大5点）</p>
       </div>
 
       <div class="form-actions">
         <button type="submit" class="btn btn-primary btn-full"
                 data-bulk-assessment-target="submitButton">
-          <i class="fas fa-robot"></i> 一括査定を開始する
+          <i class="fas fa-robot"></i> まとめて査定開始
         </button>
       </div>
     </form>
@@ -76,3 +88,24 @@
     <% end %>
   </div>
 </div>
+
+<style>
+.bulk-how-to {
+  display: flex; align-items: center; gap: 8px;
+  background: white; border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.how-to-step { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
+.how-to-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--navy); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.how-to-arrow { color: var(--text-sub); font-size: 12px; }
+@media (max-width: 520px) {
+  .bulk-how-to { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .how-to-arrow { display: none; }
+}
+</style>

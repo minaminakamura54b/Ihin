@@ -1,3 +1,5 @@
+require "image_processing/mini_magick"
+
 class AiAssessmentService
   MAX_IMAGES   = 5
   API_MAX_BYTES = 3_500_000  # base64後に5MB以内に収まるよう余裕を持たせる
@@ -34,7 +36,7 @@ class AiAssessmentService
     messages = build_messages(processed_imgs)
 
     response = @client.messages.create(
-      model: "claude-opus-4-5",
+      model: "claude-sonnet-4-5",
       max_tokens: 1024,
       messages: messages
     )
@@ -58,23 +60,43 @@ class AiAssessmentService
   def image_for_api(image_data)
     return nil unless image_data
 
-    img = MiniMagick::Image.read(image_data)
-    img.format "jpeg"
-    img.resize "1600x1600>"
-    img.quality 82
+    source_tmp  = nil
+    result_tmp  = nil
+    result_tmp2 = nil
 
-    blob = img.to_blob
+    # バイナリデータを一時ファイルに書き出してからImageProcessingに渡す
+    source_tmp = Tempfile.new([ "ihin_src", "" ])
+    source_tmp.binmode
+    source_tmp.write(image_data)
+    source_tmp.flush
+
+    result_tmp = ImageProcessing::MiniMagick
+      .source(source_tmp.path)
+      .resize_to_fit(1600, 1600)
+      .convert("jpeg")
+      .saver(quality: 82)
+      .call
+
+    blob = File.binread(result_tmp.path)
 
     # それでも大きい場合はさらに圧縮
     if blob.bytesize > API_MAX_BYTES
-      img.resize "1000x1000>"
-      img.quality 72
-      blob = img.to_blob
+      result_tmp2 = ImageProcessing::MiniMagick
+        .source(result_tmp.path)
+        .resize_to_fit(1000, 1000)
+        .convert("jpeg")
+        .saver(quality: 72)
+        .call
+      blob = File.binread(result_tmp2.path)
     end
 
     { data: blob, content_type: "image/jpeg" }
   rescue
     nil
+  ensure
+    source_tmp&.close!
+    result_tmp&.close!
+    result_tmp2&.close!
   end
 
   def build_messages(processed_imgs)
@@ -136,9 +158,24 @@ class AiAssessmentService
 
   def parse_response(text)
     json_text = text.match(/\{.*\}/m)&.to_s
-    return { success: false, error: "AI応答の解析に失敗しました" } unless json_text
+    unless json_text
+      return {
+        success: false,
+        error: "AIからの応答を解析できませんでした。もう一度お試しください。"
+      }
+    end
 
     data = JSON.parse(json_text)
+
+    # 必須フィールドの存在確認
+    required = %w[item_name estimated_price suggested_action full_assessment]
+    missing  = required.select { |k| data[k].nil? }
+    if missing.any?
+      return {
+        success: false,
+        error: "査定結果が不完全です。もう一度お試しください。"
+      }
+    end
 
     {
       success: true,
@@ -149,6 +186,6 @@ class AiAssessmentService
       raw_data: data
     }
   rescue JSON::ParserError
-    { success: false, error: "JSONの解析に失敗しました" }
+    { success: false, error: "査定結果の解析に失敗しました。もう一度お試しください。" }
   end
 end
