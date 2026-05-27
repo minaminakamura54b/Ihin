@@ -59,7 +59,7 @@ class TodoItem < ApplicationRecord
     { title: "ゲームアカウント・課金情報を整理する",                 category: :digital, priority: 3 },
     { title: "暗号資産（仮想通貨）の有無を確認する",                 category: :digital, priority: 1 },
     { title: "有料アプリ・サブスクの自動更新を停止する",             category: :digital, priority: 2 },
-    { title: "ブログ・ウェブサイトの運営を停止・削除する",            category: :digital, priority: 3 },
+    { title: "ブログ・ウェブサイトの運営を停止・削除する",            category: :digital, priority: 3 }
   ].freeze
 
   def category_label

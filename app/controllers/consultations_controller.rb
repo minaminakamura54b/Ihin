@@ -1,5 +1,5 @@
 class ConsultationsController < ApplicationController
-  before_action :check_consultation_limit, only: [:create]
+  before_action :check_consultation_limit, only: [ :create ]
 
   def index
     @consultations = current_user.consultations.recent

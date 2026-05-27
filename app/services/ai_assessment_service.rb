@@ -123,10 +123,10 @@ class AiAssessmentService
 
   def assessment_prompt(image_count = 0)
     subject = case image_count
-              when 0 then "遺品（#{@item.name}）"
-              when 1 then "この画像に写っている遺品"
-              else "#{image_count}枚の画像に写っている遺品"
-              end
+    when 0 then "遺品（#{@item.name}）"
+    when 1 then "この画像に写っている遺品"
+    else "#{image_count}枚の画像に写っている遺品"
+    end
 
     <<~PROMPT
       あなたは遺品査定の専門家です。#{subject}について、以下の形式で査定結果を日本語でお答えください。

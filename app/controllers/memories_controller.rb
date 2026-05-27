@@ -46,7 +46,7 @@ class MemoriesController < ApplicationController
   def generate_ai_summary
     client = Anthropic::Client.new(api_key: ENV["ANTHROPIC_API_KEY"])
 
-    description_text = [@memory.title, @memory.description, @memory.comment].compact.join("\n")
+    description_text = [ @memory.title, @memory.description, @memory.comment ].compact.join("\n")
     if description_text.blank?
       redirect_to @memory, alert: "エピソードを入力してからAI追悼文を生成してください" and return
     end

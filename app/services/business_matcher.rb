@@ -2,7 +2,7 @@ class BusinessMatcher
   MAX_BUSINESSES = 3
 
   def self.find_for(user, category: nil)
-    businesses = Business.active.where.not(area: [nil, ""])
+    businesses = Business.active.where.not(area: [ nil, "" ])
 
     # エリアでフィルタリング
     if user&.prefecture.present?

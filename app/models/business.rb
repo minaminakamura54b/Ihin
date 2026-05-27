@@ -108,5 +108,4 @@ class Business < ApplicationRecord
       created_at: Time.current.beginning_of_month..Time.current.end_of_month
     ).count < contact_limit
   end
-
 end

@@ -1,10 +1,10 @@
 class BusinessesController < ApplicationController
   skip_before_action :authenticate_user!, only: [ :index, :show, :for_estate_clearance, :for_resellers, :select_type, :email_sent ]
   # 審査待ちページは check_business_approval_status のループ回避のため skip しない（ApplicationControllerで制御済み）
-  before_action :set_business, only: [:show, :edit, :update, :destroy, :subscribe, :unsubscribe, :dashboard]
-  before_action :authorize_business!, only: [:edit, :update, :destroy, :subscribe, :unsubscribe]
-  before_action :require_business_role, only: [:dashboard]
-  before_action :require_business_owner!, only: [:dashboard]
+  before_action :set_business, only: [ :show, :edit, :update, :destroy, :subscribe, :unsubscribe, :dashboard ]
+  before_action :authorize_business!, only: [ :edit, :update, :destroy, :subscribe, :unsubscribe ]
+  before_action :require_business_role, only: [ :dashboard ]
+  before_action :require_business_owner!, only: [ :dashboard ]
 
   def index
     @businesses = BusinessMatcher.find_for(
@@ -102,7 +102,7 @@ class BusinessesController < ApplicationController
     @monthly_new_count = @business.inquiries.where(created_at: this_month).count
     @plan = @business.plan
     limit = @business.contact_limit
-    @remaining_contacts = limit ? [limit - @monthly_new_count, 0].max : nil
+    @remaining_contacts = limit ? [ limit - @monthly_new_count, 0 ].max : nil
     @sidebar_pending = @business.inquiries.pending.includes(:user).order(created_at: :desc).limit(5)
   end
 

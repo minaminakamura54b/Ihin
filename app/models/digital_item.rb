@@ -39,8 +39,8 @@ class DigitalItem < ApplicationRecord
   # デフォルトサービスリスト
   DEFAULT_SERVICES = {
     sns: %w[LINE Instagram Facebook Twitter(X) Gmail Yahoo!メール],
-    subscription: ["Netflix", "Amazon Prime", "Spotify", "Apple Music", "楽天", "Amazon", "各種保険"],
-    device: ["iPhone", "Android", "iPad", "PC", "マイナンバーカード", "各種ポイントカード"]
+    subscription: [ "Netflix", "Amazon Prime", "Spotify", "Apple Music", "楽天", "Amazon", "各種保険" ],
+    device: [ "iPhone", "Android", "iPad", "PC", "マイナンバーカード", "各種ポイントカード" ]
   }.freeze
 
   def category_label

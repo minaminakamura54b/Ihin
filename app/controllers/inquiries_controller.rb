@@ -1,6 +1,6 @@
 class InquiriesController < ApplicationController
   before_action :set_business
-  before_action :set_inquiry, only: [:update]
+  before_action :set_inquiry, only: [ :update ]
 
   def index
     unless @business.user == current_user

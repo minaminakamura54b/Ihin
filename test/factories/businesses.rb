@@ -4,7 +4,7 @@ FactoryBot.define do
     # skip_create + initialize_with で既存レコードを取得・更新して返す
     skip_create
 
-    association :user, factory: [:user, :business_role]
+    association :user, factory: [ :user, :business_role ]
     name            { "テスト遺品整理業者" }
     area            { "神奈川県横浜市" }
     plan            { :free }

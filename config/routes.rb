@@ -7,9 +7,9 @@ Rails.application.routes.draw do
 
   root "home#index"
 
-  resource :guest_assessment, only: [:new, :create]
+  resource :guest_assessment, only: [ :new, :create ]
 
-  resources :bulk_assessments, only: [:new, :create, :show] do
+  resources :bulk_assessments, only: [ :new, :create, :show ] do
     member do
       get :progress
       post :retry_item
@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   end
   get "shared/:token", to: "memories#shared", as: :shared_memory
 
-  resources :digital_items, only: [:index, :create, :destroy] do
+  resources :digital_items, only: [ :index, :create, :destroy ] do
     member do
       patch :toggle_status
     end
@@ -46,11 +46,11 @@ Rails.application.routes.draw do
     end
   end
 
-  resource :ai_consultation, only: [:show]
-  resources :consultations, only: [:create, :index]
+  resource :ai_consultation, only: [ :show ]
+  resources :consultations, only: [ :create, :index ]
 
   resources :businesses do
-    resources :inquiries, only: [:create, :index, :update]
+    resources :inquiries, only: [ :create, :index, :update ]
     member do
       post :subscribe
       delete :unsubscribe
@@ -76,7 +76,7 @@ Rails.application.routes.draw do
       end
     end
     resources :inquiries
-    resources :settings, only: [:index, :update]
+    resources :settings, only: [ :index, :update ]
   end
 
   namespace :stripe do
