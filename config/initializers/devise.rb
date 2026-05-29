@@ -143,6 +143,8 @@ Devise.setup do |config|
   # without confirming their account.
   # Default is 0.days, meaning the user cannot access the website without
   # confirming their account.
+  # 業者ユーザーは管理者承認で制御するため3日間の猶予を維持する
+  # familyユーザーは User#active_for_authentication? で猶予なしを強制
   config.allow_unconfirmed_access_for = 3.days
 
   # A period that the user is allowed to confirm their account before their
@@ -151,7 +153,8 @@ Devise.setup do |config|
   # their account can't be confirmed with the token any more.
   # Default is nil, meaning there is no restriction on how long a user can take
   # before confirming their account.
-  config.confirm_within = 7.days
+  # 認証リンクの有効期限：24時間（期限切れ後は再送が必要）
+  config.confirm_within = 24.hours
 
   # If true, requires any email changes to be confirmed (exactly the same way as
   # initial account confirmation) to be applied. Requires additional unconfirmed_email
@@ -166,22 +169,21 @@ Devise.setup do |config|
   # config.confirmation_keys = [:email]
 
   # ==> Configuration for :rememberable
-  # The time the user will be remembered without asking for credentials again.
-  # config.remember_for = 2.weeks
+  # ログイン維持期間：90日（3ヶ月）
+  config.remember_for = 90.days
 
-  # Invalidates all the remember me tokens when the user signs out.
-  config.expire_all_remember_me_on_sign_out = true
+  # ログアウト時は現在のデバイスのみ無効化（他デバイスは維持）
+  config.expire_all_remember_me_on_sign_out = false
 
-  # If true, extends the user's remember period when remembered via cookie.
-  # config.extend_remember_period = false
+  # アクセスのたびに期限を延長する
+  config.extend_remember_period = true
 
-  # Options to be passed to the created cookie. For instance, you can set
-  # secure: true in order to force SSL only cookies.
+  # remember_me クッキーの属性（セキュリティ設定は session_store で一括管理）
   # config.rememberable_options = {}
 
   # ==> Configuration for :validatable
-  # Range for password length.
-  config.password_length = 6..128
+  # パスワード最低文字数：8文字以上
+  config.password_length = 8..128
 
   # Email regex used to validate email formats. It simply asserts that
   # one (and only one) @ exists in the given string. This is mainly
@@ -189,9 +191,8 @@ Devise.setup do |config|
   config.email_regexp = /\A[^@\s]+@[^@\s]+\z/
 
   # ==> Configuration for :timeoutable
-  # The time you want to timeout the user session without activity. After this
-  # time the user will be asked for credentials again. Default is 30 minutes.
-  # config.timeout_in = 30.minutes
+  # 90日間アクセスがなければセッションを無効化
+  config.timeout_in = 90.days
 
   # ==> Configuration for :lockable
   # Defines which strategy will be used to lock an account.
@@ -227,7 +228,8 @@ Devise.setup do |config|
   # Time interval you can reset your password with a reset password key.
   # Don't put a too small interval or your users won't have the time to
   # change their passwords.
-  config.reset_password_within = 6.hours
+  # リセットURLは1時間で失効（セキュリティのため短めに設定）
+  config.reset_password_within = 1.hour
 
   # When set to false, does not sign a user in automatically after their password is
   # reset. Defaults to true, so a user is signed in automatically after a reset.

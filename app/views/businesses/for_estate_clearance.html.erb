@@ -1,4 +1,18 @@
-<% content_for :title, "遺品整理会社の方へ｜遺品AI査定" %>
+<% content_for :title, "遺品整理会社の方へ｜Ihin" %>
+<% content_for :description, "遺品整理会社の方向けの掲載プランをご紹介。AIが査定を終えた遺族と直接つながり、安定した問い合わせを獲得できます。初期費用0円・3ヶ月無料。" %>
+
+<% content_for :json_ld do %>
+  <script type="application/ld+json">
+    <%= {
+      "@context" => "https://schema.org",
+      "@type"    => "BreadcrumbList",
+      "itemListElement" => [
+        { "@type" => "ListItem", "position" => 1, "name" => "トップ",        "item" => root_url },
+        { "@type" => "ListItem", "position" => 2, "name" => "遺品整理会社の方へ", "item" => for_estate_clearance_businesses_url }
+      ]
+    }.to_json.html_safe %>
+  </script>
+<% end %>
 
 <div class="biz-lp">
 

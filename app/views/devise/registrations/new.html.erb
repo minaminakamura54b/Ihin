@@ -37,7 +37,7 @@
 
       <div class="form-group">
         <%= f.label :password, "パスワード", class: "form-label" %>
-        <p class="form-hint"><%= @minimum_password_length %>文字以上</p>
+        <p class="form-hint">8文字以上・大文字（A-Z）と数字（0-9）を各1文字以上含む</p>
         <%= f.password_field :password, autocomplete: "new-password", class: "form-input" %>
       </div>
 

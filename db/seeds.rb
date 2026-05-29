@@ -5,31 +5,40 @@ puts "シードデータを作成中..."
 # ============================================================
 if Rails.env.development?
 
-  # 管理者
-  admin = User.create!(
+  # 開発用パスワード（複雑性要件: 英字+数字+記号）
+  DEV_PASSWORD = "Minami@1"
+
+  # 管理者（確認済みとして作成→ログイン可能）
+  admin = User.new(
     email: "admin@ihin-app.jp",
     name: "管理者",
-    password: "minami",
+    password: DEV_PASSWORD,
     role: :admin
   )
+  admin.skip_confirmation!
+  admin.save!
   puts "管理者: #{admin.email}"
 
-  # 遺族ユーザー（after_createでTodoItemが自動作成される）
-  family = User.create!(
+  # 遺族ユーザー（after_createでTodoItemが自動作成される・確認済み）
+  family = User.new(
     email: "tanaka@example.com",
     name: "田中 花子",
-    password: "minami",
+    password: DEV_PASSWORD,
     role: :family
   )
+  family.skip_confirmation!
+  family.save!
   puts "遺族ユーザー: #{family.email}"
 
-  # 業者ユーザー（after_createで無料プランのBusinessが自動作成される）
-  business_user = User.create!(
+  # 業者ユーザー（after_createで無料プランのBusinessが自動作成される・確認済み）
+  business_user = User.new(
     email: "business@example.com",
     name: "山田 太郎",
-    password: "minami",
+    password: DEV_PASSWORD,
     role: :business
   )
+  business_user.skip_confirmation!
+  business_user.save!
   business_user.business.update!(
     name: "東京遺品整理センター",
     category: :estate_clearance,
@@ -43,12 +52,14 @@ if Rails.env.development?
   puts "業者: #{business_user.email}"
 
   # 追加の業者（一覧ページ用）
-  biz2_user = User.create!(
+  biz2_user = User.new(
     email: "buyback@example.com",
     name: "鈴木 次郎",
-    password: "minami",
+    password: DEV_PASSWORD,
     role: :business
   )
+  biz2_user.skip_confirmation!
+  biz2_user.save!
   biz2_user.business.update!(
     name: "全国買取りハウス",
     category: :buyback,
@@ -59,12 +70,14 @@ if Rails.env.development?
     active: true
   )
 
-  biz3_user = User.create!(
+  biz3_user = User.new(
     email: "lawyer@example.com",
     name: "佐藤 三郎",
-    password: "minami",
+    password: DEV_PASSWORD,
     role: :business
   )
+  biz3_user.skip_confirmation!
+  biz3_user.save!
   biz3_user.business.update!(
     name: "佐藤法律事務所",
     category: :judicial_scrivener,
@@ -94,7 +107,7 @@ if Rails.env.development?
   puts ""
   puts "シードデータの作成が完了しました！"
   puts "━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-  puts "ログイン情報（パスワードはすべて: minami）"
+  puts "ログイン情報（パスワードはすべて: #{DEV_PASSWORD}）"
   puts "  管理者: admin@ihin-app.jp"
   puts "  遺族:   tanaka@example.com"
   puts "  業者:   business@example.com"

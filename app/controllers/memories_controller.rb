@@ -1,7 +1,8 @@
 class MemoriesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [ :shared ]
+  skip_before_action :authenticate_user!, only: [ :shared, :album ]
   before_action :set_memory,      only: [ :show, :edit, :update, :destroy, :generate_ai_summary, :toggle_share ]
   before_action :set_by_token,    only: [ :shared ]
+  before_action :set_album_user,  only: [ :album ]
 
   def index
     @memories   = current_user.memories.includes(:item).order(created_at: :desc).page(params[:page]).per(12)
@@ -83,7 +84,13 @@ class MemoriesController < ApplicationController
 
   # ログイン不要の共有ページ（share_tokenでアクセス）
   def shared
-    # @memory は before_action :set_by_token でセット済み
+    render layout: "memorial"
+  end
+
+  # ログイン不要のアルバムページ（album_tokenでアクセス）
+  def album
+    @memories = @album_user.memories.where(shared: true).includes(:item).order(created_at: :desc)
+    render layout: "memorial"
   end
 
   private
@@ -96,6 +103,12 @@ class MemoriesController < ApplicationController
     @memory = Memory.find_by!(share_token: params[:token], shared: true)
   rescue ActiveRecord::RecordNotFound
     redirect_to root_path, alert: "このページは存在しないか、共有が停止されています"
+  end
+
+  def set_album_user
+    @album_user = User.find_by!(album_token: params[:token])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to root_path, alert: "このアルバムは存在しません"
   end
 
   def memory_params

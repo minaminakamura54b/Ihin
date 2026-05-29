@@ -49,35 +49,78 @@
             class: "btn btn-outline",
             data: { turbo_confirm: "AIが追悼文を生成します。既存の追悼文は上書きされます。" } %>
 
-      <%# 家族共有トグル %>
-      <% if @memory.shared? %>
-        <div class="share-box" style="flex: 1; min-width: 240px;">
-          <p style="font-size: 13px; font-weight: 600; color: var(--teal);">
-            <i class="fas fa-share-alt"></i> 共有URLが有効です
-          </p>
-          <div class="share-url-row">
-            <input type="text" class="share-url-input" readonly
-                   value="<%= shared_memory_url(@memory.share_token) %>"
-                   id="share_url_<%= @memory.id %>">
-            <button type="button" class="btn btn-outline btn-sm"
-                    onclick="navigator.clipboard.writeText(document.getElementById('share_url_<%= @memory.id %>').value); this.textContent='コピーしました'">
-              URLをコピー
+      <%# 家族共有セクション %>
+      <div id="memory_share_<%= @memory.id %>"
+           data-controller="share-memory"
+           data-share-memory-url-value="<%= shared_memory_url(@memory.share_token) %>"
+           data-share-memory-toggle-path-value="<%= toggle_share_memory_path(@memory) %>"
+           data-share-memory-shared-value="<%= @memory.shared? %>">
+
+        <% if @memory.shared? %>
+          <%# 共有中：URL表示とコピーボタン %>
+          <div class="share-active-box" data-share-memory-target="activeBox">
+            <p class="share-active-label">
+              <i class="fas fa-share-alt"></i> 共有URLが有効です
+            </p>
+            <div class="share-url-row">
+              <input type="text" class="share-url-input" readonly
+                     value="<%= shared_memory_url(@memory.share_token) %>"
+                     data-share-memory-target="urlInput">
+              <button type="button" class="btn btn-primary btn-sm"
+                      data-action="share-memory#copyUrl">
+                <i class="fas fa-copy"></i>
+                <span data-share-memory-target="copyLabel">URLをコピー</span>
+              </button>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm"
+                    style="margin-top: 8px;"
+                    data-action="share-memory#stopShare">
+              共有を停止する
             </button>
           </div>
-          <%= button_to "共有を停止する",
-                toggle_share_memory_path(@memory),
-                method: :patch,
-                class: "btn btn-ghost btn-sm",
-                style: "margin-top: 8px;",
-                data: { turbo_confirm: "共有を停止すると、共有URLにアクセスできなくなります。" } %>
-        </div>
-      <% else %>
-        <%= button_to "家族に共有する",
-              toggle_share_memory_path(@memory),
-              method: :patch,
-              class: "btn btn-outline",
-              data: { turbo_confirm: "共有URLを発行します。URLを知っている人なら誰でも閲覧できます。" } %>
-      <% end %>
+          <%# 共有停止モーダル %>
+          <div class="modal-overlay hidden" data-share-memory-target="stopModal">
+            <div class="modal-box">
+              <div class="modal-icon">🔒</div>
+              <h2>共有を停止しますか？</h2>
+              <p>共有を停止すると、共有URLにアクセスできなくなります。</p>
+              <div class="modal-actions">
+                <button type="button" class="btn btn-danger"
+                        data-action="share-memory#confirmStop">停止する</button>
+                <button type="button" class="btn btn-ghost"
+                        data-action="share-memory#closeModal">キャンセル</button>
+              </div>
+            </div>
+          </div>
+
+        <% else %>
+          <%# 未共有：共有ボタン %>
+          <button type="button" class="btn btn-outline"
+                  data-share-memory-target="shareBtn"
+                  data-action="share-memory#openShareModal">
+            <i class="fas fa-share-alt"></i> 家族に共有する
+          </button>
+          <%# 共有開始確認モーダル %>
+          <div class="modal-overlay hidden" data-share-memory-target="shareModal">
+            <div class="modal-box">
+              <div class="modal-icon">🔗</div>
+              <h2>追悼ページを共有しますか？</h2>
+              <p>このページは<strong>URLを知っている人なら誰でも</strong>見られるようになります。よろしいですか？</p>
+              <div class="modal-actions">
+                <button type="button" class="btn btn-primary"
+                        data-action="share-memory#confirmShare">共有する</button>
+                <button type="button" class="btn btn-ghost"
+                        data-action="share-memory#closeModal">キャンセル</button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <%# フォーム（Stimulusから送信） %>
+        <%= form_with url: toggle_share_memory_path(@memory), method: :patch,
+              data: { share_memory_target: "form" }, style: "display: none;" do |f| %>
+        <% end %>
+      </div>
     </div>
 
     <div class="form-actions" style="margin-top: 8px;">

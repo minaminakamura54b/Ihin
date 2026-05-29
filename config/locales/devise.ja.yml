@@ -16,7 +16,7 @@ ja:
       unconfirmed: "メールアドレスの確認が完了していません。"
     mailer:
       confirmation_instructions:
-        subject: "メールアドレスの確認"
+        subject: "【いひん】メールアドレスの確認をお願いします"
       reset_password_instructions:
         subject: "パスワードの再設定"
       unlock_instructions:

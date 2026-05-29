@@ -1,3 +1,37 @@
+<%# ===== SEO: トップページ（LP）用メタタグ・構造化データ ===== %>
+<% unless user_signed_in? %>
+  <% content_for :description, "遺品の写真を撮るだけでAIが自動識別・相場価格を査定。「売る」「残す」「処分」を優しくサポートする、遺族向け無料サービスです。" %>
+
+  <% content_for :json_ld do %>
+    <script type="application/ld+json">
+      <%= {
+        "@context" => "https://schema.org",
+        "@type"    => "WebSite",
+        "name"     => "いひん",
+        "url"      => root_url,
+        "description" => "遺品の写真を撮るだけでAIが自動識別・相場価格を査定する遺族向けサービス",
+        "potentialAction" => {
+          "@type"  => "SearchAction",
+          "target" => { "@type" => "EntryPoint", "urlTemplate" => "#{businesses_url}?area={search_term_string}" },
+          "query-input" => "required name=search_term_string"
+        }
+      }.to_json.html_safe %>
+    </script>
+    <script type="application/ld+json">
+      <%= {
+        "@context"    => "https://schema.org",
+        "@type"       => "Service",
+        "name"        => "いひん AI遺品査定",
+        "serviceType" => "遺品管理・査定サービス",
+        "description" => "スマートフォンで遺品を撮影するだけでAIが識別・相場価格を査定。遺族の方の負担を減らし、心穏やかな遺品整理をサポートします。",
+        "provider"    => { "@type" => "Organization", "name" => "いひん", "url" => root_url },
+        "areaServed"  => { "@type" => "Country", "name" => "日本" },
+        "offers"      => { "@type" => "Offer", "price" => "0", "priceCurrency" => "JPY", "description" => "遺族・家族の方は完全無料" }
+      }.to_json.html_safe %>
+    </script>
+  <% end %>
+<% end %>
+
 <% if user_signed_in? %>
   <%# ===== ログイン済みダッシュボード ===== %>
   <div class="dashboard">

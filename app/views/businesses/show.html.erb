@@ -1,4 +1,34 @@
-<% content_for :title, "#{@business.name} | 遺品AI査定" %>
+<% content_for :title, "#{@business.name}｜Ihin" %>
+<% content_for :description, "#{@business.name}（#{@business.area.presence || '全国対応'}）の業者情報です。#{@business.category_label}として、遺品整理・買取のご相談を受け付けています。" %>
+
+<% content_for :json_ld do %>
+  <% ld = {
+    "@context"    => "https://schema.org",
+    "@type"       => "LocalBusiness",
+    "name"        => @business.name,
+    "description" => @business.description.presence || "#{@business.category_label}として遺品整理・買取のサポートをいたします。",
+    "url"         => business_url(@business)
+  }
+  ld["address"]   = { "@type" => "PostalAddress", "addressLocality" => @business.area, "addressCountry" => "JP" } if @business.area.present?
+  ld["telephone"] = @business.phone if @business.phone.present?
+  ld["sameAs"]    = @business.website if @business.website.present?
+  %>
+  <script type="application/ld+json">
+    <%= ld.to_json.html_safe %>
+  </script>
+
+  <script type="application/ld+json">
+    <%= {
+      "@context" => "https://schema.org",
+      "@type"    => "BreadcrumbList",
+      "itemListElement" => [
+        { "@type" => "ListItem", "position" => 1, "name" => "トップ",     "item" => root_url },
+        { "@type" => "ListItem", "position" => 2, "name" => "業者を探す", "item" => businesses_url },
+        { "@type" => "ListItem", "position" => 3, "name" => @business.name, "item" => business_url(@business) }
+      ]
+    }.to_json.html_safe %>
+  </script>
+<% end %>
 
 <div class="page-container">
   <div class="breadcrumb">

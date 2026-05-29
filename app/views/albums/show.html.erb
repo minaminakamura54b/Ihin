@@ -1,0 +1,153 @@
+<% content_for :title, "#{@album.title} | アルバム" %>
+
+<div class="page-container">
+  <%# アルバムヘッダー %>
+  <div class="album-show-header">
+    <div class="album-show-meta">
+      <%= link_to albums_path, class: "back-link" do %>
+        <i class="fas fa-chevron-left"></i> アルバム一覧
+      <% end %>
+      <h1 class="album-show-title"><%= @album.title %></h1>
+      <% if @album.description.present? %>
+        <p class="album-show-desc"><%= @album.description %></p>
+      <% end %>
+      <p class="album-show-count"><%= @memories.count %>枚の思い出</p>
+    </div>
+    <div class="album-show-actions">
+      <%= link_to edit_album_path(@album), class: "btn btn-outline btn-sm" do %>
+        <i class="fas fa-edit"></i> 編集
+      <% end %>
+      <%= button_to generate_ai_summary_album_path(@album), method: :post, class: "btn btn-outline btn-sm" do %>
+        <i class="fas fa-robot"></i> AI追悼文
+      <% end %>
+      <%# 共有ボタン %>
+      <% if @album.shared? %>
+        <button class="btn btn-teal btn-sm" onclick="document.getElementById('share-panel').classList.toggle('hidden')" type="button">
+          <i class="fas fa-share-alt"></i> 共有中
+        </button>
+      <% else %>
+        <%= button_to toggle_share_album_path(@album), method: :patch, class: "btn btn-outline btn-sm" do %>
+          <i class="fas fa-share-alt"></i> 共有する
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <%# 共有URLパネル %>
+  <% if @album.shared? %>
+    <div class="album-share-panel" id="share-panel">
+      <div class="album-share-inner">
+        <div class="album-share-info">
+          <i class="fas fa-link" style="color:var(--teal);"></i>
+          <div>
+            <p class="album-share-label">公開URL（ログイン不要でアクセスできます）</p>
+            <p class="album-share-url"><%= shared_album_url(token: @album.share_token) %></p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <button class="btn btn-outline btn-sm"
+                  onclick="navigator.clipboard.writeText('<%= shared_album_url(token: @album.share_token) %>').then(()=>{ this.textContent='コピーしました'; setTimeout(()=>this.textContent='URLをコピー',2000) })"
+                  type="button">URLをコピー</button>
+          <%= button_to toggle_share_album_path(@album), method: :patch, class: "btn btn-danger btn-sm", data: { confirm: "共有を停止しますか？" } do %>
+            共有を停止
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%# AI追悼文 %>
+  <% if @album.ai_summary.present? %>
+    <div class="album-ai-block">
+      <p class="album-ai-label"><i class="fas fa-robot"></i> AI追悼文</p>
+      <p class="album-ai-text"><%= @album.ai_summary %></p>
+    </div>
+  <% end %>
+
+  <%# 写真を直接アップロード（複数可） %>
+  <div class="album-upload-section">
+    <%= form_with url: upload_photo_album_path(@album), method: :post,
+                  multipart: true,
+                  data: { controller: "album-upload" } do |f| %>
+      <%# 選択エリア：クリックは <label> が内包する file input に自然転送される %>
+      <label class="album-upload-area"
+             data-album-upload-target="area"
+             data-action="dragover->album-upload#dragover dragleave->album-upload#dragleave drop->album-upload#drop">
+        <i class="fas fa-cloud-upload-alt album-upload-icon"></i>
+        <p class="album-upload-text">タップして写真を追加</p>
+        <p class="album-upload-sub">複数選択・ドラッグ＆ドロップ可</p>
+        <%= f.file_field :photos, accept: "image/*", multiple: true,
+              data: { "album-upload-target": "input", action: "change->album-upload#preview" },
+              style: "display:none;" %>
+      </label>
+
+      <%# プレビューエリア %>
+      <div data-album-upload-target="preview" style="display:none;">
+        <div class="album-upload-thumb-grid" data-album-upload-target="grid"></div>
+        <div class="album-upload-preview-actions">
+          <span class="album-upload-count" data-album-upload-target="count"></span>
+          <%= f.submit "追加する", class: "btn btn-primary btn-sm",
+                data: { disable_with: "追加中..." } %>
+          <button type="button" class="btn btn-outline btn-sm"
+                  data-action="click->album-upload#reset">キャンセル</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# 思い出グリッド %>
+  <div id="album-photo-grid">
+    <% if @memories.any? %>
+      <div class="album-photo-grid">
+        <% @memories.each do |memory| %>
+          <%= render "albums/album_photo_item", album: @album, memory: memory %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="empty-state">
+        <div class="empty-icon">🖼</div>
+        <h3>写真がまだありません</h3>
+        <p>上のエリアから写真を追加してください</p>
+      </div>
+    <% end %>
+  </div>
+
+  <%# 追加候補（アルバム未登録の思い出） %>
+  <% if @other_memories.any? %>
+    <div class="album-add-section">
+      <h2 class="album-add-title">思い出を追加する</h2>
+      <%= form_with url: add_memories_album_path(@album), method: :post,
+                    data: { controller: "album-add", turbo: false } do |f| %>
+        <div class="album-add-grid" data-album-add-target="grid">
+          <% @other_memories.each do |memory| %>
+            <label class="album-add-item" data-album-add-target="item">
+              <input type="checkbox" name="memory_ids[]" value="<%= memory.id %>"
+                     class="album-add-checkbox"
+                     data-action="change->album-add#updateCount"
+                     data-album-add-target="checkbox">
+              <% if memory.photo.attached? %>
+                <%= image_tag memory.photo.variant(resize_to_fill: [200, 200]), class: "album-add-img", alt: memory.display_title %>
+              <% else %>
+                <div class="album-add-img album-add-no-img"><i class="fas fa-image"></i></div>
+              <% end %>
+              <span class="album-add-check-mark"><i class="fas fa-check"></i></span>
+              <span class="album-add-label"><%= memory.display_title %></span>
+            </label>
+          <% end %>
+        </div>
+        <div class="album-add-bar" data-album-add-target="bar">
+          <span class="album-add-count" data-album-add-target="count">0件選択中</span>
+          <%= f.submit "追加する", class: "btn btn-primary btn-sm", data: { "album-add-target": "submit" }, disabled: true %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div style="margin-top:32px;text-align:center;">
+    <%= button_to @album, method: :delete,
+          class: "btn btn-danger btn-sm",
+          data: { confirm: "アルバム「#{@album.title}」を削除しますか？思い出データは削除されません。" } do %>
+      <i class="fas fa-trash"></i> アルバムを削除
+    <% end %>
+  </div>
+</div>

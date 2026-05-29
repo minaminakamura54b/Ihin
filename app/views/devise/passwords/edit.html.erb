@@ -1,25 +1,47 @@
-<h2>Change your password</h2>
+<% content_for :title, "新しいパスワードを設定 | 遺品AI査定" %>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="brand-icon">🔒</span>
+      <h1>新しいパスワードを設定</h1>
+      <p>8文字以上・大文字と数字を含む英数字で設定してください</p>
+    </div>
 
-  <div class="field">
-    <p><%= f.label :password, "New password" %></p>
-    <% if @minimum_password_length %>
-      <p><em>(<%= @minimum_password_length %> characters minimum)</em></p>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+      <%= f.hidden_field :reset_password_token %>
+
+      <div class="form-group">
+        <%= f.label :password, "新しいパスワード", class: "form-label" %>
+        <div class="password-hint">
+          <small>8文字以上・大文字（A-Z）と数字（0-9）を各1文字以上含めてください</small>
+        </div>
+        <%= f.password_field :password,
+              autofocus: true,
+              autocomplete: "new-password",
+              class: "form-input",
+              placeholder: "新しいパスワードを入力" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :password_confirmation, "パスワード（確認）", class: "form-label" %>
+        <%= f.password_field :password_confirmation,
+              autocomplete: "new-password",
+              class: "form-input",
+              placeholder: "もう一度入力してください" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "パスワードを変更する", class: "btn btn-primary btn-full",
+              data: { disable_with: "変更中..." } %>
+      </div>
     <% end %>
-    <p><%= f.password_field :password, autofocus: true, autocomplete: "new-password" %></p>
-  </div>
 
-  <div class="field">
-    <p><%= f.label :password_confirmation, "Confirm new password" %></p>
-    <p><%= f.password_field :password_confirmation, autocomplete: "new-password" %></p>
+    <div style="margin-top: 20px; text-align: center;">
+      <p style="font-size: 13px; color: var(--text-sub);">
+        <%= link_to "ログイン画面に戻る", new_user_session_path, style: "color: var(--teal);" %>
+      </p>
+    </div>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Change my password" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

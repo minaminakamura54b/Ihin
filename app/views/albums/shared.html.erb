@@ -1,0 +1,53 @@
+<% content_for :title, "#{@shared_album.title} | デジタル記念館" %>
+
+<div class="memorial-page">
+  <div class="memorial-header">
+    <i class="fas fa-book-open" style="font-size:36px;color:#7bbfb5;margin-bottom:16px;"></i>
+    <h1 class="memorial-header-title"><%= @shared_album.title %></h1>
+    <% if @shared_album.description.present? %>
+      <p class="memorial-header-sub"><%= @shared_album.description %></p>
+    <% end %>
+  </div>
+
+  <% if @shared_album.ai_summary.present? %>
+    <div class="album-ai-block" style="max-width:680px;margin:0 auto 32px;">
+      <p class="album-ai-label"><i class="fas fa-robot"></i> AI追悼文</p>
+      <p class="album-ai-text"><%= @shared_album.ai_summary %></p>
+    </div>
+  <% end %>
+
+  <% if @memories.any? %>
+    <div class="album-public-grid">
+      <% @memories.each do |memory| %>
+        <div class="album-public-item">
+          <% if memory.photo.attached? %>
+            <%= image_tag memory.photo.variant(resize_to_fill: [400, 400]), class: "album-public-img", alt: memory.display_title %>
+          <% else %>
+            <div class="album-public-img album-public-no-img"><i class="fas fa-image"></i></div>
+          <% end %>
+          <div class="album-public-body">
+            <p class="album-public-title"><%= memory.display_title %></p>
+            <% text = memory.description.presence || memory.comment.presence %>
+            <% if text.present? %>
+              <p class="album-public-desc"><%= text %></p>
+            <% end %>
+            <% if memory.ai_summary.present? %>
+              <p class="album-public-ai"><em><%= memory.ai_summary %></em></p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="memorial-empty">
+      <i class="fas fa-images" style="font-size:48px;color:#ccc;margin-bottom:16px;"></i>
+      <p>公開中の思い出はありません</p>
+    </div>
+  <% end %>
+
+  <footer class="memorial-footer">
+    <p style="font-size:13px;color:#aaa;">
+      <a href="<%= root_url %>" style="color:#7bbfb5;">遺品AI査定</a> で作成されました
+    </p>
+  </footer>
+</div>

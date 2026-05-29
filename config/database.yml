@@ -15,6 +15,5 @@ test:
   database: ihin_test
 
 production:
-  <<: *default
-  database: <%= ENV["DATABASE_URL"] %>
+  # DATABASE_URL 環境変数を直接使用（Render が connectionString を自動設定）
   url: <%= ENV["DATABASE_URL"] %>

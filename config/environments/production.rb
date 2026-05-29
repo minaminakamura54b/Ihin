@@ -21,14 +21,23 @@ Rails.application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
 
-  # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  # Active Storage は S3 を使用（Render はエフェメラルストレージのためローカル保存不可）
+  config.active_storage.service = :amazon
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  # SSL終端はリバースプロキシ（Render）で行う
+  config.assume_ssl = true
 
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # HTTPS強制・Strict-Transport-Security・セキュアCookie
+  config.force_ssl = true
+
+  # 本番環境のセッションCookie（secure属性追加でHTTPS通信のみ）
+  # httponly: XSS対策  secure: 平文HTTP非送信  same_site: :strict CSRF対策
+  config.session_store :cookie_store,
+                       key:          "_ihin_session",
+                       httponly:     true,
+                       secure:       true,
+                       same_site:    :strict,
+                       expire_after: 90.days
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -58,7 +67,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "example.com"), protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "ihin-app.jp"), protocol: "https" }
   config.action_mailer.raise_delivery_errors = true
 
   # Resend によるメール送信（worknests.org ドメイン認証済み）
@@ -74,12 +83,13 @@ Rails.application.configure do
   # Only use :id for inspections in production.
   config.active_record.attributes_for_inspect = [ :id ]
 
-  # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  # DNS リバインディング攻撃対策：許可するホストを明示
+  # APP_HOST 環境変数で本番ドメインを指定、Render の内部ドメインも許可
+  app_host = ENV.fetch("APP_HOST", "ihin-app.jp")
+  config.hosts = [
+    app_host,
+    /\A.+\.onrender\.com\z/  # Render のデプロイプレビュー URL
+  ]
+  # ヘルスチェックはホスト検証をスキップ（Render のヘルスチェックが通るように）
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end

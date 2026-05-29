@@ -9,7 +9,10 @@ class Admin::InquiriesController < Admin::BaseController
   end
 
   def update
-    @inquiry.update(status: params[:status])
+    unless Inquiry.statuses.key?(params[:status])
+      redirect_to admin_inquiry_path(@inquiry), alert: "無効なステータスです" and return
+    end
+    @inquiry.update!(status: params[:status])
     redirect_to admin_inquiry_path(@inquiry), notice: "ステータスを更新しました"
   end
 

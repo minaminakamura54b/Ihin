@@ -1,4 +1,18 @@
-<% content_for :title, "買取業者の方へ｜遺品AI査定" %>
+<% content_for :title, "買取業者の方へ｜Ihin" %>
+<% content_for :description, "買取業者の方向けの掲載プランをご紹介。AIが査定済みで「売りたい」意思が固まった遺族から直接お問い合わせが届きます。初期費用0円・3ヶ月無料。" %>
+
+<% content_for :json_ld do %>
+  <script type="application/ld+json">
+    <%= {
+      "@context" => "https://schema.org",
+      "@type"    => "BreadcrumbList",
+      "itemListElement" => [
+        { "@type" => "ListItem", "position" => 1, "name" => "トップ",    "item" => root_url },
+        { "@type" => "ListItem", "position" => 2, "name" => "買取業者の方へ", "item" => for_resellers_businesses_url }
+      ]
+    }.to_json.html_safe %>
+  </script>
+<% end %>
 
 <div class="biz-lp">
 

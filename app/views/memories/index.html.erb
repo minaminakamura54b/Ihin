@@ -1,46 +1,71 @@
 <% content_for :title, "デジタル記念館 | 遺品AI査定" %>
 
-<div class="page-container">
-  <%# 記念館ヒーロー %>
+<div class="page-container" data-controller="memory-select">
+  <%# ヘッダー %>
   <div class="memorial-hero">
-    <i class="fas fa-heart" style="font-size: 32px; color: var(--teal); margin-bottom: 12px;"></i>
+    <i class="fas fa-heart" style="font-size:32px;color:var(--teal);margin-bottom:12px;"></i>
     <h1 class="memorial-title">デジタル記念館</h1>
     <p class="memorial-subtitle">大切な方との思い出を、写真とエピソードで永久保存</p>
-    <%= link_to new_memory_path, class: "btn btn-primary", style: "margin-top: 16px;" do %>
-      <i class="fas fa-plus"></i> 思い出を追加
-    <% end %>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+      <%= link_to new_memory_path, class: "btn btn-primary btn-sm" do %>
+        <i class="fas fa-plus"></i> 思い出を追加
+      <% end %>
+      <%= link_to albums_path, class: "btn btn-outline btn-sm" do %>
+        <i class="fas fa-book-open"></i> アルバムを見る
+      <% end %>
+      <% if @memories.any? %>
+        <button class="btn btn-outline btn-sm"
+                data-action="click->memory-select#toggleMode"
+                data-memory-select-target="toggleBtn"
+                type="button">
+          <i class="fas fa-check-square"></i> 選択
+        </button>
+      <% end %>
+    </div>
   </div>
 
-  <%# AIによる追悼文（ある場合のみ） %>
+  <%# AIによる追悼文 %>
   <% if @ai_summary.present? %>
     <div class="memorial-ai-summary">
-      <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 8px;"><i class="fas fa-robot"></i> AIが生成した追悼文</p>
+      <p style="font-size:12px;color:var(--text-sub);margin-bottom:8px;"><i class="fas fa-robot"></i> AIが生成した追悼文</p>
       <%= @ai_summary %>
     </div>
   <% end %>
 
   <% if @memories.any? %>
-    <div class="memorial-grid">
+    <div class="memorial-grid" data-memory-select-target="grid">
       <% @memories.each do |memory| %>
-        <%= link_to memory_path(memory), class: "memorial-card" do %>
-          <% if memory.photo.attached? %>
-            <%= image_tag memory.photo.variant(resize_to_fill: [300, 300]), class: "memorial-card-photo", alt: memory.display_title %>
-          <% else %>
-            <div class="memorial-card-photo" style="background: var(--bg); display: flex; align-items: center; justify-content: center;">
-              <i class="fas fa-image" style="font-size: 32px; color: var(--border);"></i>
+        <div class="memorial-card-wrap" data-memory-select-target="wrap">
+          <%# 選択モード時のチェックボックス %>
+          <label class="memory-select-check hidden" data-memory-select-target="checkLabel">
+            <input type="checkbox"
+                   value="<%= memory.id %>"
+                   data-memory-select-target="checkbox"
+                   data-action="change->memory-select#updateCount">
+            <span class="memory-check-mark"><i class="fas fa-check"></i></span>
+          </label>
+          <%= link_to memory_path(memory),
+                class: "memorial-card",
+                data: { "memory-select-target": "card", action: "click->memory-select#cardClick" } do %>
+            <% if memory.photo.attached? %>
+              <%= image_tag memory.photo.variant(resize_to_fill: [300, 300]), class: "memorial-card-photo", alt: memory.display_title %>
+            <% else %>
+              <div class="memorial-card-photo" style="background:var(--bg);display:flex;align-items:center;justify-content:center;">
+                <i class="fas fa-image" style="font-size:32px;color:var(--border);"></i>
+              </div>
+            <% end %>
+            <div class="memorial-card-body">
+              <p class="memorial-card-title"><%= memory.display_title %></p>
+              <% text = memory.description.presence || memory.comment.presence %>
+              <% if text.present? %>
+                <p class="memorial-card-desc"><%= truncate(text, length: 50) %></p>
+              <% end %>
+              <% if memory.shared? %>
+                <span style="font-size:11px;color:var(--teal);"><i class="fas fa-share-alt"></i> 共有中</span>
+              <% end %>
             </div>
           <% end %>
-          <div class="memorial-card-body">
-            <p class="memorial-card-title"><%= memory.display_title %></p>
-            <% text = memory.description.presence || memory.comment.presence %>
-            <% if text.present? %>
-              <p class="memorial-card-desc"><%= truncate(text, length: 50) %></p>
-            <% end %>
-            <% if memory.shared? %>
-              <span style="font-size: 11px; color: var(--teal);"><i class="fas fa-share-alt"></i> 共有中</span>
-            <% end %>
-          </div>
-        <% end %>
+        </div>
       <% end %>
     </div>
     <div class="pagination"><%= paginate @memories %></div>
@@ -52,4 +77,66 @@
       <%= link_to "思い出を追加する", new_memory_path, class: "btn btn-primary" %>
     </div>
   <% end %>
+</div>
+
+<%# アルバム追加フローティングバー %>
+<div class="memory-select-bar hidden" data-memory-select-target="bar">
+  <span class="memory-select-bar-count" data-memory-select-target="barCount">0件選択中</span>
+  <div style="display:flex;gap:8px;">
+    <button class="btn btn-outline btn-sm"
+            data-action="click->memory-select#cancel"
+            type="button">キャンセル</button>
+    <button class="btn btn-primary btn-sm"
+            data-action="click->memory-select#openModal"
+            data-memory-select-target="addBtn"
+            type="button"
+            disabled>
+      <i class="fas fa-book-open"></i> アルバムに追加
+    </button>
+  </div>
+</div>
+
+<%# アルバム選択モーダル %>
+<div class="modal-overlay hidden" data-memory-select-target="modal" data-action="click->memory-select#closeModal">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">アルバムを選択</h3>
+      <button class="modal-close" data-action="click->memory-select#closeModal" type="button">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <% if current_user.albums.any? %>
+        <p style="font-size:13px;color:var(--text-sub);margin-bottom:12px;">追加するアルバムを選んでください</p>
+        <div class="album-picker-list">
+          <% current_user.albums.ordered.each do |album| %>
+            <button class="album-picker-item"
+                    data-action="click->memory-select#addToAlbum"
+                    data-album-id="<%= album.id %>"
+                    data-album-url="<%= add_memories_album_path(album) %>"
+                    type="button">
+              <% cover = album.memories.joins(photo_attachment: :blob).first %>
+              <% if cover&.photo&.attached? %>
+                <%= image_tag cover.photo.variant(resize_to_fill: [60, 60]), class: "album-picker-thumb" %>
+              <% else %>
+                <div class="album-picker-thumb album-picker-no-thumb"><i class="fas fa-images"></i></div>
+              <% end %>
+              <div>
+                <p class="album-picker-name"><%= album.title %></p>
+                <p class="album-picker-count"><%= album.memories.count %>枚</p>
+              </div>
+              <i class="fas fa-chevron-right" style="margin-left:auto;color:var(--border);"></i>
+            </button>
+          <% end %>
+        </div>
+        <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px;">
+      <% end %>
+        <%= link_to new_album_path, class: "btn btn-outline", style: "width:100%;justify-content:center;" do %>
+          <i class="fas fa-plus"></i> 新しいアルバムを作成
+        <% end %>
+      <% if current_user.albums.any? %>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>

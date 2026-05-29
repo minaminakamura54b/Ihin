@@ -284,6 +284,7 @@ img { max-width: 100%; height: auto; display: block; }
 .form-checkbox { width: 18px; height: 18px; }
 .form-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
 .form-input-sm { width: 100px; }
+.password-hint { font-size: 11px; color: var(--text-sub); margin: 2px 0 6px; }
 
 .error-messages {
   background: #FEF2F2;
@@ -605,7 +606,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 .preview-image { width: 100%; max-height: 280px; object-fit: contain; }
-.hidden { display: none; }
+.hidden { display: none !important; }
 
 .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 6px; padding: 8px; }
 .preview-thumb { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-sm); }
@@ -1737,13 +1738,462 @@ img { max-width: 100%; height: auto; display: block; }
 .memorial-card-body { padding: 12px 14px; }
 .memorial-card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
 .memorial-card-desc { font-size: 12px; color: var(--text-sub); line-height: 1.5; }
-.share-box { background: var(--bg); border-radius: var(--radius); padding: 20px 24px; }
-.share-url-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-.share-url-input { flex: 1; min-width: 0; font-size: 13px; padding: 8px 12px; border: 0.5px solid var(--border); border-radius: var(--radius); background: white; }
-.memorial-shared-page { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+.share-active-box { background: var(--teal-light, #f0faf8); border: 1px solid var(--teal); border-radius: var(--radius); padding: 16px; }
+.share-active-label { font-size: 13px; font-weight: 600; color: var(--teal); margin-bottom: 8px; }
+.share-url-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.share-url-input { flex: 1; min-width: 0; font-size: 12px; padding: 8px 10px; border: 0.5px solid var(--border); border-radius: var(--radius); background: white; }
+
+/* ===== 追悼ページ（ログイン不要の公開ページ） ===== */
+.memorial-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+.memorial-header {
+  text-align: center;
+  padding: 40px 20px 32px;
+  background: linear-gradient(180deg, #f0fdf4 0%, white 100%);
+  border-radius: var(--radius);
+  margin-bottom: 28px;
+}
+.memorial-header-icon {
+  font-size: 32px;
+  color: var(--teal);
+  margin-bottom: 14px;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
+}
+.memorial-name { font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.memorial-date { font-size: 14px; color: var(--text-sub); }
+.memorial-photo-wrap { margin-bottom: 28px; }
+.memorial-photo {
+  width: 100%;
+  border-radius: var(--radius);
+  display: block;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+.memorial-tribute {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-left: 4px solid var(--teal);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 28px;
+}
+.memorial-tribute-icon { font-size: 20px; color: var(--teal); margin-bottom: 12px; }
+.memorial-tribute-text {
+  font-size: 16px;
+  line-height: 1.9;
+  color: var(--text);
+  white-space: pre-wrap;
+  font-style: italic;
+}
+.memorial-episode {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.memorial-episode-title {
+  font-size: 15px;
+  color: var(--navy);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.memorial-episode-text {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--text);
+  white-space: pre-wrap;
+}
+.memorial-footer {
+  text-align: center;
+  padding-top: 28px;
+}
+.memorial-footer-divider {
+  width: 60px;
+  height: 2px;
+  background: var(--teal);
+  margin: 0 auto 20px;
+  border-radius: 99px;
+  opacity: 0.4;
+}
+.memorial-footer-caption { font-size: 14px; color: var(--text-sub); margin-bottom: 16px; }
+.memorial-footer-btn { min-width: 200px; }
+
 @media (max-width: 600px) {
   .memorial-grid { grid-template-columns: repeat(2, 1fr); }
   .share-url-row { flex-direction: column; }
+  .memorial-name { font-size: 22px; }
+  .memorial-tribute-text { font-size: 14px; }
+}
+
+/* ===== アルバム一覧ページ ===== */
+.albums-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.albums-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 0 0 4px;
+}
+.albums-subtitle {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin: 0;
+}
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+/* アルバムカード */
+.album-card {
+  background: var(--white);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.album-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+.album-card-link { display: block; text-decoration: none; color: inherit; }
+.album-cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: var(--bg);
+}
+.album-cover-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.album-cover-empty {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px; color: var(--border);
+}
+.album-cover-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.5));
+  padding: 16px 10px 8px;
+}
+.album-count {
+  color: #fff; font-size: 12px; font-weight: 600;
+}
+.album-shared-badge {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--teal); color: #fff;
+  border-radius: 99px; padding: 3px 8px; font-size: 11px;
+}
+.album-card-info { padding: 12px 14px; }
+.album-card-title {
+  font-size: 15px; font-weight: 700; color: var(--navy); margin: 0 0 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.album-card-desc { font-size: 12px; color: var(--text-sub); margin: 0; }
+
+/* ===== アルバム詳細ページ ===== */
+.album-show-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.back-link {
+  font-size: 13px; color: var(--teal); text-decoration: none; display: block; margin-bottom: 6px;
+}
+.album-show-title { font-size: 22px; font-weight: 700; color: var(--navy); margin: 0 0 4px; }
+.album-show-desc  { font-size: 14px; color: var(--text-sub); margin: 0 0 4px; }
+.album-show-count { font-size: 13px; color: var(--text-hint); margin: 0; }
+.album-show-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+
+/* 共有パネル */
+.album-share-panel {
+  background: var(--teal-light);
+  border: 1px solid var(--teal-mid);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.album-share-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.album-share-info { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 0; }
+.album-share-label { font-size: 12px; color: var(--text-sub); margin: 0 0 2px; }
+.album-share-url   { font-size: 12px; color: var(--teal); word-break: break-all; margin: 0; }
+
+/* AI追悼文ブロック */
+.album-ai-block {
+  background: var(--teal-light);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 12px 12px 0;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+.album-ai-label { font-size: 11px; color: var(--teal); margin: 0 0 6px; }
+.album-ai-text  { font-size: 14px; color: var(--text); line-height: 1.8; margin: 0; white-space: pre-wrap; }
+
+/* 写真グリッド（アルバム詳細） */
+.album-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 40px;
+}
+.album-photo-item {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg);
+  aspect-ratio: 1;
+}
+.album-photo-link { display: block; width: 100%; height: 100%; }
+.album-photo-img  {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.2s;
+}
+.album-photo-item:hover .album-photo-img { transform: scale(1.04); }
+.album-photo-no-img {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; color: var(--border);
+}
+.album-photo-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  padding: 20px 8px 6px;
+  opacity: 0; transition: opacity 0.2s;
+}
+.album-photo-item:hover .album-photo-overlay { opacity: 1; }
+.album-photo-title { color: #fff; font-size: 11px; font-weight: 600; margin: 0; }
+.album-photo-remove {
+  position: absolute; top: 6px; right: 6px;
+  width: 24px; height: 24px;
+  background: rgba(0,0,0,0.5); color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.15s;
+}
+.album-photo-item:hover .album-photo-remove { opacity: 1; }
+
+/* 写真直接アップロード */
+.album-upload-section {
+  margin-bottom: 24px;
+}
+.album-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 28px 16px;
+  cursor: pointer;
+  background: #faf8f5;
+  transition: border-color 0.2s, background 0.2s;
+}
+.album-upload-area:hover,
+.album-upload-area--dragover {
+  border-color: var(--teal);
+  background: #f0faf8;
+}
+.album-upload-icon { font-size: 32px; color: var(--text-sub); }
+.album-upload-text { font-size: 15px; font-weight: 600; color: var(--text); margin: 0; }
+.album-upload-sub  { font-size: 12px; color: var(--text-sub); margin: 0; }
+.album-upload-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.album-upload-thumb { border-radius: 8px; overflow: hidden; aspect-ratio: 1; }
+.album-upload-thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.album-upload-preview-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.album-upload-count {
+  font-size: 13px;
+  color: var(--text-sub);
+  flex: 1;
+}
+
+/* 思い出追加セクション */
+.album-add-section {
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+  margin-bottom: 20px;
+}
+.album-add-title {
+  font-size: 17px; font-weight: 700; color: var(--navy); margin: 0 0 16px;
+}
+.album-add-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.album-add-item {
+  position: relative; cursor: pointer;
+  border-radius: 10px; overflow: hidden;
+  background: var(--bg);
+  aspect-ratio: 1;
+  display: block;
+  border: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+.album-add-item input[type="checkbox"] {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.album-add-img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.album-add-no-img {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; color: var(--border);
+}
+.album-add-check-mark {
+  position: absolute; top: 6px; right: 6px;
+  width: 22px; height: 22px;
+  background: rgba(255,255,255,0.85);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: transparent;
+  transition: all 0.15s;
+}
+.album-add-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.6));
+  color: #fff; font-size: 10px; padding: 12px 4px 4px; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.album-add-item-selected {
+  border-color: var(--teal);
+}
+.album-add-item-selected .album-add-check-mark {
+  background: var(--teal); border-color: var(--teal); color: #fff;
+}
+.album-add-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--teal-light); border-radius: 10px; padding: 12px 16px;
+}
+.album-add-count { font-size: 14px; color: var(--teal); font-weight: 600; }
+
+/* ===== 思い出一覧 選択モード ===== */
+.memorial-card-wrap { position: relative; }
+.memory-select-check {
+  position: absolute; top: 8px; left: 8px; z-index: 10;
+  cursor: pointer;
+}
+.memory-select-check input[type="checkbox"] {
+  position: absolute; opacity: 0; width: 0; height: 0;
+}
+.memory-check-mark {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  background: rgba(255,255,255,0.9);
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  font-size: 11px; color: transparent;
+  transition: all 0.15s;
+}
+.memory-select-check input:checked ~ .memory-check-mark {
+  background: var(--teal); border-color: var(--teal); color: #fff;
+}
+.memory-card-selected .memorial-card {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+/* フローティングバー */
+.memory-select-bar {
+  position: fixed;
+  bottom: 20px; left: 50%; transform: translateX(-50%);
+  z-index: 200;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 99px;
+  padding: 12px 20px;
+  display: flex; align-items: center; gap: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  min-width: 280px;
+}
+.memory-select-bar-count { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.btn-active { background: var(--teal-light) !important; color: var(--teal) !important; }
+
+/* アルバム選択モーダル内 */
+.album-picker-list { display: flex; flex-direction: column; gap: 8px; }
+.album-picker-item {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 10px 12px;
+  background: var(--bg); border: none; border-radius: 10px;
+  cursor: pointer; text-align: left;
+  transition: background 0.15s;
+}
+.album-picker-item:hover { background: var(--teal-light); }
+.album-picker-thumb {
+  width: 52px; height: 52px; border-radius: 8px;
+  object-fit: cover; flex-shrink: 0; display: block;
+}
+.album-picker-no-thumb {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--border); background: var(--border);
+}
+.album-picker-name  { font-size: 14px; font-weight: 600; color: var(--navy); margin: 0 0 2px; }
+.album-picker-count { font-size: 12px; color: var(--text-sub); margin: 0; }
+
+/* ===== 公開アルバムページ（memorial layout） ===== */
+.album-public-grid {
+  display: flex; flex-direction: column; gap: 40px;
+  max-width: 680px; margin: 0 auto; padding: 0 16px;
+}
+.album-public-item {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 3px 16px rgba(0,0,0,0.09);
+}
+.album-public-img {
+  width: 100%; max-height: 400px; object-fit: cover; display: block;
+}
+.album-public-no-img {
+  height: 200px; display: flex; align-items: center; justify-content: center;
+  font-size: 48px; color: #ccc; background: #f5f5f5;
+}
+.album-public-body { padding: 20px; }
+.album-public-title { font-size: 18px; font-weight: 700; color: #2c4f7c; margin: 0 0 10px; }
+.album-public-desc  { font-size: 14px; color: #555; line-height: 1.7; margin: 0 0 12px; }
+.album-public-ai    { font-size: 13px; color: var(--teal); font-style: italic; line-height: 1.7; margin: 0; }
+
+.memorial-empty {
+  text-align: center; padding: 60px 20px; color: #aaa;
+}
+
+@media (max-width: 600px) {
+  .albums-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .album-photo-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .album-add-grid { grid-template-columns: repeat(3, 1fr); }
+  .album-show-header { flex-direction: column; }
+  .album-share-inner { flex-direction: column; align-items: flex-start; }
+  .memory-select-bar { bottom: 70px; left: 16px; right: 16px; transform: none; min-width: 0; width: auto; }
 }
 
 /* ===== 開発環境デバッグバー ===== */

@@ -2,25 +2,56 @@ services:
   - type: web
     name: ihin-app
     runtime: ruby
+    # Render が自動検出できない場合は明示指定
     buildCommand: bundle install && bundle exec rails assets:precompile && bundle exec rails db:migrate
     startCommand: bundle exec puma -C config/puma.rb
+    healthCheckPath: /up
     envVars:
+      # ===== Rails 基本設定 =====
       - key: RAILS_ENV
         value: production
       - key: RAILS_MASTER_KEY
         fromFile: config/master.key
+      - key: RAILS_LOG_LEVEL
+        value: info
+      # ドメイン名（ActionMailer の URL 生成・サイトマップに使用）
+      - key: APP_HOST
+        value: ihin-app.jp
+
+      # ===== データベース =====
       - key: DATABASE_URL
         fromDatabase:
           name: ihin-db
           property: connectionString
+
+      # ===== メール（Resend）=====
+      # Resend ダッシュボードの API Keys から取得
+      - key: RESEND_API_KEY
+        sync: false
+      # 送信元メールアドレス（Resend でドメイン認証済みのアドレスを使用）
+      - key: MAIL_FROM
+        value: noreply@ihin-app.jp
+
+      # ===== Claude AI =====
       - key: ANTHROPIC_API_KEY
+        sync: false
+
+      # ===== Stripe 決済 =====
+      - key: STRIPE_SECRET_KEY
         sync: false
       - key: STRIPE_PUBLISHABLE_KEY
         sync: false
-      - key: STRIPE_SECRET_KEY
-        sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      # Stripe ダッシュボードの Price ID（各プランに対応）
+      - key: STRIPE_PRICE_BASIC
+        sync: false
+      - key: STRIPE_PRICE_STANDARD
+        sync: false
+      - key: STRIPE_PRICE_PREMIUM
+        sync: false
+
+      # ===== AWS S3（Active Storage 画像保存）=====
       - key: AWS_ACCESS_KEY_ID
         sync: false
       - key: AWS_SECRET_ACCESS_KEY
@@ -29,12 +60,11 @@ services:
         value: ap-northeast-1
       - key: AWS_BUCKET
         sync: false
-      - key: STRIPE_PRICE_BASIC
-        sync: false
-      - key: STRIPE_PRICE_STANDARD
-        sync: false
-      - key: STRIPE_PRICE_PREMIUM
-        sync: false
+
+      # ===== Solid Queue（バックグラウンドジョブ）=====
+      # "1" にすると Puma プロセス内で Solid Queue を起動（Render 無料プランはシングルプロセスのため推奨）
+      - key: SOLID_QUEUE_IN_PUMA
+        value: "1"
 
 databases:
   - name: ihin-db

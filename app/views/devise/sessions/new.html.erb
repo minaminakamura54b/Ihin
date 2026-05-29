@@ -8,6 +8,18 @@
       <p>おかえりなさい</p>
     </div>
 
+    <%# メール未認証でのログイン試行時：再送案内を表示 %>
+    <% if flash[:alert]&.include?("メールアドレスの確認") || flash[:alert]&.include?("unconfirmed") %>
+      <div style="background:#fef9ed;border:1px solid #e8c96a;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#6b5200;">
+        <p style="font-weight:bold;margin:0 0 6px;">メールアドレスの確認が必要です</p>
+        <p style="margin:0 0 10px;line-height:1.7;">
+          登録時に送信した確認メールのリンクをクリックしてからログインしてください。
+        </p>
+        <%= link_to "確認メールを再送する →", new_user_confirmation_path,
+              style: "display:inline-block;background:#7c6b5a;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:bold;" %>
+      </div>
+    <% end %>
+
     <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
       <div class="form-group">
         <%= f.label :email, "メールアドレス", class: "form-label" %>
@@ -15,19 +27,25 @@
       </div>
 
       <div class="form-group">
-        <%= f.label :password, "パスワード", class: "form-label" %>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+          <%= f.label :password, "パスワード", class: "form-label" %>
+          <%= link_to "パスワードをお忘れですか？", new_user_password_path,
+                style: "font-size: 12px; color: var(--teal); text-decoration: none;" %>
+        </div>
         <%= f.password_field :password, autocomplete: "current-password", class: "form-input" %>
       </div>
 
       <% if devise_mapping.rememberable? %>
         <div class="form-check">
-          <%= f.check_box :remember_me, class: "form-checkbox" %>
-          <%= f.label :remember_me, "ログイン状態を保持する" %>
+          <%# デフォルトON：90日間ログイン状態を維持 %>
+          <%= f.check_box :remember_me, { class: "form-checkbox", checked: true } %>
+          <%= f.label :remember_me, "ログイン状態を維持する（90日間）" %>
         </div>
       <% end %>
 
       <div class="form-actions">
-        <%= f.submit "ログイン", class: "btn btn-primary btn-full", data: { disable_with: "ログイン中..." } %>
+        <%= f.submit "ログイン", class: "btn btn-primary btn-full",
+              data: { disable_with: "ログイン中..." } %>
       </div>
     <% end %>
 

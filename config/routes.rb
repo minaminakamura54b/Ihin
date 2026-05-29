@@ -35,7 +35,18 @@ Rails.application.routes.draw do
       patch :toggle_share
     end
   end
-  get "shared/:token", to: "memories#shared", as: :shared_memory
+  get "memories/share/:token", to: "memories#shared", as: :shared_memory
+
+  resources :albums do
+    member do
+      post   :add_memories
+      post   :upload_photo
+      delete :remove_memory
+      post   :generate_ai_summary
+      patch  :toggle_share
+    end
+  end
+  get "albums/share/:token", to: "albums#shared", as: :shared_album
 
   resources :digital_items, only: [ :index, :create, :destroy ] do
     member do

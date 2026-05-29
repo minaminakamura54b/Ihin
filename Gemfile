@@ -12,6 +12,9 @@ gem "jbuilder"
 # 認証
 gem "devise"
 
+# レート制限（ブルートフォース攻撃対策）
+gem "rack-attack"
+
 # 決済
 gem "stripe"
 
@@ -29,6 +32,9 @@ gem "kaminari"
 
 # メール送信
 gem "resend"
+
+# サイトマップ自動生成
+gem "sitemap_generator"
 
 # 環境変数
 gem "dotenv-rails"
@@ -50,6 +56,7 @@ end
 
 group :development do
   gem "web-console"
+  gem "letter_opener"  # メールをブラウザで確認
 end
 
 group :test do

@@ -1,0 +1,47 @@
+<% content_for :title, "#{@album_user.name}さんのデジタル記念館" %>
+
+<div class="memorial-page">
+  <div class="memorial-header">
+    <i class="fas fa-heart" style="font-size: 36px; color: #7bbfb5; margin-bottom: 16px;"></i>
+    <h1 class="memorial-header-title"><%= @album_user.name %>さんのデジタル記念館</h1>
+    <p class="memorial-header-sub">大切な方との思い出をお届けします</p>
+  </div>
+
+  <% if @memories.any? %>
+    <div class="album-grid">
+      <% @memories.each do |memory| %>
+        <div class="album-card">
+          <% if memory.photo.attached? %>
+            <%= image_tag memory.photo.variant(resize_to_fill: [400, 300]), class: "album-card-photo", alt: memory.display_title %>
+          <% else %>
+            <div class="album-card-photo album-card-no-photo">
+              <i class="fas fa-image"></i>
+            </div>
+          <% end %>
+          <div class="album-card-body">
+            <h3 class="album-card-title"><%= memory.display_title %></h3>
+            <% text = memory.description.presence || memory.comment.presence %>
+            <% if text.present? %>
+              <p class="album-card-desc"><%= simple_format(text) %></p>
+            <% end %>
+            <% if memory.ai_summary.present? %>
+              <div class="album-ai-summary">
+                <p class="album-ai-label"><i class="fas fa-robot"></i> AI追悼文</p>
+                <p class="album-ai-text"><%= memory.ai_summary %></p>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="memorial-empty">
+      <i class="fas fa-heart-broken" style="font-size: 48px; color: #ccc; margin-bottom: 16px;"></i>
+      <p>まだ思い出が公開されていません</p>
+    </div>
+  <% end %>
+
+  <footer class="memorial-footer">
+    <p>このページは <a href="<%= root_url %>">遺品AI査定</a> で作成されました</p>
+  </footer>
+</div>

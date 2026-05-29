@@ -2,6 +2,8 @@ class Memory < ApplicationRecord
   belongs_to :user
   belongs_to :item, optional: true
   has_one_attached :photo
+  has_many :album_memories, dependent: :destroy
+  has_many :albums, through: :album_memories
 
   validates :user, presence: true
   validates :title, length: { maximum: 100 }

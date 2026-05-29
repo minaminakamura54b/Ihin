@@ -1,0 +1,8 @@
+<% content_for :title, "#{@album.title}を編集 | アルバム" %>
+
+<div class="page-container" style="max-width:560px;">
+  <div class="page-header">
+    <h1 class="page-title">アルバムを編集</h1>
+  </div>
+  <%= render "form", album: @album %>
+</div>

@@ -1,0 +1,16 @@
+<div id="flash">
+  <% flash_notice = local_assigns[:notice] || flash[:notice] %>
+  <% flash_alert  = local_assigns[:alert]  || flash[:alert] %>
+  <% if flash_notice.present? %>
+    <div class="flash flash-notice" data-controller="flash">
+      <span><%= flash_notice %></span>
+      <button data-action="flash#close" class="flash-close">&times;</button>
+    </div>
+  <% end %>
+  <% if flash_alert.present? %>
+    <div class="flash flash-alert" data-controller="flash">
+      <span><%= flash_alert %></span>
+      <button data-action="flash#close" class="flash-close">&times;</button>
+    </div>
+  <% end %>
+</div>

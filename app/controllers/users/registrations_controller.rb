@@ -39,12 +39,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
     end
   end
 
-  # confirmable の場合（未確認状態でもログイン可）のリダイレクト先
+  # confirmable の場合（未確認状態でのサインアップ後）のリダイレクト先
   def after_inactive_sign_up_path_for(resource)
     if resource.business?
       email_sent_businesses_path
     else
-      root_path
+      # familyユーザー：メール確認案内ページへ
+      new_user_confirmation_path
     end
   end
 

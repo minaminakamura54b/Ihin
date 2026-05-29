@@ -1,1 +1,26 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+User-agent: *
+
+# 管理画面はクロール禁止
+Disallow: /admin/
+
+# 認証系ページはインデックス不要
+Disallow: /users/sign_in
+Disallow: /users/sign_up
+Disallow: /users/password/
+Disallow: /users/confirmation/
+
+# 個人データページはクロール禁止（ログインが必要なページ）
+Disallow: /items/
+Disallow: /memories/
+Disallow: /albums/
+Disallow: /todo_items/
+Disallow: /digital_items/
+Disallow: /bulk_assessments/
+Disallow: /consultations/
+Disallow: /inquiries/
+
+# それ以外（トップ・業者一覧・業者詳細・ゲスト査定など）は許可
+Allow: /
+
+# サイトマップの場所
+Sitemap: https://ihin-app.jp/sitemap.xml.gz

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_25_103952) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_27_090340) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_103952) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "album_memories", force: :cascade do |t|
+    t.bigint "album_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "memory_id", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["album_id", "memory_id"], name: "index_album_memories_on_album_id_and_memory_id", unique: true
+    t.index ["album_id"], name: "index_album_memories_on_album_id"
+    t.index ["memory_id"], name: "index_album_memories_on_memory_id"
+  end
+
+  create_table "albums", force: :cascade do |t|
+    t.text "ai_summary"
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "share_token"
+    t.boolean "shared", default: false, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["share_token"], name: "index_albums_on_share_token", unique: true
+    t.index ["user_id"], name: "index_albums_on_user_id"
   end
 
   create_table "app_settings", force: :cascade do |t|
@@ -168,6 +192,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_103952) do
     t.index ["item_id"], name: "index_memories_on_item_id"
     t.index ["share_token"], name: "index_memories_on_share_token", unique: true
     t.index ["user_id"], name: "index_memories_on_user_id"
+  end
+
+  create_table "password_histories", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "encrypted_password", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_password_histories_on_user_id"
   end
 
   create_table "solid_queue_blocked_executions", force: :cascade do |t|
@@ -303,6 +335,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_103952) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "album_token"
     t.string "city"
     t.datetime "confirmation_sent_at"
     t.string "confirmation_token"
@@ -311,20 +344,28 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_103952) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "name", default: "", null: false
+    t.datetime "password_changed_at"
     t.string "prefecture"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
     t.integer "role", default: 0, null: false
+    t.string "session_token"
     t.string "unconfirmed_email"
     t.datetime "updated_at", null: false
+    t.string "user_agent_fingerprint"
+    t.index ["album_token"], name: "index_users_on_album_token", unique: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["session_token"], name: "index_users_on_session_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "album_memories", "albums"
+  add_foreign_key "album_memories", "memories"
+  add_foreign_key "albums", "users"
   add_foreign_key "bulk_assessment_items", "bulk_assessments"
   add_foreign_key "bulk_assessments", "users"
   add_foreign_key "businesses", "users"
@@ -336,6 +377,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_25_103952) do
   add_foreign_key "items", "users"
   add_foreign_key "memories", "items"
   add_foreign_key "memories", "users"
+  add_foreign_key "password_histories", "users"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

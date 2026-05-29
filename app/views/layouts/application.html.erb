@@ -1,16 +1,40 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <title><%= content_for(:title) || "遺品AI査定" %></title>
+    <%# ===== 基本メタタグ ===== %>
+    <title><%= content_for?(:title) ? yield(:title) : "遺品整理をAIがサポート｜Ihin" %></title>
+    <meta name="description" content="<%= content_for?(:description) ? yield(:description) : "遺品の写真を撮るだけでAIが自動識別・相場価格を査定。遺族に寄り添う遺品管理サービスです。" %>">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="遺品の写真を撮るだけでAIが査定。遺族に寄り添う遺品管理サービスです。">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="いひん">
     <meta name="mobile-web-app-capable" content="yes">
+
+    <%# ===== OGP（Open Graph Protocol）===== %>
+    <%# SNSシェア時のプレビュー表示に使われる %>
+    <meta property="og:site_name" content="Ihin｜遺品整理AIサポート">
+    <meta property="og:title"       content="<%= content_for?(:og_title)       ? yield(:og_title)       : (content_for?(:title) ? yield(:title) : "遺品整理をAIがサポート｜Ihin") %>">
+    <meta property="og:description" content="<%= content_for?(:og_description) ? yield(:og_description) : (content_for?(:description) ? yield(:description) : "遺品の写真を撮るだけでAIが自動識別・相場価格を査定。遺族に寄り添う遺品管理サービスです。") %>">
+    <meta property="og:type"        content="<%= content_for?(:og_type)        ? yield(:og_type)        : "website" %>">
+    <meta property="og:url"         content="<%= content_for?(:og_url)         ? yield(:og_url)         : request.original_url %>">
+    <meta property="og:image"       content="<%= content_for?(:og_image)       ? yield(:og_image)       : image_url("ogp_default.png") %>">
+    <meta property="og:locale"      content="ja_JP">
+
+    <%# ===== Twitter Card ===== %>
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="<%= content_for?(:og_title)       ? yield(:og_title)       : (content_for?(:title) ? yield(:title) : "遺品整理をAIがサポート｜Ihin") %>">
+    <meta name="twitter:description" content="<%= content_for?(:og_description) ? yield(:og_description) : (content_for?(:description) ? yield(:description) : "遺品の写真を撮るだけでAIが自動識別・相場価格を査定。") %>">
+    <meta name="twitter:image"       content="<%= content_for?(:og_image)       ? yield(:og_image)       : image_url("ogp_default.png") %>">
+
+    <%# ===== canonical URL（重複コンテンツ回避） ===== %>
+    <link rel="canonical" href="<%= content_for?(:canonical) ? yield(:canonical) : request.original_url.split("?").first %>">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
+
+    <%# ===== 構造化データ（JSON-LD）===== %>
+    <%= yield :json_ld %>
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -24,18 +48,7 @@
   <body>
     <%= render "shared/navbar" %>
 
-    <% if notice %>
-      <div class="flash flash-notice" data-controller="flash">
-        <span><%= notice %></span>
-        <button data-action="flash#close" class="flash-close">&times;</button>
-      </div>
-    <% end %>
-    <% if alert %>
-      <div class="flash flash-alert" data-controller="flash">
-        <span><%= alert %></span>
-        <button data-action="flash#close" class="flash-close">&times;</button>
-      </div>
-    <% end %>
+    <%= render "shared/flash" %>
 
     <main class="main-content">
       <%= yield %>

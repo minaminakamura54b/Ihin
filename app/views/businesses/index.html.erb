@@ -1,4 +1,18 @@
-<% content_for :title, "業者を探す | 遺品AI査定" %>
+<% content_for :title, "業者を探す｜Ihin" %>
+<% content_for :description, "遺品整理・買取・司法書士など、信頼できる業者をエリアと業種で絞り込めます。あなたの地域の業者を無料でご紹介します。" %>
+
+<% content_for :json_ld do %>
+  <script type="application/ld+json">
+    <%= {
+      "@context" => "https://schema.org",
+      "@type"    => "BreadcrumbList",
+      "itemListElement" => [
+        { "@type" => "ListItem", "position" => 1, "name" => "トップ",     "item" => root_url },
+        { "@type" => "ListItem", "position" => 2, "name" => "業者を探す", "item" => businesses_url }
+      ]
+    }.to_json.html_safe %>
+  </script>
+<% end %>
 
 <div class="page-container">
   <div class="page-header">

@@ -19,7 +19,8 @@
             <%= link_to "査定する", new_bulk_assessment_path, class: "nav-link #{controller_name == 'bulk_assessments' ? 'active' : ''}" %>
             <%= link_to "遺品リスト", items_path, class: "nav-link #{controller_name == 'items' ? 'active' : ''}" %>
             <%= link_to "やることリスト", todo_items_path, class: "nav-link #{controller_name == 'todo_items' ? 'active' : ''}" %>
-            <%= link_to "思い出ボックス", memories_path, class: "nav-link #{controller_name == 'memories' ? 'active' : ''}" %>
+            <%= link_to "思い出", memories_path, class: "nav-link #{controller_name == 'memories' ? 'active' : ''}" %>
+            <%= link_to "アルバム", albums_path, class: "nav-link #{controller_name == 'albums' ? 'active' : ''}" %>
             <%= link_to "業者を探す", businesses_path, class: "nav-link #{controller_name == 'businesses' ? 'active' : ''}" %>
             <%= link_to "💬 AI相談", ai_consultation_path, class: "nav-link nav-link-ai #{controller_name == 'ai_consultations' ? 'active' : ''}" %>
 

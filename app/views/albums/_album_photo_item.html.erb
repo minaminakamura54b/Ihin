@@ -1,0 +1,20 @@
+<div class="album-photo-item" id="album_memory_<%= memory.id %>">
+  <%= link_to memory_path(memory), class: "album-photo-link" do %>
+    <% if memory.photo.attached? %>
+      <%= image_tag memory.photo.variant(resize_to_fill: [300, 300]), class: "album-photo-img", alt: memory.display_title %>
+    <% else %>
+      <div class="album-photo-img album-photo-no-img">
+        <i class="fas fa-image"></i>
+      </div>
+    <% end %>
+    <div class="album-photo-overlay">
+      <p class="album-photo-title"><%= memory.display_title %></p>
+    </div>
+  <% end %>
+  <%= button_to remove_memory_album_path(album, memory_id: memory.id), method: :delete,
+        class: "album-photo-remove",
+        data: { confirm: "このアルバムから削除しますか？" },
+        title: "アルバムから削除" do %>
+    <i class="fas fa-times"></i>
+  <% end %>
+</div>

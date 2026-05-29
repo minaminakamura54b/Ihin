@@ -1,0 +1,28 @@
+<% content_for :title, "アルバム | デジタル記念館" %>
+
+<div class="page-container">
+  <div class="albums-header">
+    <div>
+      <h1 class="albums-title"><i class="fas fa-book-open" style="color:var(--teal);"></i> アルバム</h1>
+      <p class="albums-subtitle">思い出をアルバムにまとめて整理できます</p>
+    </div>
+    <%= link_to new_album_path, class: "btn btn-primary btn-sm" do %>
+      <i class="fas fa-plus"></i> 新しいアルバム
+    <% end %>
+  </div>
+
+  <% if @albums.any? %>
+    <div class="albums-grid" id="albums-list">
+      <% @albums.each do |album| %>
+        <%= render "album_card", album: album %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-icon">📷</div>
+      <h3>アルバムがまだありません</h3>
+      <p>思い出をテーマ別にまとめたアルバムを作りましょう</p>
+      <%= link_to "最初のアルバムを作る", new_album_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

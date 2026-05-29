@@ -1,0 +1,24 @@
+<%= form_with model: album, class: "form-card" do |f| %>
+  <% if album.errors.any? %>
+    <div class="form-errors">
+      <% album.errors.full_messages.each do |msg| %>
+        <p><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :title, "アルバム名", class: "form-label" %>
+    <%= f.text_field :title, class: "form-input", placeholder: "例：お父さんの思い出", required: true %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :description, "説明（任意）", class: "form-label" %>
+    <%= f.text_area :description, class: "form-input", rows: 3, placeholder: "アルバムの説明を書いてください" %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit album.new_record? ? "作成する" : "更新する", class: "btn btn-primary" %>
+    <%= link_to "キャンセル", album.new_record? ? albums_path : album_path(album), class: "btn btn-outline" %>
+  </div>
+<% end %>

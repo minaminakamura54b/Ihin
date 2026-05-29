@@ -1,16 +1,32 @@
-<h2>Forgot your password?</h2>
+<% content_for :title, "パスワードをお忘れですか？ | 遺品AI査定" %>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="brand-icon">🔑</span>
+      <h1>パスワードをお忘れですか？</h1>
+      <p>登録済みのメールアドレスを入力してください。<br>パスワード再設定のURLをお送りします。</p>
+    </div>
 
-  <div class="field">
-    <p><%= f.label :email %></p>
-    <p><%= f.email_field :email, autofocus: true, autocomplete: "email" %></p>
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <div class="form-group">
+        <%= f.label :email, "メールアドレス", class: "form-label" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-input",
+              placeholder: "example@email.com" %>
+      </div>
+
+      <div class="form-actions">
+        <%= f.submit "リセット用メールを送信", class: "btn btn-primary btn-full",
+              data: { disable_with: "送信中..." } %>
+      </div>
+    <% end %>
+
+    <div class="auth-links" style="margin-top: 20px; text-align: center;">
+      <p style="font-size: 13px; color: var(--text-sub);">
+        <%= link_to "ログイン画面に戻る", new_user_session_path, style: "color: var(--teal);" %>
+      </p>
+    </div>
   </div>
-
-  <div class="actions">
-    <%= f.submit "Send me password reset instructions" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</div>

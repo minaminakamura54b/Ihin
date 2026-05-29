@@ -1,41 +1,55 @@
-<% content_for :title, "#{@memory.display_title} | デジタル記念館" %>
+<% content_for :title, "#{@memory.display_title} | 追悼ページ" %>
 
-<div class="memorial-shared-page">
-  <div class="memorial-hero" style="margin-bottom: 32px;">
-    <i class="fas fa-heart" style="font-size: 28px; color: var(--teal); margin-bottom: 12px;"></i>
-    <h1 class="memorial-title"><%= @memory.display_title %></h1>
-    <p class="memorial-subtitle"><%= @memory.created_at.strftime("%Y年%m月%d日") %></p>
+<div class="memorial-page">
+
+  <%# ヘッダー：名前と日付 %>
+  <div class="memorial-header">
+    <div class="memorial-header-icon">
+      <i class="fas fa-heart"></i>
+    </div>
+    <h1 class="memorial-name"><%= @memory.display_title %></h1>
+    <p class="memorial-date"><%= @memory.created_at.strftime("%Y年%m月%d日") %></p>
   </div>
 
   <%# 写真 %>
   <% if @memory.photo.attached? %>
-    <%= image_tag @memory.photo.variant(resize_to_limit: [700, 600]),
-          style: "width: 100%; border-radius: var(--radius); margin-bottom: 24px; display: block;",
-          alt: @memory.display_title %>
+    <div class="memorial-photo-wrap">
+      <%= image_tag @memory.photo.variant(resize_to_limit: [800, 700]),
+            class: "memorial-photo",
+            alt: @memory.display_title %>
+    </div>
   <% end %>
 
   <%# AI追悼文 %>
   <% if @memory.ai_summary.present? %>
-    <div class="memorial-ai-summary">
-      <%= @memory.ai_summary %>
+    <div class="memorial-tribute">
+      <div class="memorial-tribute-icon">
+        <i class="fas fa-feather-alt"></i>
+      </div>
+      <p class="memorial-tribute-text"><%= @memory.ai_summary %></p>
     </div>
   <% end %>
 
   <%# エピソード %>
   <% text = @memory.description.presence || @memory.comment.presence %>
   <% if text.present? %>
-    <div class="memory-detail-comment">
-      <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--navy);">エピソード・思い出</h2>
-      <p style="white-space: pre-wrap; line-height: 1.8;"><%= text %></p>
+    <div class="memorial-episode">
+      <h2 class="memorial-episode-title">
+        <i class="fas fa-book-open"></i> 思い出のエピソード
+      </h2>
+      <p class="memorial-episode-text"><%= text %></p>
     </div>
   <% end %>
 
-  <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 0.5px solid var(--border);">
-    <p style="font-size: 13px; color: var(--text-sub);">
-      遺品AI査定 — デジタル記念館
+  <%# フッター %>
+  <div class="memorial-footer">
+    <div class="memorial-footer-divider"></div>
+    <p class="memorial-footer-caption">
+      <i class="fas fa-heart" style="color: var(--teal);"></i>
+      大切な思い出を、いつまでも。
     </p>
-    <%= link_to "無料で記念館を作る", new_user_registration_path,
-          class: "btn btn-outline",
-          style: "margin-top: 12px;" %>
+    <%= link_to "無料で追悼ページを作る", new_user_registration_path,
+          class: "btn btn-outline memorial-footer-btn" %>
   </div>
+
 </div>

@@ -95,12 +95,19 @@ class BusinessesController < ApplicationController
 
   def dashboard
     this_month = Time.current.beginning_of_month..Time.current.end_of_month
-    @inquiries         = @business.inquiries.includes(:user).order(created_at: :desc).page(params[:page]).per(20)
-    @pending_count     = @business.inquiries.pending.count
-    @contacted_count   = @business.inquiries.contacted.count
-    @closed_count      = @business.inquiries.closed.where(created_at: this_month).count
-    @monthly_new_count = @business.inquiries.where(created_at: this_month).count
-    @plan = @business.plan
+
+    @inquiries = @business.inquiries.includes(:user).order(created_at: :desc).page(params[:page]).per(20)
+
+    # ステータス別カウントを1クエリで取得
+    status_counts  = @business.inquiries.group(:status).count
+    @pending_count   = status_counts["pending"]   || 0
+    @contacted_count = status_counts["contacted"] || 0
+
+    # 当月カウントを1クエリで取得
+    monthly_counts = @business.inquiries.where(created_at: this_month).group(:status).count
+    @closed_count      = monthly_counts["closed"] || 0
+    @monthly_new_count = monthly_counts.values.sum
+
     limit = @business.contact_limit
     @remaining_contacts = limit ? [ limit - @monthly_new_count, 0 ].max : nil
     @sidebar_pending = @business.inquiries.pending.includes(:user).order(created_at: :desc).limit(5)

@@ -1,0 +1,26 @@
+<div class="album-card" id="album_<%= album.id %>_card">
+  <%= link_to album_path(album), class: "album-card-link" do %>
+    <div class="album-cover">
+      <% cover = album.memories.joins(photo_attachment: :blob).first %>
+      <% if cover&.photo&.attached? %>
+        <%= image_tag cover.photo.variant(resize_to_fill: [400, 280]), class: "album-cover-img", alt: album.title %>
+      <% else %>
+        <div class="album-cover-empty">
+          <i class="fas fa-images"></i>
+        </div>
+      <% end %>
+      <div class="album-cover-overlay">
+        <span class="album-count"><%= album.memories.count %>枚</span>
+      </div>
+      <% if album.shared? %>
+        <span class="album-shared-badge"><i class="fas fa-share-alt"></i></span>
+      <% end %>
+    </div>
+    <div class="album-card-info">
+      <p class="album-card-title"><%= album.title %></p>
+      <% if album.description.present? %>
+        <p class="album-card-desc"><%= truncate(album.description, length: 40) %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>
