@@ -34,7 +34,7 @@ class Rack::Attack
         "Content-Type" => "text/html; charset=utf-8",
         "Retry-After"  => retry_after.to_s
       },
-      [<<~HTML]
+      [ <<~HTML ]
         <!DOCTYPE html>
         <html lang="ja">
         <head>

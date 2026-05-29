@@ -73,8 +73,8 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
     image = fixture_file_upload(
       Rails.root.join("test/fixtures/files/test_image.jpg"), "image/jpeg"
     )
-    assert_difference ["Memory.count", "AlbumMemory.count"], 1 do
-      post upload_photo_album_path(@album), params: { photos: [image] }
+    assert_difference [ "Memory.count", "AlbumMemory.count" ], 1 do
+      post upload_photo_album_path(@album), params: { photos: [ image ] }
     end
     assert_redirected_to album_path(@album)
     assert_match "1枚", flash[:notice]
@@ -86,7 +86,7 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
         Rails.root.join("test/fixtures/files/test_image.jpg"), "image/jpeg"
       )
     end
-    assert_difference ["Memory.count", "AlbumMemory.count"], 3 do
+    assert_difference [ "Memory.count", "AlbumMemory.count" ], 3 do
       post upload_photo_album_path(@album), params: { photos: images }
     end
     assert_redirected_to album_path(@album)
@@ -94,7 +94,7 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "画像なしでアップロードするとアラートが出る" do
-    assert_no_difference ["Memory.count", "AlbumMemory.count"] do
+    assert_no_difference [ "Memory.count", "AlbumMemory.count" ] do
       post upload_photo_album_path(@album), params: { photos: [] }
     end
     assert_redirected_to album_path(@album)
@@ -105,8 +105,8 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
     txt = fixture_file_upload(
       Rails.root.join("test/fixtures/files/test.txt"), "text/plain"
     )
-    assert_no_difference ["Memory.count", "AlbumMemory.count"] do
-      post upload_photo_album_path(@album), params: { photos: [txt] }
+    assert_no_difference [ "Memory.count", "AlbumMemory.count" ] do
+      post upload_photo_album_path(@album), params: { photos: [ txt ] }
     end
     assert_redirected_to album_path(@album)
     assert flash[:alert].present?
@@ -117,7 +117,7 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
     image = fixture_file_upload(
       Rails.root.join("test/fixtures/files/test_image.jpg"), "image/jpeg"
     )
-    post upload_photo_album_path(other_album), params: { photos: [image] }
+    post upload_photo_album_path(other_album), params: { photos: [ image ] }
     assert_response :not_found
   end
 
@@ -126,7 +126,7 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
   test "既存の思い出をアルバムに追加できる" do
     memory = create(:memory, user: @user)
     assert_difference "AlbumMemory.count", 1 do
-      post add_memories_album_path(@album), params: { memory_ids: [memory.id] }
+      post add_memories_album_path(@album), params: { memory_ids: [ memory.id ] }
     end
     assert_redirected_to album_path(@album)
   end
@@ -134,7 +134,7 @@ class AlbumsControllerTest < ActionDispatch::IntegrationTest
   test "他人の思い出はアルバムに追加できない" do
     other_memory = create(:memory, user: @other)
     assert_no_difference "AlbumMemory.count" do
-      post add_memories_album_path(@album), params: { memory_ids: [other_memory.id] }
+      post add_memories_album_path(@album), params: { memory_ids: [ other_memory.id ] }
     end
   end
 

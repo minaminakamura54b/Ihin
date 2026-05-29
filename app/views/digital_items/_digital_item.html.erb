@@ -6,10 +6,12 @@
           class: "status-toggle status-toggle-#{item.status}",
           form: { data: { turbo_stream: true } },
           title: { "unchecked" => "未対応", "in_progress" => "対応中", "completed" => "完了" }[item.status] do %>
-      <% case item.status %>
-      <% when "unchecked"   %><i class="fas fa-circle"></i>
-      <% when "in_progress" %><i class="fas fa-spinner"></i>
-      <% when "completed"   %><i class="fas fa-check-circle"></i>
+      <% if item.status == "unchecked" %>
+        <i class="fas fa-circle"></i>
+      <% elsif item.status == "in_progress" %>
+        <i class="fas fa-spinner"></i>
+      <% else %>
+        <i class="fas fa-check-circle"></i>
       <% end %>
     <% end %>
   </div>
