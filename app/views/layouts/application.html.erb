@@ -16,14 +16,14 @@
     <meta property="og:description" content="<%= content_for?(:og_description) ? yield(:og_description) : (content_for?(:description) ? yield(:description) : "遺品の写真を撮るだけでAIが自動識別・相場価格を査定。遺族に寄り添う遺品管理サービスです。") %>">
     <meta property="og:type"        content="<%= content_for?(:og_type)        ? yield(:og_type)        : "website" %>">
     <meta property="og:url"         content="<%= content_for?(:og_url)         ? yield(:og_url)         : request.original_url %>">
-    <meta property="og:image"       content="<%= content_for?(:og_image)       ? yield(:og_image)       : image_url("ogp_default.png") %>">
+    <meta property="og:image"       content="<%= content_for?(:og_image)       ? yield(:og_image)       : "#{request.base_url}/ogp_default.png" %>">
     <meta property="og:locale"      content="ja_JP">
 
     <%# ===== Twitter Card ===== %>
     <meta name="twitter:card"        content="summary_large_image">
     <meta name="twitter:title"       content="<%= content_for?(:og_title)       ? yield(:og_title)       : (content_for?(:title) ? yield(:title) : "遺品整理をAIがサポート｜Ihin") %>">
     <meta name="twitter:description" content="<%= content_for?(:og_description) ? yield(:og_description) : (content_for?(:description) ? yield(:description) : "遺品の写真を撮るだけでAIが自動識別・相場価格を査定。") %>">
-    <meta name="twitter:image"       content="<%= content_for?(:og_image)       ? yield(:og_image)       : image_url("ogp_default.png") %>">
+    <meta name="twitter:image"       content="<%= content_for?(:og_image)       ? yield(:og_image)       : "#{request.base_url}/ogp_default.png" %>">
 
     <%# ===== canonical URL（重複コンテンツ回避） ===== %>
     <link rel="canonical" href="<%= content_for?(:canonical) ? yield(:canonical) : request.original_url.split("?").first %>">

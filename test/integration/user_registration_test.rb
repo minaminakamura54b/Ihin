@@ -10,14 +10,15 @@ class UserRegistrationTest < ActionDispatch::IntegrationTest
           user: {
             name: "田中 花子",
             email: "hanako@example.com",
-            password: "password123",
-            password_confirmation: "password123",
+            password: "Password1",
+            password_confirmation: "Password1",
             role: "family"
           }
         }
       end
     end
-    assert_redirected_to root_path
+    # family ユーザーはメール確認が必要なのでconfirmationページへリダイレクト
+    assert_redirected_to new_user_confirmation_path
     user = User.find_by(email: "hanako@example.com")
     assert user.family?
     assert_equal 46, user.todo_items.count
@@ -46,8 +47,8 @@ class UserRegistrationTest < ActionDispatch::IntegrationTest
           user: {
             name: "山田 業者",
             email: "yamada_biz@example.com",
-            password: "password123",
-            password_confirmation: "password123",
+            password: "Password1",
+            password_confirmation: "Password1",
             role: "business"
           }
         }
