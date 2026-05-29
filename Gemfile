@@ -22,7 +22,7 @@ gem "stripe"
 gem "anthropic"
 
 # 画像処理
-gem "image_processing", "~> 1.2"
+gem "image_processing", "~> 2.0"
 
 # AWS S3
 gem "aws-sdk-s3", require: false
