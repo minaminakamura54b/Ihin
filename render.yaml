@@ -10,8 +10,10 @@ services:
       # ===== Rails 基本設定 =====
       - key: RAILS_ENV
         value: production
+      # config/master.key は .gitignore で除外されているため、
+      # Render ダッシュボードで手動設定する必要がある
       - key: RAILS_MASTER_KEY
-        fromFile: config/master.key
+        sync: false
       - key: RAILS_LOG_LEVEL
         value: info
       # ドメイン名（ActionMailer の URL 生成・サイトマップに使用）
