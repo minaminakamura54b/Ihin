@@ -61,7 +61,9 @@ Rails.application.routes.draw do
   resources :consultations, only: [ :create, :index ]
 
   resources :businesses do
-    resources :inquiries, only: [ :create, :index, :update ]
+    resources :inquiries, only: [ :new, :create, :index, :update ] do
+      member { get :complete }
+    end
     member do
       post :subscribe
       delete :unsubscribe

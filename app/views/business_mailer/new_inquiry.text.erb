@@ -1,0 +1,21 @@
+<%= @business.user.name %> 様
+
+<%= @sender.name %> 様から新しいお問い合わせが届きました。
+
+━━━━━━━━━━━━━━━━━━━━
+お名前　：<%= @sender.name %>
+連絡先　：<%= @inquiry.contact_info %>（<%= @inquiry.email? ? "メールアドレス" : "電話番号" %>）
+日時　　：<%= @inquiry.created_at.strftime("%Y年%m月%d日 %H:%M") %>
+━━━━━━━━━━━━━━━━━━━━
+
+【メッセージ】
+<%= @inquiry.message %>
+
+━━━━━━━━━━━━━━━━━━━━
+
+以降は直接ご連絡ください。
+
+ダッシュボード：https://<%= ENV.fetch("APP_HOST", "ihin-app.jp") %>/users/sign_in
+
+─────────────────────
+Ihin（https://<%= ENV.fetch("APP_HOST", "ihin-app.jp") %>）

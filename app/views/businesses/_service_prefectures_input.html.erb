@@ -1,0 +1,49 @@
+<%# 対応エリア（都道府県チェックボックス）共有パーシャル %>
+<%# locals: f (form_builder), business (Business インスタンス) %>
+
+<div class="form-group">
+  <%= f.label :service_prefectures, class: "form-label" do %>
+    対応エリア <span class="required-badge">必須</span>
+  <% end %>
+  <p class="form-hint">対応できる都道府県をすべて選択してください（複数選択可）</p>
+
+  <%# 未チェックの場合に空配列を送るための hidden フィールド %>
+  <input type="hidden" name="business[service_prefectures][]" value="">
+
+  <div class="pref-check-wrap">
+    <% [
+      ["北海道・東北", %w[北海道 青森県 岩手県 宮城県 秋田県 山形県 福島県]],
+      ["関東",        %w[茨城県 栃木県 群馬県 埼玉県 千葉県 東京都 神奈川県]],
+      ["甲信越・北陸", %w[新潟県 富山県 石川県 福井県 山梨県 長野県]],
+      ["東海",        %w[岐阜県 静岡県 愛知県 三重県]],
+      ["近畿",        %w[滋賀県 京都府 大阪府 兵庫県 奈良県 和歌山県]],
+      ["中国",        %w[鳥取県 島根県 岡山県 広島県 山口県]],
+      ["四国",        %w[徳島県 香川県 愛媛県 高知県]],
+      ["九州・沖縄",  %w[福岡県 佐賀県 長崎県 熊本県 大分県 宮崎県 鹿児島県 沖縄県]],
+    ].each do |region, prefs| %>
+      <div class="pref-check-region">
+        <span class="pref-check-region-name"><%= region %></span>
+        <div class="pref-check-group">
+          <% prefs.each do |pref| %>
+            <label class="pref-check-label">
+              <%= check_box_tag "business[service_prefectures][]", pref,
+                    (business.service_prefectures || []).include?(pref),
+                    id: "pref_#{pref}" %>
+              <%= pref %>
+            </label>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# 一括選択ボタン %>
+  <div class="pref-check-actions">
+    <button type="button" class="pref-check-all-btn" onclick="document.querySelectorAll('[name=\'business[service_prefectures][]\']').forEach(c => c.checked = true)">
+      すべて選択
+    </button>
+    <button type="button" class="pref-check-all-btn" onclick="document.querySelectorAll('[name=\'business[service_prefectures][]\']').forEach(c => c.checked = false)">
+      すべて解除
+    </button>
+  </div>
+</div>

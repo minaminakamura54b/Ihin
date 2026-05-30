@@ -1,0 +1,33 @@
+<%# STEP1: カテゴリ選択 %>
+<div class="search-step-content">
+  <h2 class="step-title">どのようなサービスをお探しですか？</h2>
+  <p class="step-desc">ご希望のカテゴリを選んでください</p>
+
+  <div class="category-cards">
+    <%# 遺品整理 %>
+    <%= link_to search_businesses_path(step: 2, category: "estate_clearance"),
+          class: "category-card",
+          data: { turbo_frame: "search-steps" } do %>
+      <div class="category-card-icon">🏠</div>
+      <h3 class="category-card-title">遺品整理</h3>
+      <p class="category-card-desc">
+        ご自宅の片付け・清掃・<br>
+        不用品の処分まで対応
+      </p>
+      <span class="category-card-cta">この業者を探す <i class="fas fa-arrow-right"></i></span>
+    <% end %>
+
+    <%# 遺品買取 %>
+    <%= link_to search_businesses_path(step: 2, category: "buyback"),
+          class: "category-card",
+          data: { turbo_frame: "search-steps" } do %>
+      <div class="category-card-icon">💎</div>
+      <h3 class="category-card-title">遺品買取</h3>
+      <p class="category-card-desc">
+        骨董品・貴金属・家電など<br>
+        価値あるものを買い取り
+      </p>
+      <span class="category-card-cta">この業者を探す <i class="fas fa-arrow-right"></i></span>
+    <% end %>
+  </div>
+</div>

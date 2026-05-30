@@ -5,19 +5,21 @@ FactoryBot.define do
     skip_create
 
     association :user, factory: [ :user, :business_role ]
-    name            { "テスト遺品整理業者" }
-    area            { "神奈川県横浜市" }
-    plan            { :free }
-    active          { true }
-    approval_status { :approved }
-    category        { :estate_clearance }
+    name                 { "テスト遺品整理業者" }
+    area                 { "神奈川県横浜市" }
+    plan                 { :free }
+    active               { true }
+    approval_status      { :approved }
+    category             { :estate_clearance }
+    service_prefectures  { %w[東京都] }
 
     initialize_with do
       biz = user.business
       biz.update!(
         name: name, area: area, plan: plan,
         active: active, category: category,
-        approval_status: approval_status
+        approval_status: approval_status,
+        service_prefectures: service_prefectures
       )
       biz
     end

@@ -26,12 +26,13 @@
     </div>
     <div class="form-group">
       <%= f.label :category, "業種", class: "form-label required" %>
-      <%= f.select :category, [["遺品整理業者", "estate_clearance"], ["買取業者", "buyback"], ["司法書士", "judicial_scrivener"]], {}, class: "form-select" %>
+      <%= f.select :category, [
+            ["遺品整理業者", "estate_clearance"],
+            ["買取業者",     "buyback"],
+            ["不動産業者",   "real_estate"]
+          ], {}, class: "form-select" %>
     </div>
-    <div class="form-group">
-      <%= f.label :area, "対応エリア", class: "form-label" %>
-      <%= f.text_field :area, class: "form-input" %>
-    </div>
+    <%= render "businesses/service_prefectures_input", f: f, business: @business %>
     <div class="form-group">
       <%= f.label :description, "事業者の説明", class: "form-label" %>
       <%= f.text_area :description, class: "form-input form-textarea", rows: 4 %>

@@ -90,6 +90,84 @@ class BusinessesControllerTest < ActionDispatch::IntegrationTest
     assert_equal original_name, @business.reload.name
   end
 
+  # ===== service_prefectures 更新 =====
+
+  test "オーナーが service_prefectures を更新できる" do
+    sign_in @owner
+    patch business_path(@business), params: {
+      business: { service_prefectures: %w[大阪府 京都府] }
+    }
+    assert_redirected_to business_path(@business)
+    assert_equal %w[大阪府 京都府], @business.reload.service_prefectures
+  end
+
+  test "service_prefectures の空文字列はフォーム送信時に除去される" do
+    sign_in @owner
+    patch business_path(@business), params: {
+      business: { service_prefectures: [ "", "埼玉県", "" ] }
+    }
+    assert_equal %w[埼玉県], @business.reload.service_prefectures
+  end
+
+  test "他ユーザーは service_prefectures を更新できない（認可テスト）" do
+    sign_in @family_user
+    original = @business.service_prefectures.dup
+    patch business_path(@business), params: {
+      business: { service_prefectures: %w[沖縄県] }
+    }
+    assert_redirected_to root_path
+    assert_equal original, @business.reload.service_prefectures
+  end
+
+  test "未ログインは service_prefectures を更新できない" do
+    patch business_path(@business), params: {
+      business: { service_prefectures: %w[沖縄県] }
+    }
+    assert_redirected_to new_user_session_path
+    assert_not_equal %w[沖縄県], @business.reload.service_prefectures
+  end
+
+  # ===== セキュリティ: マスアサインメント =====
+
+  test "role は business_params 経由で変更できない" do
+    sign_in @owner
+    patch business_path(@business), params: {
+      business: { name: "test", role: "admin" }
+    }
+    # User の role は変化しない（Business モデルに role はない → 無視される）
+    assert_equal "business", @owner.reload.role
+  end
+
+  test "approval_status はオーナーが変更できない（管理者専用）" do
+    sign_in @owner
+    patch business_path(@business), params: {
+      business: { approval_status: "rejected" }
+    }
+    assert_equal "approved", @business.reload.approval_status
+  end
+
+  # ===== service_prefectures による検索（index）=====
+
+  test "都道府県検索で service_prefectures にマッチする業者が返る" do
+    @business.update!(service_prefectures: %w[神奈川県])
+    get businesses_path, params: { prefecture: "神奈川県" }
+    assert_response :success
+    assert_select "turbo-frame#businesses-list"
+  end
+
+  test "都道府県未選択では業者一覧は表示されない" do
+    get businesses_path
+    assert_response :success
+    # リスト内に biz-map-guide（未選択ガイド）が表示される
+    assert_select ".biz-map-guide"
+  end
+
+  test "prefecture パラメータに不正値を渡しても 500 にならない" do
+    # SQL インジェクション試行（? = ANY(service_prefectures) は parameterized なので安全）
+    get businesses_path, params: { prefecture: "'; DROP TABLE businesses; --" }
+    assert_response :success
+  end
+
   # ===== subscribe (Stripe モック) =====
 
   test "subscribe が free→free の場合 alert でリダイレクト" do

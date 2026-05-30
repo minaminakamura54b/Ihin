@@ -2244,3 +2244,740 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .dev-bar-value { color: #e2e8f0; }
 .dev-bar-guest { color: #f59e0b; }
+
+/* ========================================
+   業者マッチング検索ページ (/businesses/search)
+   ======================================== */
+
+/* ヒーローバナー */
+.search-hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #1a3a5c 100%);
+  padding: 40px 20px 36px;
+  text-align: center;
+}
+.search-hero-inner { max-width: 600px; margin: 0 auto; }
+.search-hero-title {
+  color: var(--white);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.search-hero-title i { margin-right: 8px; color: var(--teal-accent); }
+.search-hero-lead { color: rgba(255,255,255,0.8); font-size: 14px; line-height: 1.7; }
+
+/* 検索フォームカード */
+.search-form-wrap {
+  background: var(--white);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  margin: 0 auto 32px;
+  max-width: 680px;
+  padding: 28px 24px 24px;
+}
+.search-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (max-width: 540px) {
+  .search-form-row { grid-template-columns: 1fr; gap: 12px; }
+}
+.search-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.search-select,
+.search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  background: var(--white);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.search-select:focus,
+.search-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(42,127,111,0.12);
+}
+.search-select.is-selected { border-color: var(--teal); font-weight: 600; }
+.search-form-submit { text-align: center; }
+.search-btn { min-width: 200px; }
+
+/* 結果エリア */
+.search-results-wrap { max-width: 680px; margin: 0 auto; padding: 0 16px 48px; }
+
+/* 件数バー */
+.search-result-count {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.search-result-count strong { color: var(--navy); font-size: 18px; }
+.search-result-area { color: var(--teal); }
+
+/* 業者カード（検索結果）*/
+.search-result-list { display: flex; flex-direction: column; gap: 16px; }
+
+.search-result-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.search-result-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  border-color: var(--teal-light);
+}
+.src-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.src-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.src-area {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+.src-area i { color: var(--teal); margin-right: 4px; }
+.src-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--surface);
+  border-radius: 8px;
+}
+.src-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* 未検索時のガイド表示 */
+.search-guide {
+  text-align: center;
+  padding: 40px 20px;
+}
+.search-guide-inner { max-width: 440px; margin: 0 auto; }
+.search-guide-icon { font-size: 48px; margin-bottom: 16px; }
+.search-guide h2 { font-size: 18px; color: var(--navy); margin-bottom: 10px; }
+.search-guide p { font-size: 14px; color: var(--text-secondary); margin-bottom: 20px; }
+.search-guide-list {
+  list-style: none;
+  padding: 0;
+  text-align: left;
+  display: inline-block;
+}
+.search-guide-list li {
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding: 5px 0;
+}
+.search-guide-list i { color: var(--teal); margin-right: 8px; }
+
+/* 該当業者なし */
+.search-empty {
+  text-align: center;
+  padding: 48px 20px;
+}
+.search-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.search-empty h3 { font-size: 17px; color: var(--navy); margin-bottom: 10px; }
+.search-empty p { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 20px; }
+
+/* スマホ改行用 */
+.sp-only { display: none; }
+@media (max-width: 480px) { .sp-only { display: inline; } }
+
+/* ========================================
+   業者一覧（地図ファースト）
+   ======================================== */
+
+.biz-index-page { max-width: 800px; margin: 0 auto; padding-bottom: 60px; }
+
+/* 地図セクション */
+.biz-map-section {
+  padding: 0 16px 8px;
+}
+
+/* 結果セクション */
+.biz-results-section {
+  padding: 0 16px;
+}
+
+/* カテゴリタブ */
+.biz-category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.category-tab {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.category-tab:hover  { border-color: var(--teal); }
+.category-tab.active { background: var(--teal); color: white; border-color: var(--teal); }
+
+/* 選択済み都道府県ヘッダー */
+.biz-result-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.biz-result-pref {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.biz-clear-btn {
+  font-size: 12px;
+  color: var(--text-sub);
+  text-decoration: none;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.biz-clear-btn:hover { color: var(--danger); border-color: var(--danger); }
+
+/* 都道府県チェックボックス（業者登録フォーム）*/
+.pref-check-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.pref-check-region {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.pref-check-region:last-child { border-bottom: none; }
+.pref-check-region:nth-child(even) { background: var(--bg); }
+.pref-check-region-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sub);
+  white-space: nowrap;
+  padding-top: 3px;
+  min-width: 72px;
+}
+.pref-check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pref-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background 0.1s;
+}
+.pref-check-label:hover { background: var(--teal-light); }
+.pref-check-label input[type="checkbox"] { accent-color: var(--teal); }
+.pref-check-actions {
+  display: flex;
+  gap: 8px;
+}
+.pref-check-all-btn {
+  font-size: 12px;
+  color: var(--teal);
+  background: none;
+  border: 1px solid var(--teal);
+  border-radius: 16px;
+  padding: 3px 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.pref-check-all-btn:hover { background: var(--teal-light); }
+
+/* 市区町村フィルター */
+.city-filter {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.city-filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  background: var(--white);
+  list-style: none;
+  user-select: none;
+}
+.city-filter-toggle::-webkit-details-marker { display: none; }
+.city-filter-toggle:hover { background: var(--teal-light); }
+.city-filter-icon {
+  font-size: 11px;
+  color: var(--text-sub);
+  transition: transform 0.2s;
+}
+details.city-filter[open] .city-filter-icon { transform: rotate(180deg); }
+.city-filter-badge {
+  margin-left: auto;
+  background: var(--teal);
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.city-filter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.city-chip {
+  display: inline-block;
+  padding: 5px 12px;
+  font-size: 13px;
+  border-radius: 20px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  color: var(--navy);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.city-chip:hover  { border-color: var(--teal); background: var(--teal-light); }
+.city-chip.active { background: var(--teal); color: white; border-color: var(--teal); }
+
+/* 未選択ガイド */
+.biz-map-guide {
+  text-align: center;
+  padding: 24px 20px;
+  color: var(--text-sub);
+  font-size: 14px;
+  background: var(--teal-light);
+  border-radius: 12px;
+}
+
+/* ========================================
+   3ステップ業者検索
+   ======================================== */
+
+/* ステップインジケーター */
+.search-steps-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 20px 16px 8px;
+  max-width: 360px;
+  margin: 0 auto;
+}
+.search-step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ccc;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.step-label {
+  font-size: 11px;
+  color: var(--text-sub);
+}
+.search-step-dot.active .step-num { background: var(--teal); }
+.search-step-dot.done   .step-num { background: var(--navy); }
+.search-step-line {
+  flex: 1;
+  height: 2px;
+  background: #ccc;
+  margin: 0 8px;
+  margin-bottom: 14px;
+  min-width: 40px;
+}
+
+/* ステップ共通コンテンツ */
+.search-step-content {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+.step-title {
+  font-size: 20px;
+  color: var(--navy);
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.step-desc {
+  font-size: 14px;
+  color: var(--text-sub);
+  text-align: center;
+  margin-bottom: 24px;
+}
+.step-back { margin-bottom: 16px; }
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-sub);
+  text-decoration: none;
+  padding: 4px 0;
+}
+.btn-back:hover { color: var(--navy); }
+
+/* STEP1: カテゴリカード */
+.category-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+@media (max-width: 480px) { .category-cards { grid-template-columns: 1fr; } }
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 20px 24px;
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.category-card:hover {
+  border-color: var(--teal);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(42,127,111,0.15);
+}
+.category-card-icon { font-size: 48px; margin-bottom: 12px; }
+.category-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.category-card-desc {
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  flex: 1;
+}
+.category-card-cta {
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* STEP2: 地図 */
+.japan-map-wrap {
+  position: relative;
+  margin-bottom: 24px;
+}
+.japan-map-svg {
+  width: 100%;
+  max-width: 720px;
+  display: block;
+  margin: 0 auto;
+}
+/* index ページでは地図をさらに広げる */
+.biz-map-section .japan-map-svg { max-width: 100%; }
+.pref-path {
+  fill: var(--teal-light);
+  stroke: white;
+  stroke-width: 1;
+  cursor: pointer;
+  transition: fill 0.15s;
+}
+.pref-path:hover,
+.pref-path.pref-hovered { fill: var(--teal-accent); }
+.pref-path.pref-selected { fill: var(--teal); }
+.pref-label {
+  font-size: 7px;
+  fill: var(--navy);
+  cursor: pointer;
+  user-select: none;
+}
+.map-tooltip { pointer-events: none; }
+.map-hover-label {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--navy);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.map-hover-label.visible { opacity: 1; }
+
+/* 都道府県ボタンリスト */
+.pref-list-wrap { margin-top: 8px; }
+.pref-list-title {
+  font-size: 12px;
+  color: var(--text-sub);
+  text-align: center;
+  margin-bottom: 12px;
+}
+.pref-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.pref-region {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.pref-region-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sub);
+  white-space: nowrap;
+  padding-top: 4px;
+  min-width: 72px;
+}
+.pref-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.pref-btn {
+  display: inline-block;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--navy);
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pref-btn:hover {
+  background: var(--teal-light);
+  border-color: var(--teal);
+}
+
+/* STEP3: 結果 */
+.search-result-count {
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-sub);
+  margin-bottom: 20px;
+}
+.search-result-count strong {
+  font-size: 22px;
+  color: var(--navy);
+  margin-right: 2px;
+}
+.search-empty-actions { margin-top: 16px; }
+
+/* ========================================
+   問い合わせフォーム・完了画面
+   ======================================== */
+
+/* フォームカード */
+.inquiry-form-card {
+  background: var(--white);
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  padding: 32px 28px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+@media (max-width: 480px) { .inquiry-form-card { padding: 24px 16px; } }
+
+/* 業者ヘッダー部分 */
+.inquiry-biz-header { margin-bottom: 20px; }
+.inquiry-biz-name { font-size: 20px; color: var(--navy); margin: 8px 0 4px; }
+.inquiry-biz-area { font-size: 13px; color: var(--text-secondary); }
+.inquiry-biz-area i { color: var(--teal); margin-right: 4px; }
+
+.inquiry-lead {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: var(--teal-light);
+  border-radius: 8px;
+}
+
+/* 連絡方法ラジオボタン */
+.contact-type-options { display: flex; gap: 12px; flex-wrap: wrap; }
+.contact-type-label {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+  flex: 1;
+  min-width: 160px;
+}
+.contact-type-label input[type="radio"] { display: none; }
+.contact-type-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  width: 100%;
+  font-size: 15px;
+  color: var(--text-secondary);
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.contact-type-content i { font-size: 18px; }
+.contact-type-label input[type="radio"]:checked + .contact-type-content {
+  border-color: var(--teal);
+  background: var(--teal-light);
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* 注意文言 */
+.inquiry-notice {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.inquiry-notice i { color: var(--teal); margin-right: 6px; }
+
+/* 送信ボタン行 */
+.inquiry-submit { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.inquiry-submit-btn { flex: 1; min-width: 200px; }
+
+/* 業者詳細ページのCTAボタン */
+.inquiry-cta-btn { width: 100%; max-width: 320px; }
+
+/* 問い合わせ済みバナー */
+.inquiry-already-sent {
+  font-size: 14px;
+  color: var(--teal);
+  padding: 16px;
+  background: var(--teal-light);
+  border-radius: 10px;
+  line-height: 1.7;
+}
+.inquiry-already-sent i { margin-right: 6px; }
+.inquiry-already-note { font-size: 12px; color: var(--text-secondary); }
+
+/* 送信完了画面 */
+.inquiry-complete-card {
+  background: var(--white);
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  padding: 48px 32px;
+  max-width: 480px;
+  margin: 32px auto;
+  text-align: center;
+}
+.inquiry-complete-icon { font-size: 56px; color: var(--teal); margin-bottom: 16px; }
+.inquiry-complete-title { font-size: 22px; color: var(--navy); margin-bottom: 8px; }
+.inquiry-complete-biz { font-size: 16px; color: var(--text-secondary); margin-bottom: 16px; }
+.inquiry-complete-lead {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.inquiry-complete-info {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 28px;
+  text-align: left;
+}
+.inquiry-complete-row { display: flex; gap: 12px; align-items: center; }
+.inquiry-complete-label { font-size: 13px; color: var(--text-secondary); white-space: nowrap; }
+.inquiry-complete-label i { margin-right: 4px; }
+.inquiry-complete-value { font-size: 15px; font-weight: 600; color: var(--navy); }
+.inquiry-complete-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* 業者ダッシュボードの連絡先表示 */
+.biz-inquiry-contact {
+  font-size: 14px;
+  padding: 8px 12px;
+  background: var(--teal-light);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.biz-inquiry-contact i { color: var(--teal); }
+.biz-inquiry-contact a { color: var(--teal); font-weight: 600; text-decoration: none; }
+.biz-inquiry-contact a:hover { text-decoration: underline; }
+
+/* required バッジ */
+.required-badge {
+  display: inline-block;
+  font-size: 11px;
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+  font-weight: 600;
+  vertical-align: middle;
+}

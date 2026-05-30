@@ -1,5 +1,5 @@
 <% content_for :title, "業者を探す｜Ihin" %>
-<% content_for :description, "遺品整理・買取・司法書士など、信頼できる業者をエリアと業種で絞り込めます。あなたの地域の業者を無料でご紹介します。" %>
+<% content_for :description, "地域から遺品整理・買取業者を探せます。審査済みの信頼できる業者をご紹介します。" %>
 
 <% content_for :json_ld do %>
   <script type="application/ld+json">
@@ -14,43 +14,91 @@
   </script>
 <% end %>
 
-<div class="page-container">
-  <div class="page-header">
-    <div>
-      <h1>業者を探す</h1>
-      <p class="page-subtitle">信頼できる業者をご紹介します</p>
+<div class="biz-index-page">
+
+  <%# ヘッダー %>
+  <div class="search-hero">
+    <div class="search-hero-inner">
+      <h1 class="search-hero-title">業者を探す</h1>
+      <p class="search-hero-lead">都道府県をクリックしてお近くの業者を見つけましょう</p>
     </div>
   </div>
 
-  <div class="business-filter">
-    <%= form_with url: businesses_path, method: :get, local: true, class: "filter-form" do |f| %>
-      <div class="filter-row">
-        <%= f.select :category, [["すべての業種", ""],
-            ["遺品整理業者", "estate_clearance"],
-            ["買取業者", "buyback"],
-            ["司法書士", "judicial_scrivener"]],
-            {}, class: "form-select filter-select" %>
-        <%= f.text_field :area, placeholder: "エリアで絞り込み", class: "form-input filter-input",
-            value: params[:area] %>
-        <%= f.submit "検索", class: "btn btn-primary" %>
-      </div>
+  <%# 地図セクション（フルワイド）%>
+  <div class="biz-map-section">
+    <%= render "businesses/prefecture_map",
+          frame_id:     "businesses-list",
+          pref_url:     ->(p) { businesses_path(prefecture: p, category: params[:category]) },
+          stimulus_data: { "base-url-value" => businesses_path, "frame-value" => "businesses-list" } %>
+  </div>
+
+  <%# 結果エリア（Turbo Frame）%>
+  <div class="biz-results-section">
+    <%= turbo_frame_tag "businesses-list" do %>
+      <% if @prefecture.present? %>
+
+        <%# カテゴリタブ（フレーム内に置くことで @prefecture が保持される）%>
+        <div class="biz-category-filter">
+          <% [
+            ["すべて",   nil,               "🗂️"],
+            ["遺品整理", "estate_clearance", "🏠"],
+            ["買取",     "buyback",          "💎"],
+            ["不動産",   "real_estate",      "🏢"],
+          ].each do |label, value, icon| %>
+            <% active = params[:category].to_s == value.to_s %>
+            <%= link_to businesses_path(prefecture: @prefecture, category: value),
+                  class: "category-tab #{"active" if active}",
+                  data: { turbo_frame: "businesses-list" } do %>
+              <%= icon %> <%= label %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <%# 選択中のエリア表示 %>
+        <div class="biz-result-header">
+          <span class="biz-result-pref">
+            <i class="fas fa-map-marker-alt"></i> <%= @prefecture %>
+          </span>
+          <%= link_to "× 都道府県を変更",
+                businesses_path,
+                class: "biz-clear-btn",
+                data: { turbo_frame: "businesses-list" } %>
+        </div>
+
+        <%# 業者一覧 %>
+        <% if @businesses.any? %>
+          <p class="search-result-count">
+            <strong><%= @businesses.total_count %></strong> 件の業者が見つかりました
+          </p>
+          <div class="search-result-list">
+            <% @businesses.each do |business| %>
+              <%= render "businesses/search_result", business: business %>
+            <% end %>
+          </div>
+          <% if @businesses.respond_to?(:total_pages) && @businesses.total_pages > 1 %>
+            <div class="pagination">
+              <%= paginate @businesses, params: { prefecture: @prefecture, city: @city, category: params[:category] } %>
+            </div>
+          <% end %>
+
+        <% else %>
+          <div class="search-empty">
+            <div class="search-empty-icon">🔍</div>
+            <h3>
+              <%= @city.present? ? "#{@prefecture}#{@city}" : @prefecture %>
+              の業者はまだ登録されていません
+            </h3>
+            <p>別のエリアをお試しいただくか、しばらく経ってからご確認ください。</p>
+          </div>
+        <% end %>
+
+      <% else %>
+        <%# 未選択ガイド %>
+        <div class="biz-map-guide">
+          <p>上の地図から都道府県を選んでください</p>
+        </div>
+      <% end %>
     <% end %>
   </div>
 
-  <% if @businesses.any? %>
-    <div class="businesses-grid">
-      <%= render @businesses %>
-    </div>
-    <% if @businesses.respond_to?(:total_pages) %>
-      <div class="pagination">
-        <%= paginate @businesses %>
-      </div>
-    <% end %>
-  <% else %>
-    <div class="empty-state">
-      <div class="empty-icon">🤝</div>
-      <h3>該当する業者が見つかりません</h3>
-      <p>条件を変えて検索してみてください</p>
-    </div>
-  <% end %>
 </div>

@@ -2,13 +2,11 @@ class BusinessMatcher
   MAX_BUSINESSES = 3
 
   def self.find_for(user, category: nil)
-    businesses = Business.active.where.not(area: [ nil, "" ])
+    businesses = Business.active
 
-    # エリアでフィルタリング
+    # service_prefectures 配列に登録された都道府県で絞り込み
     if user&.prefecture.present?
-      businesses = businesses.where(
-        "area LIKE ?", "%#{user.prefecture}%"
-      )
+      businesses = businesses.where("? = ANY(service_prefectures)", user.prefecture)
     end
 
     # カテゴリでフィルタリング

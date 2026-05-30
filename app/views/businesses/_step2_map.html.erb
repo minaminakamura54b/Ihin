@@ -1,0 +1,20 @@
+<%# STEP2: 都道府県選択 %>
+<% category_label = category == "estate_clearance" ? "遺品整理" : "遺品買取" %>
+
+<div class="search-step-content">
+  <div class="step-back">
+    <%= link_to search_businesses_path(step: 1),
+          class: "btn-back",
+          data: { turbo_frame: "search-steps" } do %>
+      <i class="fas fa-arrow-left"></i> カテゴリ選択に戻る
+    <% end %>
+  </div>
+
+  <h2 class="step-title"><%= category_label %>の業者を探す</h2>
+  <p class="step-desc">都道府県を選んでください</p>
+
+  <%= render "businesses/prefecture_map",
+        frame_id:     "search-steps",
+        pref_url:     ->(p) { search_businesses_path(step: 3, category: category, prefecture: p) },
+        stimulus_data: { "category-value" => category } %>
+</div>

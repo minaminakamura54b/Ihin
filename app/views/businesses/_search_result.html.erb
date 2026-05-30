@@ -1,0 +1,47 @@
+<%# 検索結果の業者カード（1件分）%>
+<div class="search-result-card">
+
+  <%# カードヘッダー：カテゴリ + プランバッジ %>
+  <div class="src-header">
+    <span class="business-category-badge"><%= business.category_label %></span>
+    <% if business.premium? %>
+      <span class="plan-badge plan-premium">プレミアム</span>
+    <% elsif business.standard? %>
+      <span class="plan-badge plan-standard">スタンダード</span>
+    <% end %>
+  </div>
+
+  <%# 業者名 %>
+  <h3 class="src-name"><%= business.name %></h3>
+
+  <%# エリア %>
+  <% if business.area.present? %>
+    <p class="src-area">
+      <i class="fas fa-map-marker-alt"></i>
+      <%= business.area %>
+    </p>
+  <% end %>
+
+  <%# 説明文（先頭100文字）%>
+  <% if business.description.present? %>
+    <p class="src-description"><%= truncate(business.description, length: 100) %></p>
+  <% end %>
+
+  <%# アクションボタン %>
+  <div class="src-actions">
+    <%= link_to "詳細を見る", business_path(business), class: "btn btn-outline btn-sm" %>
+
+    <% if user_signed_in? %>
+      <%# ログイン済み → 問い合わせフォームへ（show ページにフォームあり）%>
+      <%= link_to business_path(business, anchor: "inquiry"), class: "btn btn-primary btn-sm" do %>
+        <i class="fas fa-envelope"></i> 問い合わせる
+      <% end %>
+    <% else %>
+      <%# 未ログイン → 登録を促すボタン %>
+      <%= link_to new_user_registration_path, class: "btn btn-primary btn-sm" do %>
+        <i class="fas fa-user-plus"></i> 無料登録して問い合わせる
+      <% end %>
+    <% end %>
+  </div>
+
+</div>

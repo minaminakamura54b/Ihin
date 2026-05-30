@@ -40,7 +40,12 @@
       <div>
         <span class="business-category-badge"><%= @business.category_label %></span>
         <h1><%= @business.name %></h1>
-        <% if @business.area.present? %>
+        <% if @business.service_prefectures.any? %>
+          <p class="business-area">
+            <i class="fas fa-map-marker-alt"></i>
+            <%= @business.service_prefectures.join("・") %>
+          </p>
+        <% elsif @business.area.present? %>
           <p class="business-area"><i class="fas fa-map-marker-alt"></i> <%= @business.area %></p>
         <% end %>
       </div>
@@ -70,23 +75,30 @@
       </div>
     </div>
 
-    <% if user_signed_in? && @inquiry %>
-      <div class="inquiry-section">
-        <h2>問い合わせる</h2>
-        <p class="inquiry-note">無料で問い合わせができます。業者からの返信をお待ちください。</p>
-        <%= form_with model: [@business, @inquiry] do |f| %>
-          <div class="form-group">
-            <%= f.label :message, "メッセージ", class: "form-label" %>
-            <%= f.text_area :message, class: "form-input form-textarea", rows: 4,
-                placeholder: "遺品整理についてご相談したいのですが..." %>
+    <%# id="inquiry" → 検索結果の「問い合わせる」リンクのアンカー先 %>
+    <div class="inquiry-section" id="inquiry">
+      <h2>問い合わせる</h2>
+      <% if user_signed_in? %>
+        <% if @already_inquired %>
+          <%# 24時間以内に問い合わせ済みの場合 %>
+          <div class="inquiry-already-sent">
+            <i class="fas fa-check-circle"></i>
+            この業者にはすでにお問い合わせいただいています。<br>
+            <span class="inquiry-already-note">24時間経過後に再度ご連絡いただけます。</span>
           </div>
-          <%= f.submit "送信する", class: "btn btn-primary" %>
+        <% else %>
+          <p class="inquiry-note">無料で問い合わせができます。ご入力いただいた連絡先に業者から直接ご連絡します。</p>
+          <%= link_to new_business_inquiry_path(@business),
+                class: "btn btn-primary inquiry-cta-btn" do %>
+            <i class="fas fa-envelope"></i> 問い合わせる
+          <% end %>
         <% end %>
-      </div>
-    <% elsif !user_signed_in? %>
-      <div class="inquiry-section">
-        <p>問い合わせるには <%= link_to "無料登録", new_user_registration_path %> が必要です。</p>
-      </div>
-    <% end %>
+      <% else %>
+        <p class="inquiry-note">問い合わせるには無料登録が必要です。</p>
+        <%= link_to new_user_registration_path, class: "btn btn-primary" do %>
+          <i class="fas fa-user-plus"></i> 無料登録して問い合わせる
+        <% end %>
+      <% end %>
+    </div>
   </div>
 </div>

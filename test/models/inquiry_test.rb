@@ -35,7 +35,9 @@ class InquiryTest < ActiveSupport::TestCase
     inquiry = Inquiry.new(
       user: create(:user),
       business: create(:business),
-      message: "問い合わせ"
+      message: "問い合わせ",
+      contact_type: :email,
+      contact_info: "test@example.com"
     )
     assert inquiry.valid?
     assert_nil inquiry.item
@@ -48,6 +50,8 @@ class InquiryTest < ActiveSupport::TestCase
       user: family,
       business: create(:business),
       message: "この品物についての問い合わせです",
+      contact_type: :email,
+      contact_info: "test@example.com",
       item: item
     )
     assert inquiry.valid?

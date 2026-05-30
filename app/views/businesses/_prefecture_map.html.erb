@@ -1,0 +1,142 @@
+<%#
+  都道府県選択マップ（共有パーシャル）
+  locals:
+    frame_id      - Turbo Frame の ID
+    pref_url      - proc: ->(pref) { URL文字列 }
+    stimulus_data - Hash: japan-map コントローラーへの data-* 属性
+%>
+<%
+  prefectures_data = [
+    { name: "北海道",   path: "M320,20 L420,20 L440,60 L430,100 L390,120 L350,110 L330,80 L320,20Z",       lx: 375, ly: 70  },
+    { name: "青森県",   path: "M300,120 L330,110 L340,130 L325,150 L305,148 L295,135 L300,120Z",           lx: 316, ly: 135 },
+    { name: "岩手県",   path: "M315,148 L338,135 L348,155 L345,185 L325,192 L308,180 L305,160 L315,148Z",  lx: 327, ly: 167 },
+    { name: "宮城県",   path: "M300,178 L320,170 L328,190 L318,208 L298,208 L292,192 L300,178Z",           lx: 310, ly: 192 },
+    { name: "秋田県",   path: "M285,128 L300,120 L308,140 L308,165 L290,170 L278,155 L280,138 L285,128Z",  lx: 293, ly: 148 },
+    { name: "山形県",   path: "M280,165 L300,162 L305,178 L295,195 L278,195 L270,180 L275,168 L280,165Z",  lx: 288, ly: 180 },
+    { name: "福島県",   path: "M278,193 L310,190 L315,210 L308,228 L278,228 L268,215 L270,200 L278,193Z",  lx: 292, ly: 210 },
+    { name: "茨城県",   path: "M318,208 L338,205 L342,225 L335,242 L315,240 L310,225 L318,208Z",           lx: 327, ly: 225 },
+    { name: "栃木県",   path: "M298,208 L318,208 L315,228 L308,242 L290,238 L286,222 L298,208Z",           lx: 303, ly: 225 },
+    { name: "群馬県",   path: "M278,205 L298,208 L295,228 L280,235 L265,228 L266,212 L278,205Z",           lx: 282, ly: 220 },
+    { name: "埼玉県",   path: "M278,228 L298,225 L305,240 L295,252 L275,250 L268,240 L278,228Z",           lx: 287, ly: 240 },
+    { name: "千葉県",   path: "M315,238 L338,240 L345,260 L335,278 L315,272 L308,258 L308,242 L315,238Z",  lx: 325, ly: 258 },
+    { name: "東京都",   path: "M292,242 L310,240 L315,258 L305,265 L288,262 L285,250 L292,242Z",           lx: 300, ly: 255 },
+    { name: "神奈川県", path: "M278,252 L298,252 L305,265 L295,278 L275,275 L268,262 L278,252Z",           lx: 287, ly: 265 },
+    { name: "新潟県",   path: "M248,170 L278,168 L282,188 L275,210 L245,215 L238,195 L242,178 L248,170Z",  lx: 260, ly: 193 },
+    { name: "富山県",   path: "M232,215 L252,212 L255,228 L242,238 L228,232 L225,220 L232,215Z",           lx: 240, ly: 226 },
+    { name: "石川県",   path: "M218,218 L232,215 L228,235 L218,248 L205,242 L205,228 L218,218Z",           lx: 218, ly: 233 },
+    { name: "福井県",   path: "M208,238 L225,235 L228,252 L215,262 L202,255 L202,245 L208,238Z",           lx: 215, ly: 250 },
+    { name: "山梨県",   path: "M265,248 L282,245 L285,262 L272,272 L258,268 L256,255 L265,248Z",           lx: 271, ly: 260 },
+    { name: "長野県",   path: "M245,228 L265,225 L270,248 L262,268 L242,268 L232,250 L235,235 L245,228Z",  lx: 252, ly: 249 },
+    { name: "岐阜県",   path: "M228,248 L248,245 L252,268 L242,285 L220,285 L210,268 L215,252 L228,248Z",  lx: 232, ly: 267 },
+    { name: "静岡県",   path: "M262,268 L285,265 L290,285 L278,298 L258,295 L248,280 L252,268 L262,268Z",  lx: 270, ly: 283 },
+    { name: "愛知県",   path: "M240,282 L260,278 L262,295 L250,308 L232,305 L228,290 L240,282Z",           lx: 246, ly: 295 },
+    { name: "三重県",   path: "M222,285 L240,282 L245,302 L238,320 L218,318 L212,302 L218,290 L222,285Z",  lx: 229, ly: 303 },
+    { name: "滋賀県",   path: "M208,262 L225,260 L228,278 L215,285 L202,280 L202,268 L208,262Z",           lx: 215, ly: 273 },
+    { name: "京都府",   path: "M190,262 L210,260 L212,280 L200,290 L182,285 L180,270 L190,262Z",           lx: 197, ly: 275 },
+    { name: "大阪府",   path: "M195,285 L212,282 L215,298 L202,305 L188,300 L188,290 L195,285Z",           lx: 202, ly: 295 },
+    { name: "兵庫県",   path: "M172,270 L195,268 L198,290 L188,302 L165,298 L158,282 L165,272 L172,270Z",  lx: 178, ly: 285 },
+    { name: "奈良県",   path: "M200,298 L218,295 L220,315 L208,322 L195,315 L195,305 L200,298Z",           lx: 208, ly: 310 },
+    { name: "和歌山県", path: "M188,302 L205,300 L208,320 L198,335 L180,330 L175,315 L182,305 L188,302Z",  lx: 193, ly: 318 },
+    { name: "鳥取県",   path: "M162,268 L182,265 L185,282 L170,288 L155,285 L152,272 L162,268Z",           lx: 169, ly: 278 },
+    { name: "島根県",   path: "M138,268 L162,268 L160,285 L145,292 L128,288 L125,275 L138,268Z",           lx: 145, ly: 280 },
+    { name: "岡山県",   path: "M162,285 L182,282 L185,300 L172,308 L155,305 L150,290 L162,285Z",           lx: 168, ly: 296 },
+    { name: "広島県",   path: "M138,285 L160,282 L162,300 L150,310 L130,308 L122,295 L128,285 L138,285Z",  lx: 142, ly: 297 },
+    { name: "山口県",   path: "M112,292 L135,290 L138,308 L125,318 L108,315 L102,302 L112,292Z",           lx: 120, ly: 305 },
+    { name: "徳島県",   path: "M195,318 L215,315 L218,332 L205,340 L192,335 L190,322 L195,318Z",           lx: 204, ly: 329 },
+    { name: "香川県",   path: "M175,308 L195,305 L198,320 L185,325 L172,320 L172,312 L175,308Z",           lx: 184, ly: 315 },
+    { name: "愛媛県",   path: "M155,308 L175,305 L178,322 L165,332 L148,328 L145,315 L155,308Z",           lx: 162, ly: 318 },
+    { name: "高知県",   path: "M155,325 L192,322 L195,342 L180,352 L158,348 L145,338 L148,328 L155,325Z",  lx: 170, ly: 338 },
+    { name: "福岡県",   path: "M108,312 L128,310 L130,328 L115,338 L98,332 L96,318 L108,312Z",             lx: 114, ly: 325 },
+    { name: "佐賀県",   path: "M90,318 L110,315 L112,332 L98,338 L84,332 L85,322 L90,318Z",                lx: 98,  ly: 328 },
+    { name: "長崎県",   path: "M68,320 L90,318 L92,335 L78,345 L60,340 L58,328 L68,320Z",                  lx: 76,  ly: 333 },
+    { name: "熊本県",   path: "M98,335 L120,332 L122,352 L108,362 L90,358 L88,342 L98,335Z",               lx: 106, ly: 348 },
+    { name: "大分県",   path: "M120,325 L140,322 L142,342 L128,350 L112,346 L112,332 L120,325Z",           lx: 128, ly: 338 },
+    { name: "宮崎県",   path: "M118,348 L138,345 L140,368 L125,378 L108,372 L106,358 L118,348Z",           lx: 124, ly: 362 },
+    { name: "鹿児島県", path: "M95,358 L118,355 L120,375 L105,385 L85,380 L82,365 L95,358Z",               lx: 102, ly: 372 },
+    { name: "沖縄県",   path: "M30,480 L55,478 L58,495 L45,502 L28,498 L28,488 L30,480Z",                  lx: 43,  ly: 491 },
+  ]
+
+  # Stimulusのdata属性を文字列に変換
+  stimulus_attrs = (stimulus_data || {}).map { |k, v|
+    "data-japan-map-#{k}=\"#{v}\""
+  }.join(" ")
+%>
+
+<div class="japan-map-wrap"
+     data-controller="japan-map"
+     data-japan-map-frame-value="<%= frame_id %>"
+     <%= stimulus_attrs.html_safe %>>
+
+  <%# SVG日本地図 %>
+  <svg viewBox="0 0 500 520" xmlns="http://www.w3.org/2000/svg"
+       class="japan-map-svg"
+       data-japan-map-target="svg">
+
+    <%# 沖縄インセット枠 %>
+    <rect x="15" y="465" width="80" height="50" rx="4"
+          fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="4"/>
+    <text x="18" y="524" font-size="9" fill="#999">沖縄</text>
+
+    <%# 都道府県パス %>
+    <% prefectures_data.each do |pref| %>
+      <path
+        d="<%= pref[:path] %>"
+        class="pref-path"
+        data-name="<%= pref[:name] %>"
+        data-action="mouseenter->japan-map#hover mouseleave->japan-map#unhover click->japan-map#select"
+        data-japan-map-target="pref" />
+    <% end %>
+
+    <%# 都道府県ラベル（小さすぎる県は省略）%>
+    <% small = %w[東京都 神奈川県 埼玉県 千葉県 大阪府 滋賀県 奈良県 福井県 和歌山県 佐賀県 香川県] %>
+    <% prefectures_data.reject { |p| small.include?(p[:name]) }.each do |pref| %>
+      <text x="<%= pref[:lx] %>" y="<%= pref[:ly] %>"
+            class="pref-label"
+            data-name="<%= pref[:name] %>"
+            pointer-events="none">
+        <%= pref[:name].gsub(/[都道府県]$/, "") %>
+      </text>
+    <% end %>
+
+    <%# ツールチップ %>
+    <g data-japan-map-target="tooltip" style="display:none">
+      <rect data-japan-map-target="tooltipBg"
+            x="0" y="0" width="80" height="24" rx="4"
+            fill="#2c4f7c" opacity="0.92"/>
+      <text data-japan-map-target="tooltipText"
+            x="0" y="0" fill="white" font-size="11"
+            text-anchor="middle" dominant-baseline="middle"/>
+    </g>
+  </svg>
+
+  <%# ホバー県名（モバイル向け）%>
+  <div class="map-hover-label" data-japan-map-target="hoverLabel"></div>
+</div>
+
+<%# 都道府県ボタンリスト %>
+<div class="pref-list-wrap">
+  <p class="pref-list-title">または下のリストから選ぶ</p>
+  <div class="pref-list">
+    <% [
+      ["北海道・東北", %w[北海道 青森県 岩手県 宮城県 秋田県 山形県 福島県]],
+      ["関東",        %w[茨城県 栃木県 群馬県 埼玉県 千葉県 東京都 神奈川県]],
+      ["甲信越・北陸", %w[新潟県 富山県 石川県 福井県 山梨県 長野県]],
+      ["東海",        %w[岐阜県 静岡県 愛知県 三重県]],
+      ["近畿",        %w[滋賀県 京都府 大阪府 兵庫県 奈良県 和歌山県]],
+      ["中国",        %w[鳥取県 島根県 岡山県 広島県 山口県]],
+      ["四国",        %w[徳島県 香川県 愛媛県 高知県]],
+      ["九州・沖縄",  %w[福岡県 佐賀県 長崎県 熊本県 大分県 宮崎県 鹿児島県 沖縄県]],
+    ].each do |region, prefs| %>
+      <div class="pref-region">
+        <span class="pref-region-name"><%= region %></span>
+        <div class="pref-btns">
+          <% prefs.each do |p| %>
+            <%= link_to p, pref_url.call(p),
+                  class: "pref-btn",
+                  data: { turbo_frame: frame_id } %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

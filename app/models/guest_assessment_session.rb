@@ -1,5 +1,8 @@
 class GuestAssessmentSession < ApplicationRecord
-  validates :token, presence: true, uniqueness: true
+  validates :token, presence: true
+  # uniqueness はDBの一意制約で保証する。
+  # モデルレベルの validates :uniqueness を使うと create_or_find_by! が
+  # RecordNotUnique の前に RecordInvalid を上げてしまい find_by にフォールバックできない。
 
   # INSERT優先で同時リクエスト時の重複作成を防ぐ
   def self.find_or_create_for(token)

@@ -22,3 +22,5 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+次は業者側の登録時に都道府県設定できるようにするとこから

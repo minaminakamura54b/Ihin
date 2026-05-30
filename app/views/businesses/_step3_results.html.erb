@@ -1,0 +1,47 @@
+<%# STEP3: 検索結果一覧 %>
+<%
+  category_label = category == "estate_clearance" ? "遺品整理" : "遺品買取"
+%>
+
+<div class="search-step-content">
+  <div class="step-back">
+    <%= link_to search_businesses_path(step: 2, category: category),
+          class: "btn-back",
+          data: { turbo_frame: "search-steps" } do %>
+      <i class="fas fa-arrow-left"></i> 地域選択に戻る
+    <% end %>
+  </div>
+
+  <h2 class="step-title"><%= prefecture %>の<%= category_label %>業者</h2>
+
+  <% if businesses.any? %>
+    <p class="search-result-count">
+      <strong><%= businesses.total_count %></strong> 件の業者が見つかりました
+    </p>
+
+    <div class="search-result-list">
+      <% businesses.each do |business| %>
+        <%= render "businesses/search_result", business: business %>
+      <% end %>
+    </div>
+
+    <% if businesses.respond_to?(:total_pages) && businesses.total_pages > 1 %>
+      <div class="pagination">
+        <%= paginate businesses, params: { step: 3, category: category, prefecture: prefecture } %>
+      </div>
+    <% end %>
+
+  <% else %>
+    <div class="search-empty">
+      <div class="search-empty-icon">🔍</div>
+      <h3><%= prefecture %>の<%= category_label %>業者はまだ登録されていません</h3>
+      <p>別の都道府県でお試しいただくか、しばらく経ってからご確認ください。</p>
+      <div class="search-empty-actions">
+        <%= link_to "別の地域で探す",
+              search_businesses_path(step: 2, category: category),
+              class: "btn btn-outline",
+              data: { turbo_frame: "search-steps" } %>
+      </div>
+    </div>
+  <% end %>
+</div>

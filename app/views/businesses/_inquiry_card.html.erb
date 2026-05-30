@@ -17,6 +17,21 @@
     <p><%= inquiry.message.truncate(120) %></p>
   </div>
 
+  <%# 連絡先表示（問い合わせ時に入力された連絡方法）%>
+  <% if inquiry.contact_info.present? %>
+    <div class="biz-inquiry-contact">
+      <% if inquiry.email? %>
+        <i class="fas fa-envelope"></i>
+        <a href="mailto:<%= inquiry.contact_info %>?subject=<%= u "【Ihin】#{@business.name}よりご連絡" %>">
+          <%= inquiry.contact_info %>
+        </a>
+      <% else %>
+        <i class="fas fa-phone"></i>
+        <a href="tel:<%= inquiry.contact_info.gsub("-", "") %>"><%= inquiry.contact_info %></a>
+      <% end %>
+    </div>
+  <% end %>
+
   <div class="biz-inquiry-actions">
     <% unless inquiry.closed? %>
       <% if inquiry.pending? %>
@@ -34,10 +49,6 @@
           class: "btn btn-success btn-sm",
           data: { turbo_stream: true } %>
     <% end %>
-    <a href="mailto:<%= inquiry.user.email %>?subject=<%= u "【いひん】#{@business.name}よりご連絡" %>"
-       class="btn btn-outline btn-sm">
-      <i class="fas fa-envelope"></i> メールで連絡
-    </a>
     <span class="btn btn-ghost btn-sm biz-estimate-btn" title="近日公開予定">
       <i class="fas fa-file-invoice"></i> 見積もり作成
     </span>

@@ -53,8 +53,9 @@ Rails.application.configure do
   # Highlight code that enqueued background job in logs.
   config.active_job.verbose_enqueue_logs = true
 
-  # 開発環境でもSolid Queueを使う（本番と同じ挙動で検証できる）
-  config.active_job.queue_adapter = :solid_queue
+  # 開発環境はインプロセスで即時実行（letter_opener でメールをすぐ確認できる）
+  # 本番は solid_queue で非同期処理（production.rb 参照）
+  config.active_job.queue_adapter = :async
 
   # Highlight code that triggered redirect in logs.
   config.action_dispatch.verbose_redirect_logs = true

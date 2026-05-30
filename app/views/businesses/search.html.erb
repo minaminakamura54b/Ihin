@@ -1,0 +1,41 @@
+<%# ===== SEO ===== %>
+<% content_for :title, "業者を探す｜Ihin" %>
+<% content_for :description, "カテゴリと地域から遺品整理・買取業者を探せます。審査済みの信頼できる業者をご紹介します。" %>
+
+<div class="search-page">
+  <div class="search-hero">
+    <div class="search-hero-inner">
+      <h1 class="search-hero-title">業者を探す</h1>
+      <p class="search-hero-lead">カテゴリと地域を選ぶだけで<br>信頼できる業者が見つかります</p>
+    </div>
+  </div>
+
+  <%# ステップインジケーター %>
+  <div class="search-steps-nav">
+    <div class="search-step-dot <%= "active" if @step == "1" %> <%= "done" if @step.to_i > 1 %>">
+      <span class="step-num">1</span><span class="step-label">カテゴリ</span>
+    </div>
+    <div class="search-step-line"></div>
+    <div class="search-step-dot <%= "active" if @step == "2" %> <%= "done" if @step.to_i > 2 %>">
+      <span class="step-num">2</span><span class="step-label">地域</span>
+    </div>
+    <div class="search-step-line"></div>
+    <div class="search-step-dot <%= "active" if @step == "3" %>">
+      <span class="step-num">3</span><span class="step-label">結果</span>
+    </div>
+  </div>
+
+  <%# Turbo Frame: ステップコンテンツ %>
+  <%= turbo_frame_tag "search-steps" do %>
+    <% if @step == "1" %>
+      <%= render "businesses/step1_category" %>
+    <% elsif @step == "2" %>
+      <%= render "businesses/step2_map", category: @category %>
+    <% elsif @step == "3" %>
+      <%= render "businesses/step3_results",
+            category: @category,
+            prefecture: @prefecture,
+            businesses: @businesses %>
+    <% end %>
+  <% end %>
+</div>

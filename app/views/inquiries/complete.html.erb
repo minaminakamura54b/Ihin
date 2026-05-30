@@ -1,0 +1,40 @@
+<%# 問い合わせ送信完了画面 %>
+<% content_for :title, "問い合わせ送信完了｜Ihin" %>
+
+<div class="page-container page-narrow">
+  <div class="inquiry-complete-card">
+
+    <div class="inquiry-complete-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+
+    <h1 class="inquiry-complete-title">問い合わせを送信しました</h1>
+
+    <p class="inquiry-complete-biz">
+      <strong><%= @business.name %></strong>
+    </p>
+
+    <p class="inquiry-complete-lead">
+      業者から連絡が届くまでしばらくお待ちください。<br>
+      ご入力いただいた
+      <strong><%= @inquiry.email? ? "メールアドレス" : "電話番号" %></strong>
+      宛にご連絡いたします。
+    </p>
+
+    <div class="inquiry-complete-info">
+      <div class="inquiry-complete-row">
+        <span class="inquiry-complete-label">
+          <i class="fas fa-<%= @inquiry.email? ? "envelope" : "phone" %>"></i>
+          <%= @inquiry.email? ? "メールアドレス" : "電話番号" %>
+        </span>
+        <span class="inquiry-complete-value"><%= @inquiry.contact_info %></span>
+      </div>
+    </div>
+
+    <div class="inquiry-complete-actions">
+      <%= link_to "業者ページに戻る", business_path(@business), class: "btn btn-outline" %>
+      <%= link_to "トップページへ", root_path, class: "btn btn-primary" %>
+    </div>
+
+  </div>
+</div>

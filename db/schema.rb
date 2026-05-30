@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_27_090340) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_30_165543) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -112,12 +112,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_090340) do
     t.string "phone"
     t.integer "plan", default: 0
     t.text "rejected_reason"
+    t.text "service_prefectures", default: [], array: true
     t.string "stripe_customer_id"
     t.string "stripe_subscription_id"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.string "website"
     t.index ["approval_status"], name: "index_businesses_on_approval_status"
+    t.index ["service_prefectures"], name: "index_businesses_on_service_prefectures", using: :gin
     t.index ["user_id"], name: "index_businesses_on_user_id"
   end
 
@@ -154,6 +156,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_27_090340) do
 
   create_table "inquiries", force: :cascade do |t|
     t.bigint "business_id", null: false
+    t.string "contact_info"
+    t.integer "contact_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.bigint "item_id"
     t.text "message", null: false

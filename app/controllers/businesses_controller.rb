@@ -1,5 +1,5 @@
 class BusinessesController < ApplicationController
-  skip_before_action :authenticate_user!, only: [ :index, :show, :for_estate_clearance, :for_resellers, :select_type, :email_sent ]
+  skip_before_action :authenticate_user!, only: [ :index, :show, :search, :for_estate_clearance, :for_resellers, :select_type, :email_sent ]
   # 審査待ちページは check_business_approval_status のループ回避のため skip しない（ApplicationControllerで制御済み）
   before_action :set_business, only: [ :show, :edit, :update, :destroy, :subscribe, :unsubscribe, :dashboard ]
   before_action :authorize_business!, only: [ :edit, :update, :destroy, :subscribe, :unsubscribe ]
@@ -7,10 +7,17 @@ class BusinessesController < ApplicationController
   before_action :require_business_owner!, only: [ :dashboard ]
 
   def index
-    @businesses = BusinessMatcher.find_for(
-      current_user,
-      category: params[:category]
-    )
+    @prefecture = params[:prefecture]
+
+    if @prefecture.present?
+      # service_prefectures 配列に選択した都道府県が含まれる業者を検索
+      base = Business.active.approved
+                    .where("? = ANY(service_prefectures)", @prefecture)
+      base = base.where(category: params[:category]) if params[:category].present?
+      @businesses = base.order(plan: :desc).page(params[:page]).per(12)
+    else
+      @businesses = Business.none
+    end
   end
 
   def select_type
@@ -33,16 +40,28 @@ class BusinessesController < ApplicationController
   end
 
   def search
-    @businesses = Business.active.includes(:user)
-    @businesses = @businesses.where(category: params[:category]) if params[:category].present?
-    @businesses = @businesses.where("area LIKE ?", "%#{params[:area]}%") if params[:area].present?
-    @businesses = @businesses.where("name LIKE ?", "%#{params[:q]}%") if params[:q].present?
-    @businesses = @businesses.page(params[:page]).per(12)
-    render :index
+    @step = params[:step] || "1"
+    @category = params[:category]
+    @prefecture = params[:prefecture]
+
+    if @step == "3" && @category.present? && @prefecture.present?
+      # STEP3: カテゴリ＋service_prefectures で絞り込み
+      @businesses = Business.active.approved
+                            .where(category: @category)
+                            .where("? = ANY(service_prefectures)", @prefecture)
+                            .order(plan: :desc)
+                            .page(params[:page]).per(12)
+    end
   end
 
   def show
-    @inquiry = Inquiry.new if user_signed_in?
+    return unless user_signed_in?
+
+    # 24時間以内に同一業者への問い合わせ済みかどうか
+    @already_inquired = current_user.inquiries
+                                    .where(business: @business)
+                                    .where("created_at > ?", 24.hours.ago)
+                                    .exists?
   end
 
   def new
@@ -147,6 +166,6 @@ class BusinessesController < ApplicationController
   end
 
   def business_params
-    params.require(:business).permit(:name, :category, :area, :description, :phone, :website, :plan)
+    params.require(:business).permit(:name, :category, :area, :description, :phone, :website, :plan, service_prefectures: [])
   end
 end

@@ -121,8 +121,58 @@ class BusinessTest < ActiveSupport::TestCase
 
   test "can_contact? は今月の問い合わせが limit に達した場合 false" do
     biz = create(:business)  # free plan: limit 2
-    user = create(:user)
-    2.times { create(:inquiry, business: biz, user: user) }
+    # 24時間以内の重複バリデーションを避けるため別ユーザーで問い合わせを作成
+    2.times { create(:inquiry, business: biz, user: create(:user)) }
     assert_not biz.can_contact?
+  end
+
+  # ===== service_prefectures =====
+
+  test "service_prefectures を配列で保存・取得できる" do
+    biz = create(:business, service_prefectures: %w[東京都 神奈川県])
+    assert_equal %w[東京都 神奈川県], biz.reload.service_prefectures
+  end
+
+  test "保存前に service_prefectures の空文字列が除去される" do
+    biz = create(:business)
+    biz.update!(service_prefectures: [ "", "大阪府", "" ])
+    assert_equal %w[大阪府], biz.reload.service_prefectures
+  end
+
+  test "service_prefectures に不正な値があるとバリデーションエラー" do
+    biz = create(:business)
+    biz.service_prefectures = %w[東京都 存在しない県]
+    assert_not biz.valid?
+    assert biz.errors[:service_prefectures].any?
+  end
+
+  test "service_prefectures がすべて有効な都道府県であれば有効" do
+    biz = create(:business)
+    biz.service_prefectures = %w[北海道 沖縄県]
+    assert biz.valid?
+  end
+
+  test "service_prefectures は複数都道府県を選択できる" do
+    biz = create(:business, service_prefectures: Business::VALID_PREFECTURES)
+    assert_equal 47, biz.reload.service_prefectures.length
+  end
+
+  # ===== service_prefectures 検索 =====
+
+  test "特定の都道府県を service_prefectures に持つ業者を検索できる" do
+    tokyo_biz  = create(:business, service_prefectures: %w[東京都])
+    osaka_biz  = create(:business, service_prefectures: %w[大阪府])
+
+    results = Business.where("? = ANY(service_prefectures)", "東京都")
+    assert_includes     results, tokyo_biz
+    assert_not_includes results, osaka_biz
+  end
+
+  test "複数都道府県を持つ業者はそれぞれの都道府県で検索できる" do
+    multi_biz = create(:business, service_prefectures: %w[東京都 神奈川県])
+
+    assert_includes Business.where("? = ANY(service_prefectures)", "東京都"),  multi_biz
+    assert_includes Business.where("? = ANY(service_prefectures)", "神奈川県"), multi_biz
+    assert_not_includes Business.where("? = ANY(service_prefectures)", "大阪府"), multi_biz
   end
 end

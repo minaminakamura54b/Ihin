@@ -28,4 +28,15 @@ class BusinessMailer < ApplicationMailer
       subject: "【遺品AI査定】掲載申請についてのご連絡"
     )
   end
+
+  # 新規問い合わせ通知（遺族から問い合わせが届いた時に業者へ送信）
+  def new_inquiry(business, inquiry)
+    @business = business
+    @inquiry  = inquiry
+    @sender   = inquiry.user
+    mail(
+      to:      business.user.email,
+      subject: "【Ihin】新しい問い合わせが届きました"
+    )
+  end
 end

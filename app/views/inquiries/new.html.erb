@@ -1,0 +1,128 @@
+<% content_for :title, "#{@business.name}に問い合わせる｜Ihin" %>
+
+<div class="page-container page-narrow">
+
+  <%# パンくず %>
+  <div class="breadcrumb">
+    <%= link_to "業者を探す", businesses_path %> &rsaquo;
+    <%= link_to @business.name, business_path(@business) %> &rsaquo;
+    問い合わせ
+  </div>
+
+  <div class="inquiry-form-card">
+
+    <%# 業者ヘッダー %>
+    <div class="inquiry-biz-header">
+      <span class="business-category-badge"><%= @business.category_label %></span>
+      <h1 class="inquiry-biz-name"><%= @business.name %></h1>
+      <% if @business.area.present? %>
+        <p class="inquiry-biz-area">
+          <i class="fas fa-map-marker-alt"></i> <%= @business.area %>
+        </p>
+      <% end %>
+    </div>
+
+    <%# リード文 %>
+    <p class="inquiry-lead">
+      無料でお問い合わせいただけます。<br>
+      ご入力いただいた連絡先に業者から直接ご連絡します。
+    </p>
+
+    <%# エラー表示 %>
+    <% if @inquiry.errors.any? %>
+      <div class="form-errors">
+        <% @inquiry.errors.full_messages.each do |msg| %>
+          <p><i class="fas fa-exclamation-circle"></i> <%= msg %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= form_with model: [@business, @inquiry],
+          data: { controller: "inquiry-contact" } do |f| %>
+
+      <%# ===== 連絡方法の選択 ===== %>
+      <div class="form-group">
+        <label class="form-label">連絡方法 <span class="required-badge">必須</span></label>
+        <p class="form-hint">業者からの連絡を受け取る方法を選んでください</p>
+
+        <div class="contact-type-options">
+          <%# メールで連絡を受け取る %>
+          <label class="contact-type-label">
+            <%= f.radio_button :contact_type, :email,
+                  checked: @inquiry.email?,
+                  data: { action: "change->inquiry-contact#toggle" } %>
+            <div class="contact-type-content">
+              <i class="fas fa-envelope"></i>
+              <span>メールで連絡を受け取る</span>
+            </div>
+          </label>
+
+          <%# 電話で連絡を受け取る %>
+          <label class="contact-type-label">
+            <%= f.radio_button :contact_type, :phone,
+                  checked: @inquiry.phone?,
+                  data: { action: "change->inquiry-contact#toggle" } %>
+            <div class="contact-type-content">
+              <i class="fas fa-phone"></i>
+              <span>電話で連絡を受け取る</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <%# ===== メールアドレス入力欄（初期表示）===== %>
+      <div data-inquiry-contact-target="emailField">
+        <div class="form-group">
+          <%= f.label :contact_info, class: "form-label" do %>
+            メールアドレス <span class="required-badge">必須</span>
+          <% end %>
+          <%= f.email_field :contact_info,
+                value: (@inquiry.email? ? @inquiry.contact_info : ""),
+                placeholder: "example@email.com",
+                class: "form-input",
+                autocomplete: "email" %>
+        </div>
+      </div>
+
+      <%# ===== 電話番号入力欄（初期非表示）===== %>
+      <div data-inquiry-contact-target="phoneField" hidden>
+        <div class="form-group">
+          <%= f.label :contact_info, class: "form-label" do %>
+            電話番号 <span class="required-badge">必須</span>
+          <% end %>
+          <%= f.telephone_field :contact_info,
+                value: (@inquiry.phone? ? @inquiry.contact_info : ""),
+                placeholder: "090-1234-5678",
+                class: "form-input",
+                autocomplete: "tel" %>
+          <p class="form-hint">ハイフンあり・なしどちらでも構いません</p>
+        </div>
+      </div>
+
+      <%# ===== メッセージ入力欄 ===== %>
+      <div class="form-group">
+        <%= f.label :message, class: "form-label" do %>
+          お問い合わせ内容 <span class="required-badge">必須</span>
+        <% end %>
+        <%= f.text_area :message,
+              rows: 5,
+              class: "form-input form-textarea",
+              placeholder: "例：父の遺品整理をお願いしたいです。家具・家電・衣類などがあります。大まかな費用感を教えていただけますか？" %>
+      </div>
+
+      <%# 注意事項 %>
+      <div class="inquiry-notice">
+        <i class="fas fa-info-circle"></i>
+        同じ業者への問い合わせは24時間以内に1回までです。
+      </div>
+
+      <%# 送信ボタン %>
+      <div class="inquiry-submit">
+        <%= f.submit "問い合わせを送信する", class: "btn btn-primary btn-lg inquiry-submit-btn" %>
+        <%= link_to "キャンセル", business_path(@business), class: "btn btn-ghost" %>
+      </div>
+
+    <% end %>
+
+  </div>
+</div>
